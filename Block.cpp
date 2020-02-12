@@ -43,9 +43,9 @@ void Block::DrawBlock()
 
 int Block::GetPosition(int Pos)
 {
-	if (Pos == 1)
+	if (Pos == POSITION_X)
 		return m_ix;
-	else if (Pos == 2)
+	else if (Pos == POSITION_Y)
 		return m_iy;
 }
 

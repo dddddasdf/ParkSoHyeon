@@ -35,11 +35,11 @@ bool BlockManager::IsOverlap(int iXPos, int iYPos, int i)
 {
 	for (int x = 0; x < i; x++)
 	{
-		if (m_Obstacle[x].GetPosition(1) == iXPos && m_Obstacle[x].GetPosition(2) == iYPos)
-			return false;
+		if (m_Obstacle[x].GetPosition(POSITION_X) == iXPos && m_Obstacle[x].GetPosition(POSITION_Y) == iYPos)
+			return true;
 	}
 
-	return true;
+	return false;
 }
 
 
@@ -52,8 +52,11 @@ Position BlockManager::GetRandomPosition(int i)
 		tmpPosition.m_iy = (rand() % (MAP_HEIGHT - 2)) + 1;
 		tmpPosition.m_ix = (rand() % (MAP_WIDTH - 2)) + 1;
 
-		if (IsOverlap(tmpPosition.m_ix, tmpPosition.m_iy, i) == true)
-			break;
+		if (IsOverlap(tmpPosition.m_ix, tmpPosition.m_iy, i) == false)
+		{
+			if (tmpPosition.m_ix != ((MAP_WIDTH / 2) + 1) && tmpPosition.m_iy != ((MAP_HEIGHT / 2) + 1))
+				break;	//중복 아니라고 판정되면 해당 방해물 저장
+		}
 	}
 	
 	return tmpPosition;

@@ -21,6 +21,7 @@ void Game::StartGame()
 	m_BlockManager.DrawWallBlock();
 	Init();
 	PrintScore();
+	Player.PrintSnake();
 	system("pause>null");
 }
 

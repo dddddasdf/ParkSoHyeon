@@ -2,7 +2,7 @@
 
 void main()
 {
-	system("mode con lines=35 cols=100");
+	system("mode con lines=36 cols=102");
 	Game NowGaming;
 	NowGaming.Menu();
 }
