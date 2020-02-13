@@ -13,6 +13,11 @@ private:
 	//int m_iarrObsXY[MAX_OBS][2];	//장애물 좌표 저장 2차원 배열
 	//Block Blocks;
 	int m_iScore;
+	int m_iFeedCount;	//먹이 개수
+	int m_iFeedSpawnCount;	//먹이 생성 시간 조절용-현재 시간
+	int m_iFeedStandard;	//먹이 생성 시간 조절용-기준
+	int m_iMovingCount;	//움직이는 시간 조절용-현재 시간
+	int m_iMovingStandard;	//움직이는 시간 조절용-기준
 	Snake Player;
 public:
 	Game();
@@ -20,6 +25,7 @@ public:
 	void PrintScore();	//점수 표기
 	void StartGame();	//게임 시작
 	void Menu();	//시작시 메뉴 보여줌
+	void MakeFeed();	//먹이 생성 함수
 	void IsCollision();	//충돌 체크
 	inline void gotoxy(int x, int y)
 	{

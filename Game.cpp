@@ -1,5 +1,6 @@
 #include "Game.h"
-
+#define FEEDSPAWNTIME 1000
+#define MOVINGTIME 200
 
 
 Game::Game()
@@ -13,16 +14,53 @@ Game::Game()
 void Game::Init()
 {
 	m_BlockManager.SetRandObstacle();
+	m_iFeedCount = 0;
+	m_iFeedStandard = 0;
+	m_iMovingStandard = 0;
+	m_iFeedSpawnCount = 0;
+	m_iMovingCount = 0;
 }
 
 void Game::StartGame()
 {
 	system("cls");
+	int iKey = DIRECTION_NEUTRAL;	//키보드 입력 감지용, 시작할 땐 중립 상태
+	Player.ChangeDirection(iKey);
 	m_BlockManager.DrawWallBlock();
 	Init();
 	PrintScore();
 	Player.PrintSnake();
-	system("pause>null");
+	m_iFeedStandard = clock();
+	m_iMovingStandard = clock();
+
+	while (1)
+	{
+		/*m_iFeedSpawnCount = clock();
+		if (m_iFeedSpawnCount - m_iFeedStandard > FEEDSPAWNTIME)
+		{
+			if (m_iFeedCount < 10)
+		}*/
+
+		if (_kbhit())
+		{
+			iKey = _getch();
+			if (iKey == DIRECTION_LEFT || iKey == DIRECTION_RIGHT || iKey == DIRECTION_UP || iKey == DIRECTION_DOWN)
+			{
+				Player.ChangeDirection(iKey);
+			}
+		}
+		
+		m_iMovingCount = clock();
+
+		if (m_iMovingCount - m_iMovingStandard > MOVINGTIME)
+		{
+			Player.MoveSnake();
+			Player.PrintSnake();
+			m_iMovingStandard = m_iMovingCount;
+		}
+
+		
+	}
 }
 
 void Game::PrintScore()

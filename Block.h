@@ -20,6 +20,7 @@ public:
 	Block();
 	void SetBlock(BLOCK_ATTRIBUTE Attribute, Position P);
 	void DrawBlock();
+	void DeleteBlock(int x, int y);
 	int GetPosition(int Pos);
 	inline void gotoxy(int x, int y)
 	{

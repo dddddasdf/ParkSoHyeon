@@ -76,13 +76,6 @@ void BlockManager::SetRandObstacle()
 	}
 }
 
-void BlockManager::InitFeed()
-{
-	m_iFeedCount = 0;
-
-
-}
-
 void BlockManager::DrawWallBlock()
 {
 	for (int i = 0; i < m_iWallCount; i++)

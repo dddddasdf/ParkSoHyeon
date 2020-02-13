@@ -49,6 +49,12 @@ int Block::GetPosition(int Pos)
 		return m_iy;
 }
 
+void Block::DeleteBlock(int x, int y)
+{
+	gotoxy(x, y);
+	std::cout << "¡¡";
+}
+
 Block::~Block()
 {
 }
