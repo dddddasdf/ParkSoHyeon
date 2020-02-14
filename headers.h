@@ -33,3 +33,12 @@ enum POSITION
 	POSITION_X,
 	POSITION_Y
 };
+
+enum CASE
+{
+	CASE_COLLISION_WALL,	//벽과 충돌
+	CASE_COLLISION_OBJECT,	//오브젝트와 충돌
+	CASE_COLLISION_BODY,	//몸과 충돌
+	CASE_FEED, 	//먹이 획득
+	CASE_NEUTRAL	//아무 일도 없었다
+};

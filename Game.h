@@ -14,9 +14,9 @@ private:
 	//Block Blocks;
 	int m_iScore;
 	int m_iFeedCount;	//먹이 개수
-	int m_iFeedSpawnCount;	//먹이 생성 시간 조절용-현재 시간
+	int m_iFeedSpawnTimer;	//먹이 생성 시간 조절용-현재 시간
 	int m_iFeedStandard;	//먹이 생성 시간 조절용-기준
-	int m_iMovingCount;	//움직이는 시간 조절용-현재 시간
+	int m_iMovingTimer;	//움직이는 시간 조절용-현재 시간
 	int m_iMovingStandard;	//움직이는 시간 조절용-기준
 	Snake Player;
 public:
@@ -26,7 +26,6 @@ public:
 	void StartGame();	//게임 시작
 	void Menu();	//시작시 메뉴 보여줌
 	void MakeFeed();	//먹이 생성 함수
-	void IsCollision();	//충돌 체크
 	inline void gotoxy(int x, int y)
 	{
 		COORD Pos = { x, y };

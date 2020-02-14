@@ -19,7 +19,8 @@ void Snake::PrintSnake()
 	HeadPosition.m_iy = Head->iYPos;
 	Head->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_HEAD, HeadPosition);
 	Head->Block_Snake.DrawBlock();
-	DeleteAfterimage(Head);
+
+	tmp = Head;
 
 	if (Head->Next != NULL)
 	{
@@ -35,6 +36,8 @@ void Snake::PrintSnake()
 			tmp = tmp->Next;
 		}
 	}
+
+	DeleteAfterimage(Head);	//ÀÜ»ó Á¦°Å
 }
 
 void Snake::CreateBody()
@@ -167,24 +170,30 @@ void Snake::DeleteAfterimage(SnakeInfo *tmp2)
 {
 	if (m_iDirectionState == DIRECTION_RIGHT)
 	{
-		gotoxy((tmp2->iXPos) - 1, (tmp2->iYPos));
+		gotoxy(((tmp2->iXPos) * 2) - 2, (tmp2->iYPos));
 		std::cout << "  ";
 	}
 	else if (m_iDirectionState == DIRECTION_LEFT)
 	{
-		gotoxy((tmp2->iXPos) + 1, (tmp2->iYPos));
+		gotoxy(((tmp2->iXPos) * 2) + 2, (tmp2->iYPos));
 		std::cout << "  ";
 	}
 	else if (m_iDirectionState == DIRECTION_UP)
 	{
-		gotoxy((tmp2->iXPos), (tmp2->iYPos) + 1);
+		gotoxy(((tmp2->iXPos) * 2), (tmp2->iYPos) + 1);
 		std::cout << "  ";
 	}
 	else if (m_iDirectionState == DIRECTION_DOWN)
 	{
-		gotoxy((tmp2->iXPos), (tmp2->iYPos) - 1);
+		gotoxy(((tmp2->iXPos) * 2), (tmp2->iYPos) - 1);
 		std::cout << "  ";
 	}
+}
+
+void Snake::GetSnakePosition(int *iSnakeX, int *iSnakeY)
+{
+	*iSnakeX = Head->iXPos;
+	*iSnakeY = Head->iYPos;
 }
 
 Snake::~Snake()

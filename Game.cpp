@@ -14,11 +14,12 @@ Game::Game()
 void Game::Init()
 {
 	m_BlockManager.SetRandObstacle();
+	m_BlockManager.InitFeed();
 	m_iFeedCount = 0;
 	m_iFeedStandard = 0;
 	m_iMovingStandard = 0;
-	m_iFeedSpawnCount = 0;
-	m_iMovingCount = 0;
+	m_iFeedSpawnTimer = 0;
+	m_iMovingTimer = 0;
 }
 
 void Game::StartGame()
@@ -32,14 +33,21 @@ void Game::StartGame()
 	Player.PrintSnake();
 	m_iFeedStandard = clock();
 	m_iMovingStandard = clock();
+	int iSnakeX, iSnakeY;	//뱀 머리 위치 확인용
+	int iCase;	//상황 전환용
 
 	while (1)
 	{
-		/*m_iFeedSpawnCount = clock();
-		if (m_iFeedSpawnCount - m_iFeedStandard > FEEDSPAWNTIME)
+		m_iFeedSpawnTimer = clock();
+		if (m_iFeedSpawnTimer - m_iFeedStandard > FEEDSPAWNTIME)
 		{
 			if (m_iFeedCount < 10)
-		}*/
+			{
+				m_BlockManager.SetRandFeed(m_iFeedCount);
+				m_iFeedCount++;
+			}
+			m_iFeedStandard = m_iFeedSpawnTimer;
+		}
 
 		if (_kbhit())
 		{
@@ -50,13 +58,37 @@ void Game::StartGame()
 			}
 		}
 		
-		m_iMovingCount = clock();
+		m_iMovingTimer = clock();
 
-		if (m_iMovingCount - m_iMovingStandard > MOVINGTIME)
+		if (m_iMovingTimer - m_iMovingStandard > MOVINGTIME)
 		{
 			Player.MoveSnake();
 			Player.PrintSnake();
-			m_iMovingStandard = m_iMovingCount;
+			m_iMovingStandard = m_iMovingTimer;
+			Player.GetSnakePosition(&iSnakeX, &iSnakeY);	//뱀머리 위치 가져옴
+
+			//아래로는 상황 체크
+			iCase = m_BlockManager.IsCollisionObject(iSnakeX, iSnakeY);
+
+			if (iCase == CASE_COLLISION_WALL)
+			{
+				gotoxy(30, 15);
+				std::cout << "벽에 부딪쳐서 사망";
+				system("pause>null");
+				return;
+			}
+			else if (iCase == CASE_COLLISION_OBJECT)
+			{
+				gotoxy(30, 15);
+				std::cout << "방해물에 부딪쳐서 사망";
+				system("pause>null");
+				return;
+			}
+			else if (iCase == CASE_FEED)
+			{
+				m_iFeedCount--;
+				m_iScore++;
+			}
 		}
 
 		
