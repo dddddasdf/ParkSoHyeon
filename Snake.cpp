@@ -2,19 +2,12 @@
 
 Snake::Snake()
 {
-	m_iLife = 1;
-	Head = new SnakeInfo;
-	Head->iXPos = (MAP_WIDTH / 2) + 1;
-	Head->iYPos = (MAP_HEIGHT / 2) + 1;
-	HeadPosition.m_ix = Head->iXPos;
-	HeadPosition.m_iy = Head->iYPos;
-	Head->Next = NULL;
-	Head->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_HEAD, HeadPosition);
-	//대머리 생성
 }
 
 void Snake::PrintSnake()
 {
+	if (Head->Next == NULL)
+		DeleteAfterimage(HeadPosition.m_ix, HeadPosition.m_iy);	//잔상 제거
 	HeadPosition.m_ix = Head->iXPos;
 	HeadPosition.m_iy = Head->iYPos;
 	Head->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_HEAD, HeadPosition);
@@ -26,18 +19,23 @@ void Snake::PrintSnake()
 	{
 		tmp = Head->Next;
 
-		while (tmp->Next != NULL)
+		while (1)
 		{
+			/*if (tmp->Next == NULL)
+				DeleteAfterimage(Bodytmp.m_ix, Bodytmp.m_iy);*/
 			Bodytmp.m_ix = tmp->iXPos;
 			Bodytmp.m_iy = tmp->iYPos;
 			tmp->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_TAIL, Bodytmp);
 			tmp->Block_Snake.DrawBlock();
-			DeleteAfterimage(tmp);
+			
+			if (tmp->Next == NULL)
+				break;
+
 			tmp = tmp->Next;
 		}
 	}
 
-	DeleteAfterimage(Head);	//잔상 제거
+	
 }
 
 void Snake::CreateBody()
@@ -101,6 +99,8 @@ void Snake::CreateBody()
 		Body->Next = NULL;
 		tmp->Next = Body;
 	}
+	Bodytmp.m_ix = tmp->iXPos;
+	Bodytmp.m_iy = tmp->iYPos;
 }
 
 void Snake::MoveSnake()
@@ -110,33 +110,47 @@ void Snake::MoveSnake()
 	
 	if (m_iDirectionState == DIRECTION_RIGHT)
 	{
+		if (Head->Next != NULL)
+			MoveBody(Head);
 		Head->iXPos += 1;
 	}
 	else if (m_iDirectionState == DIRECTION_LEFT)
 	{
+		if (Head->Next != NULL)
+			MoveBody(Head);
 		Head->iXPos -= 1;
 	}
 	else if (m_iDirectionState == DIRECTION_UP)
 	{
+		if (Head->Next != NULL)
+			MoveBody(Head);
 		Head->iYPos -= 1;
 	}
 	else if (m_iDirectionState == DIRECTION_DOWN)
 	{
+		if (Head->Next != NULL)
+			MoveBody(Head);
 		Head->iYPos += 1;
 	}
-
-	if (Head->Next != NULL)
-		MoveBody(Head);
 }
 
 void Snake::MoveBody(SnakeInfo *tmp2)
 {
-	while (tmp2->Next != NULL)
+	int x, y;
+
+	while (1)
 	{
+		x = tmp2->Next->iXPos;
+		y = tmp2->Next->iYPos;
 		tmp2->Next->iXPos = tmp2->iXPos;
 		tmp2->Next->iYPos = tmp2->iYPos;
+
+		if (tmp2->Next->Next == NULL)
+			break;
+
 		tmp2 = tmp2->Next;
 	}
+	DeleteAfterimage(x, y);
 }
 
 void Snake::ChangeDirection(int iDirection)
@@ -166,34 +180,57 @@ void Snake::ChangeDirection(int iDirection)
 	m_iDirectionState = iDirection;
 }
 
-void Snake::DeleteAfterimage(SnakeInfo *tmp2)
+void Snake::DeleteAfterimage(int x, int y)
 {
-	if (m_iDirectionState == DIRECTION_RIGHT)
-	{
-		gotoxy(((tmp2->iXPos) * 2) - 2, (tmp2->iYPos));
-		std::cout << "  ";
-	}
-	else if (m_iDirectionState == DIRECTION_LEFT)
-	{
-		gotoxy(((tmp2->iXPos) * 2) + 2, (tmp2->iYPos));
-		std::cout << "  ";
-	}
-	else if (m_iDirectionState == DIRECTION_UP)
-	{
-		gotoxy(((tmp2->iXPos) * 2), (tmp2->iYPos) + 1);
-		std::cout << "  ";
-	}
-	else if (m_iDirectionState == DIRECTION_DOWN)
-	{
-		gotoxy(((tmp2->iXPos) * 2), (tmp2->iYPos) - 1);
-		std::cout << "  ";
-	}
+	gotoxy((x * 2), y);
+	std::cout << "  ";
 }
 
 void Snake::GetSnakePosition(int *iSnakeX, int *iSnakeY)
 {
 	*iSnakeX = Head->iXPos;
 	*iSnakeY = Head->iYPos;
+}
+
+void Snake::InitSnakePosition()
+{
+	Head = new SnakeInfo;
+	tmp = new SnakeInfo;
+	Head->iXPos = (MAP_WIDTH / 2) + 1;
+	Head->iYPos = (MAP_HEIGHT / 2) + 1;
+	HeadPosition.m_ix = Head->iXPos;
+	HeadPosition.m_iy = Head->iYPos;
+	Head->Next = NULL;
+	Head->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_HEAD, HeadPosition);
+}
+
+void Snake::KillSnake()
+{
+	if (Head->Next != NULL)
+	{
+		SnakeInfo *tmp2;
+		tmp = Head->Next;
+		
+		while (tmp->Next != NULL)
+		{
+			tmp2 = tmp->Next;
+			tmp->iXPos = NULL;
+			tmp->iYPos = NULL;
+			Bodytmp.m_ix = tmp->iXPos;
+			Bodytmp.m_iy = tmp->iYPos;
+			tmp = tmp2;
+		}
+
+		tmp2 = tmp;
+	}
+		
+	Head->iXPos = NULL;
+	Head->iYPos = NULL;
+	HeadPosition.m_ix = Head->iXPos;
+	HeadPosition.m_iy = Head->iYPos;
+
+	delete Head;
+	//delete tmp;
 }
 
 Snake::~Snake()

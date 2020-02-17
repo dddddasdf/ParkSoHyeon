@@ -28,10 +28,6 @@ void Block::SetBlock(BLOCK_ATTRIBUTE Attribute, Position P)
 		m_strShape = "¡Ù";
 		break;
 	}
-	if (m_eAttribute == BLOCK_ATTRIBUTE_FEED)
-		m_bLiveStatus = false;
-	else
-		m_bLiveStatus = true;
 	m_MyPosition = P;
 }
 
@@ -44,15 +40,21 @@ void Block::DrawBlock()
 int Block::GetPosition(int Pos)
 {
 	if (Pos == POSITION_X)
-		return m_ix;
+		return m_MyPosition.m_ix;
 	else if (Pos == POSITION_Y)
-		return m_iy;
+		return m_MyPosition.m_iy;
 }
 
 void Block::DeleteBlock(int x, int y)
 {
 	gotoxy(x, y);
 	std::cout << "¡¡";
+}
+
+void Block::DeletePosition()
+{
+	m_MyPosition.m_ix = NULL;
+	m_MyPosition.m_iy = NULL;
 }
 
 Block::~Block()

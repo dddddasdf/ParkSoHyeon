@@ -1,6 +1,6 @@
 #include "Game.h"
 #define FEEDSPAWNTIME 1000
-#define MOVINGTIME 200
+#define MOVINGTIME 150
 
 
 Game::Game()
@@ -15,6 +15,7 @@ void Game::Init()
 {
 	m_BlockManager.SetRandObstacle();
 	m_BlockManager.InitFeed();
+	Player.InitSnakePosition();
 	m_iFeedCount = 0;
 	m_iFeedStandard = 0;
 	m_iMovingStandard = 0;
@@ -72,15 +73,17 @@ void Game::StartGame()
 
 			if (iCase == CASE_COLLISION_WALL)
 			{
-				gotoxy(30, 15);
+				gotoxy(40, 34);
 				std::cout << "º®¿¡ ºÎµúÃÄ¼­ »ç¸Á";
+				Player.KillSnake();
 				system("pause>null");
 				return;
 			}
 			else if (iCase == CASE_COLLISION_OBJECT)
 			{
-				gotoxy(30, 15);
+				gotoxy(38, 34);
 				std::cout << "¹æÇØ¹°¿¡ ºÎµúÃÄ¼­ »ç¸Á";
+				Player.KillSnake();
 				system("pause>null");
 				return;
 			}
@@ -88,6 +91,8 @@ void Game::StartGame()
 			{
 				m_iFeedCount--;
 				m_iScore++;
+				Player.CreateBody();
+				PrintScore();
 			}
 		}
 
@@ -107,6 +112,7 @@ void Game::Menu()
 	
 	while (1)
 	{
+		m_iScore = 0;
 		gotoxy(46, 13);
 		std::cout << "1. ¤¡¤¡";
 		gotoxy(46, 15);

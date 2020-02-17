@@ -26,8 +26,9 @@ public:
 	void MoveSnake();
 	void MoveBody(SnakeInfo *tmp);
 	void ChangeDirection(int iDirection);
-	void DeleteAfterimage(SnakeInfo *tmp);	//¿‹ªÛ ¡¶∞≈
+	void DeleteAfterimage(int x, int y);	//¿‹ªÛ ¡¶∞≈
 	void GetSnakePosition(int *iSnakeX, int *iSnakeY);
+	void InitSnakePosition();
 	void KillSnake();
 	inline void gotoxy(int x, int y)
 	{

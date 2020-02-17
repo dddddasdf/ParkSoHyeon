@@ -163,6 +163,7 @@ int BlockManager::IsCollisionObject(int iSnakeX, int iSnakeY)
 		if (m_Feed[i].GetPosition(POSITION_X) == iSnakeX && m_Feed[i].GetPosition(POSITION_Y) == iSnakeY)
 		{
 			DeleteFeed(&m_Feed[i]);
+			m_Feed[i].DeletePosition();
 			return CASE_FEED;
 		}
 	}
