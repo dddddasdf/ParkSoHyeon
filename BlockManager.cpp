@@ -182,4 +182,6 @@ void BlockManager::DeleteFeed(Block *DeleteFeed)
 BlockManager::~BlockManager()
 {
 	delete[] m_BlockWall;
+	delete[] m_Feed;
+	delete[] m_Obstacle;
 }

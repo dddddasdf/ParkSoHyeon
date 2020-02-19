@@ -94,9 +94,16 @@ void Game::StartGame()
 				Player.CreateBody();
 				PrintScore();
 			}
-		}
 
-		
+			if (Player.IsCollisionBody() == CASE_COLLISION_BODY)
+			{
+				gotoxy(39, 34);
+				std::cout << "≤ø∏Æø° ∫Œµ˙√ƒº≠ ªÁ∏¡";
+				Player.KillSnake();
+				system("pause>null");
+				return;
+			}
+		}
 	}
 }
 
@@ -141,6 +148,12 @@ void Game::Menu()
 			break;
 		}
 	}
+}
+
+void Game::DeleteAll()
+{
+	Player.KillSnake();	//πÏ µø¿˚«“¥Á «ÿ¡¶
+
 }
 
 Game::~Game()

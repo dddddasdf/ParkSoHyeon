@@ -25,7 +25,7 @@ public:
 	void PrintScore();	//점수 표기
 	void StartGame();	//게임 시작
 	void Menu();	//시작시 메뉴 보여줌
-	void MakeFeed();	//먹이 생성 함수
+	void DeleteAll();	//동적할당한 블록들 전부 해제
 	inline void gotoxy(int x, int y)
 	{
 		COORD Pos = { x, y };

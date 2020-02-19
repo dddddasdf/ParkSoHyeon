@@ -13,9 +13,9 @@ struct SnakeInfo
 class Snake
 {
 private:
-	int m_iLife;
 	int m_iDirectionState;
-	int m_iSpeedControl;
+	int m_iOriginX, m_iOriginY;	//¹ì ¿òÁ÷ÀÏ ¶§ ±âÁ¸ ÁÂÇ¥ ÀúÀå¿ë
+	int m_iTmpX, m_iTmpY;	//¹ì ¸Ó¸®°¡ ¿òÁ÷ÀÏ ÁÂÇ¥ ÀÓ½Ã ÀúÀå¿ë
 	SnakeInfo *Head, *Body, *tmp;
 	Position HeadPosition;
 	Position Bodytmp;
@@ -28,8 +28,10 @@ public:
 	void ChangeDirection(int iDirection);
 	void DeleteAfterimage(int x, int y);	//ÀÜ»ó Á¦°Å
 	void GetSnakePosition(int *iSnakeX, int *iSnakeY);
+	int IsCollisionBody();	//¸ö°ú Ãæµ¹Çß³ª Ã¼Å©
 	void InitSnakePosition();
 	void KillSnake();
+	void KillRecursion(SnakeInfo *TmpBody);	//Àç±Í¿ëÀ¸·Î ¸¸µë,,
 	inline void gotoxy(int x, int y)
 	{
 		COORD Pos = { x, y };

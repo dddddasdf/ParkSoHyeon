@@ -4,6 +4,7 @@
 #include <ctime>
 #include <string>
 #include <conio.h>
+#include <crtdbg.h>
 
 #define MAX_FEED 10	//먹이 최대 개수
 #define MAX_OBS 20	//장애물 최대 개수
