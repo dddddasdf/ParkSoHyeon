@@ -150,12 +150,6 @@ void Game::Menu()
 	}
 }
 
-void Game::DeleteAll()
-{
-	Player.KillSnake();	//뱀 동적할당 해제
-
-}
-
 Game::~Game()
 {
 }

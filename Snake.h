@@ -32,6 +32,7 @@ public:
 	void InitSnakePosition();
 	void KillSnake();
 	void KillRecursion(SnakeInfo *TmpBody);	//재귀용으로 만듬,,
+	void DeleteTmp();	//임시용 구조체 삭제
 	inline void gotoxy(int x, int y)
 	{
 		COORD Pos = { x, y };

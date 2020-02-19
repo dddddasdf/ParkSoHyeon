@@ -215,6 +215,7 @@ void Snake::InitSnakePosition()
 	tmp->iXPos = NULL;
 	tmp->iYPos = NULL;
 	tmp->Next = NULL;
+	tmp->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_NONE, HeadPosition);
 }
 
 void Snake::KillSnake()
@@ -229,16 +230,10 @@ void Snake::KillSnake()
 		HeadPosition.m_iy = Head->iYPos;
 		delete Head;
 	}
-
-	tmp->iXPos = NULL;
-	tmp->iYPos = NULL;
-	tmp->Next = NULL;
-	delete tmp;
 }
 
 void Snake::KillRecursion(SnakeInfo *TmpBody)
 {
-
 	if (TmpBody->Next != NULL)
 	{
 		KillRecursion(TmpBody->Next);
@@ -252,7 +247,13 @@ void Snake::KillRecursion(SnakeInfo *TmpBody)
 		TmpBody->iYPos = NULL;
 		delete TmpBody;
 	}
-		
+}
+
+void Snake::DeleteTmp()
+{
+	tmp->iXPos = NULL;
+	tmp->iYPos = NULL;
+	delete tmp;
 }
 
 Snake::~Snake()

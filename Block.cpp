@@ -27,6 +27,9 @@ void Block::SetBlock(BLOCK_ATTRIBUTE Attribute, Position P)
 	case BLOCK_ATTRIBUTE_FEED:
 		m_strShape = "¡Ù";
 		break;
+	case BLOCK_ATTRIBUTE_NONE:
+		m_strShape = " ";
+		break;
 	}
 	m_MyPosition = P;
 }
