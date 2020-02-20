@@ -8,10 +8,6 @@ class Game
 {
 private:
 	BlockManager m_BlockManager;
-	//int m_iarrBlockXY[159][2];	//블럭 좌표 저장 2차원 배열
-	//int m_iarrFeedXY[MAX_FEED][2];	//먹이 좌표 저장 2차원 배열
-	//int m_iarrObsXY[MAX_OBS][2];	//장애물 좌표 저장 2차원 배열
-	//Block Blocks;
 	int m_iScore;
 	int m_iFeedCount;	//먹이 개수
 	int m_iFeedSpawnTimer;	//먹이 생성 시간 조절용-현재 시간

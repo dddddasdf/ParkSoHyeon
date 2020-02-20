@@ -16,7 +16,7 @@ private:
 	int m_iDirectionState;
 	int m_iOriginX, m_iOriginY;	//¹ì ¿òÁ÷ÀÏ ¶§ ±âÁ¸ ÁÂÇ¥ ÀúÀå¿ë
 	int m_iTmpX, m_iTmpY;	//¹ì ¸Ó¸®°¡ ¿òÁ÷ÀÏ ÁÂÇ¥ ÀÓ½Ã ÀúÀå¿ë
-	SnakeInfo *Head, *Body, *tmp;
+	SnakeInfo *Head, *Body;
 	Position HeadPosition;
 	Position Bodytmp;
 public:
@@ -32,7 +32,6 @@ public:
 	void InitSnakePosition();
 	void KillSnake();
 	void KillRecursion(SnakeInfo *TmpBody);	//Àç±Í¿ëÀ¸·Î ¸¸µë,,
-	void DeleteTmp();	//ÀÓ½Ã¿ë ±¸Á¶Ã¼ »èÁ¦
 	inline void gotoxy(int x, int y)
 	{
 		COORD Pos = { x, y };

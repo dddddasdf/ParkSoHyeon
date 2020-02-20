@@ -8,7 +8,6 @@ Game::Game()
 	m_BlockManager.DrawWallBlock();
 	m_iScore = 0;
 	PrintScore();
-	//MapDraw();
 }
 
 void Game::Init()

@@ -13,7 +13,7 @@ void Snake::PrintSnake()
 	Head->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_HEAD, HeadPosition);
 	Head->Block_Snake.DrawBlock();
 
-	tmp = Head;
+	SnakeInfo *tmp = Head;
 
 	if (Head->Next != NULL)
 	{
@@ -38,6 +38,8 @@ void Snake::PrintSnake()
 
 void Snake::CreateBody()
 {
+	SnakeInfo *tmp = Head;
+
 	if (Head->Next == NULL)
 	{
 		Body = new SnakeInfo;
@@ -66,7 +68,6 @@ void Snake::CreateBody()
 	}
 	else
 	{
-		tmp = Head;
 		while (tmp->Next != NULL)
 		{
 			tmp = tmp->Next;
@@ -189,7 +190,7 @@ int Snake::IsCollisionBody()
 {
 	if (Head->Next != NULL)
 	{
-		tmp = Head->Next;
+		SnakeInfo *tmp = Head->Next;
 
 		while (tmp->Next != NULL)
 		{
@@ -205,17 +206,12 @@ int Snake::IsCollisionBody()
 void Snake::InitSnakePosition()
 {
 	Head = new SnakeInfo;
-	tmp = new SnakeInfo;
 	Head->iXPos = (MAP_WIDTH / 2) + 1;
 	Head->iYPos = (MAP_HEIGHT / 2) + 1;
 	HeadPosition.m_ix = Head->iXPos;
 	HeadPosition.m_iy = Head->iYPos;
 	Head->Next = NULL;
 	Head->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_HEAD, HeadPosition);
-	tmp->iXPos = NULL;
-	tmp->iYPos = NULL;
-	tmp->Next = NULL;
-	tmp->Block_Snake.SetBlock(BLOCK_ATTRIBUTE_NONE, HeadPosition);
 }
 
 void Snake::KillSnake()
@@ -247,13 +243,6 @@ void Snake::KillRecursion(SnakeInfo *TmpBody)
 		TmpBody->iYPos = NULL;
 		delete TmpBody;
 	}
-}
-
-void Snake::DeleteTmp()
-{
-	tmp->iXPos = NULL;
-	tmp->iYPos = NULL;
-	delete tmp;
 }
 
 Snake::~Snake()
