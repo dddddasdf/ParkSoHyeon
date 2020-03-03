@@ -24,8 +24,11 @@ void Menu::PrintMenu()
 		switch (iSelect)
 		{
 		case 1:
+			NowLogin.Register(m_iUserCount);
+			m_iUserCount++;
 			break;
 		case 2:
+			NowLogin.DataCheck();
 			break;
 		case 3:
 			return;
@@ -36,20 +39,7 @@ void Menu::PrintMenu()
 	}
 }
 
-void Menu::DeleteUserData()
-{
-	
-}
-
 Menu::~Menu()
 {
-	if (m_iUserCount == 1)
-	{
-		User *tmp;
 
-		for (int i = 0; i < m_iUserCount; i++)
-		{
-
-		}
-	}
 }

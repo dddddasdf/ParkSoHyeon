@@ -13,6 +13,7 @@ private:
 public:
 	Computer();
 	void PrintSpec();
+	void Functions();
 	~Computer();
 };
 

@@ -1,24 +1,18 @@
 #pragma once
 #include "Headers.h"
+#include "Login.h"
 
-struct User
-{
-	string Id;
-	string Password;
-	int Age;
-	int PhoneNumber;
-	int Mileage;
-	User *Next;
-};
+
 
 class Menu
 {
 private:
 	int m_iUserCount;
+	Login NowLogin;
 public:
 	Menu();
 	void PrintMenu();
-	void DeleteUserData();
+	
 	~Menu();
 };
 
