@@ -1,0 +1,344 @@
+#include<iostream>
+#include<string>
+#define MAX 10
+using namespace std;
+
+typedef struct member {
+	string id;
+	string pw;
+	string nickname;
+	int age;
+	string phone;
+	int mileage;
+}Member;
+
+int Member_Menu()
+{
+	int Select;
+
+	cout << "========MENU========" << endl;
+	cout << " 1. 회원 정보" << endl;
+	cout << " 2. 회원 정보 변경" << endl;
+	cout << " 3. 로그아웃 " << endl;
+	cout << "=====================" << endl;
+	cout << "[ 입력 ] : ";
+	cin >> Select;
+
+	return Select;
+}
+int Change_Member_Info()
+{
+	int Select;
+
+	cout << "=================회원정보변경=================" << endl;
+	cout << "1. 닉네임 변경" << endl;
+	cout << "2. 나이 변경" << endl;
+	cout << "3. 휴대폰 번호 변경" << endl;
+	cout << "4. 돌아가기" << endl;
+	cout << "==============================================" << endl;
+	cout << "[ 입력 ] :";
+	cin >> Select;
+
+	return Select;
+}
+bool Num_Check(string str, int index) // 숫자가 포함이 되는지
+{
+
+	for (int i = 0; i < index; i++)
+	{
+		if (str[i] >= '0'&&str[i] <= '9')// 숫자가 포함되었으면 부울값에 true를 저장해준다.
+			return true;
+	}
+	return false;
+}
+bool Hangul_Check(string str, int index) //한글이 포함이 되는지 여부 판단
+{
+	for (int i = 0; i < index; i++)
+	{
+		if (!((str[i] >= '0'&&str[i] <= '9') || (str[i] >= 'a'&&str[i] <= 'z') || (str[i] >= 'A'&&str[i] <= 'Z')))
+			return false;
+	}
+	return true;
+}
+bool Same_id_Check(Member mem[], string str, int index) // 동일한 아이디가 있는지 검사
+{
+	for (int i = 0; i < index; i++)
+	{
+		if (mem[i].id == str)
+			return false;
+	}
+	return true;
+}
+void Member_Info(Member mem[], int index)
+{
+	system("cls");
+	cout << "============== MEMBER INFORMATION ==============" << endl;
+	cout << "▶ ID : " << (mem[index].id) << "	▶ 닉네임 : " << (mem[index].nickname) << endl;
+	cout << "▶ 나이 : " << (mem[index].age) << "	▶ 휴대폰 번호 : " << (mem[index].phone) << endl;
+	cout << "▶ 마일리지 : " << (mem[index].mileage) << "원 " << endl<<endl;
+	system("pause");
+}
+void Nickname_Change(Member mem[], int index)
+{
+	string temp_nickname;
+	cout << "▶ 현재 닉네임: " << mem[index].nickname << endl;
+	temp_nickname = mem[index].nickname;
+
+	cout << "▶ 변경할 닉네임 입력 : ";
+	cin >> mem[index].nickname;
+	cout << endl;
+	if (temp_nickname == mem[index].nickname)
+	{
+		cout << "※ 변경전 닉네임과 똑같습니다. ※" << endl << endl;
+		system("pause");
+	}
+	else
+	{
+		cout <<"["<< temp_nickname << "  ->  " << mem[index].nickname <<"] 로 닉네임이 변경되었습니다." << endl << endl;
+		system("pause");
+	}
+
+}
+void Age_Change(Member mem[], int index)
+{
+	int temp_age;
+
+	cout << "▶ 현재 나이 : " << mem[index].age << endl;
+	temp_age = mem[index].age;
+	cout << "▶ 변경할 나이 입력 : ";
+	cin >> mem[index].age;
+	cout << endl;
+
+	if (temp_age == mem[index].age)
+	{
+		cout << "※ 변경 전 나이와 똑같습니다. ※" << endl << endl;
+		system("pasue");
+	}
+	else
+	{
+		cout << "[" << temp_age << "  ->  " << mem[index].age<<"] 로 나이가 변경되었습니다." << endl << endl;
+		system("pause");
+	}
+
+}
+void Phone_Change(Member mem[], int index)
+{
+	string temp_phone;
+	cout << "▶ 현재 휴대폰 번호 : " << mem[index].phone<<endl; 
+	temp_phone = mem[index].phone;
+	cout << "▶ 변경할 휴대폰 번호 입력: ";
+	cin >> mem[index].phone;
+	cout << endl;
+
+	if (temp_phone == mem[index].phone)
+	{
+		cout << "※ 변경 전 휴대폰 번호와 똑같습니다. ※" << endl<<endl;
+		system("pause");
+	}
+	else
+	{
+		cout << "[" << temp_phone << "  ->  " << mem[index].phone <<"] 로 휴대폰번호가 변경되었습니다."<<endl<< endl;
+		system("pause");
+	}
+}
+void Login(Member mem[], int index)
+{
+	system("cls");
+	string temp_id, temp_pw, find;
+	int j, index_id, Member_State = 0, Member_Change_State=0;
+
+	cout << endl << "♬ 아이디 입력 : ";
+	cin >> temp_id;
+	cout << "♬ 비밀번호 입력 : ";
+	cin >> temp_pw;
+	cout << endl;
+	
+	for (int i = 0; i < index; i++)
+	{
+		if (temp_id == mem[i].id)
+		{
+			index_id = 1;
+			j = i;
+		}
+		else
+		{
+			cout << "※ 존재하지 않는 아이디 입니다. ※" << endl;
+			index_id = 0;
+			system("pause");
+		}
+	}
+	if (index_id != 0) // id는 있으니까 비밀번호 확인
+	{
+		if (temp_pw == mem[j].pw)
+		{
+			cout << "# 로그인 되었습니다. #" << endl << endl;
+			system("pause");
+			while (!Member_State)
+			{
+				Member_Change_State = 0;
+				system("cls");
+				switch (Member_Menu())
+				{
+				case 1:
+					Member_Info(mem, j);
+					break;
+				case 2:
+					while (!Member_Change_State)
+					{
+						system("cls");
+						switch (Change_Member_Info())
+						{
+						case 1:
+							Nickname_Change(mem, j);
+							break;
+						case 2:
+							Age_Change(mem, j);
+							break;
+						case 3:
+							Phone_Change(mem, j);
+							break;
+						case 4:
+							Member_Change_State = 1;
+							break;
+						}
+					}
+					break;
+				case 3:
+					Member_State = 1;
+					return;
+				}
+			}
+		}
+		else
+		{
+			cout << "※ 비밀번호가 틀렸습니다. ※" << endl;
+			system("pause");
+		}
+	}
+}
+
+void Join(Member mem[], int index) // 세글자이상, 한글x, 동일아이디 x
+{
+	string tmp_id, tmp_pw, tmp_pw_re;
+	int id_state = 0, pw_state = 0;
+	while (!id_state)
+	{
+		system("cls");
+		cout << endl<< "♬ 아이디 입력([3글자↑] AND[한글X]) : ";
+		cin >> tmp_id;
+		cout << endl;
+		
+		if (tmp_id.length() < 3)
+		{
+			cout << "※ 아이디가 세글자 미만입니다. ※" << endl;
+			system("pause");
+		}
+		else if (Hangul_Check(tmp_id, tmp_id.length()) == false)
+		{
+			cout << "※ 한글은 입력될 수 없습니다. ※" << endl;
+			system("pause");
+		}
+		else if (Same_id_Check(mem, tmp_id, index) == false)
+		{
+			cout << "※ 동일한 아이디가 존재합니다. ※" << endl;
+			system("pause");
+		}
+		else
+		{
+			mem[index].id = tmp_id;
+			cout << "# 아이디 생성 성공 #" <<endl<< endl;
+			id_state = 1;
+			system("pause");
+		}
+	}
+	
+	while (!pw_state)
+	{
+		system("cls");
+		cout <<endl<< "♬ 비밀번호 입력([8글자↑] AND [영문] AND [숫자포함]) : ";
+		cin >> tmp_pw;
+		cout << endl;
+		cout << "♬ 비밀번호 확인 : ";
+		cin >> tmp_pw_re;
+		cout << endl;
+		if (tmp_pw != tmp_pw_re)
+		{
+			cout << "※ 비밀번호가 같지 않습니다. ※" << endl;
+			system("pause");
+		}
+		else if (Hangul_Check(tmp_pw, tmp_pw.length()) == false)
+		{
+			cout << "※ 한글은 입력될 수 없습니다. ※" << endl; 
+			system("pause");
+		}
+		else if (Num_Check(tmp_pw, tmp_pw.length()) == false)
+		{
+			cout << "※ 숫자가 포함되어야 합니다. ※" << endl;
+			system("pause");
+		}
+		else if (tmp_pw.length() < 8)
+		{
+			cout << "※ 비밀번호는 8글자 이상이어야 합니다. ※" << endl;
+			system("pause");
+		}
+		else
+		{
+			mem[index].pw = tmp_pw;
+			cout << "# 비밀번호 생성 성공 #"<<endl << endl;
+			pw_state = 1;
+			system("pause");
+		}
+	}
+
+	system("cls");
+	cout << "======================================================================" << endl;
+	cout << "♬ 닉네임 입력: ";
+	cin >> mem[index].nickname;
+	cout << "======================================================================"<<endl;
+	cout << "♬ 나이 입력 : ";
+	cin >> mem[index].age;
+	cout << "======================================================================" << endl;
+	cout << "♬ 휴대폰 번호 입력 : ";
+	cin >> mem[index].phone;
+	cout << "======================================================================" << endl;
+	mem[index].mileage = 1000;
+	cout << "# 회원 가입 성공 !! 마일리지 " << mem[index].mileage << "원 등록 #" << endl;
+	cout << "======================================================================" << endl;
+	cout << "========================★환☆영★합☆니★다☆========================" <<endl<< endl;
+	system("pause");
+}
+
+void main()
+{
+	int Select;
+	int main_state = 0;
+	int MemberCount = 0;
+	Member Member_List[MAX];
+
+	while (!main_state)
+	{
+		system("cls");
+		cout << "=====LOGIN=====(회원수[" << MemberCount << "명])=====" << endl;
+		cout << "    1. 회원가입 " << endl;
+		cout << "    2. 로그인 " << endl;
+		cout << "    3. 종료 " << endl;
+		cout << "=================================" << endl;
+		cout << "입력 : ";
+		cin >> Select;
+
+		system("cls");
+		switch (Select)
+		{
+		case 1: //회원가입
+			Join(Member_List, MemberCount);
+			MemberCount++;
+			break;
+		case 2://로그인
+			Login(Member_List, MemberCount);
+			break;
+		case 3://종료
+			main_state = 1;
+			break;
+		}
+	}
+}
