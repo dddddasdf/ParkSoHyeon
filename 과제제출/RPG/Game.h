@@ -23,17 +23,28 @@ class Game
 private:
 	MapDraw GameMap;
 	string m_sUserName;	//이름
-	int m_iUserLife;	//생명력
+	int m_iUserCurrentLife;	//현재생명력
+	int m_iUserMaxLife;	//최대생명력
 	int m_iUserAttack;	//공격력
-	int m_iUserExp;		//경험치
+	int m_iUserCurrentExp;		//현재경험치
+	int m_iUserMaxExp;	//다음 레벨로 넘어가기 위한 최대 경험치
 	int m_iUserGold;	//소지 골드
 	int m_iUserLevel;	//레벨
+	int m_iUserGetExp;	//몹한테 주는 경험치
 	bool m_bUserStance;	//공방 상태
+	Monster *MonsterArr;
 public:
 	Game();
 	void GetName(string name);
+	bool InitUserInfo();	//유저 정보 초기화, 텍스트를 성공적으로 읽어들였을 경우 true를 반환하고 이어나가지면 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
+	bool InitMonsterInfo();	//몹 정보 초기화. InitUserInfo()와 똑같은 매커니즘
 	void TownMenu();
+	void NowBattle();	//전투 화면
+	void ShowUserBattle();	//전투 중 유저 정보 보여줌
+	void ShowMonsterBattle();	//전투 중 몹 정보 보여줌
+	void ShowResult();	//몹 잡고 상세 스테이터스 보여줌
 	void ShowUserInfo();
+	void DeleteInfo();
 	inline void gotoxy(int x, int y)
 	{
 		COORD Pos = { x, y };

@@ -33,6 +33,7 @@ enum KEYBOARD
 	KEYBOARD_ENTER = 13,
 	KEYBOARD_UP = 72,
 	KEYBOARD_DOWN = 80,
-};	//엔터 및 상하 입력
+	KEYBOARD_SPACE = 32
+};	//엔터 상하 스페이스 입력
 
 
