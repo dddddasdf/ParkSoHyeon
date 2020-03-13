@@ -58,6 +58,9 @@ void Menu::NewGame()
 	if (RolePlaying.InitUserInfo() == false)
 		return;	//유저 정보 초기화 과정에서 텍스트 파일이 없을 경우 새 게임을 진행하지 않고 메인 화면으로 돌아감
 
+	if (RolePlaying.InitMonsterInfo() == false)
+		return;	//위와 마찬가지
+
 	RolePlaying.TownMenu();
 }
 

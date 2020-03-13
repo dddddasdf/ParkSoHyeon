@@ -4,10 +4,15 @@
 
 struct Monster
 {
-	string MonsterName;
-	int MonsterLife;
-	int MonsterAttck;
-	int MonsterGold;
+	string MonsterName;	//몹 이름
+	int MonsterCurrentLife;	//몹 현재 생명력
+	int MonsterMaxLife;	//몹 최대 생명력
+	int MonsterAttck;	//몹 공격력
+	int MonsterDropGold;	//몹이 주는 골드
+	int MonsterLevel;	//몹 현재 레벨
+	int MonsterCurrentExp;	//몹 현재 경험치
+	int MonsterMaxExp;	//다음 레벨 가기 위한 요구 경험치
+	int MonsterDropExp;	//몹이 주는 경험치
 	int Delay;	//몬스터가 공격을 하기까지 걸리는 시간
 	bool Stance;
 };
@@ -16,6 +21,13 @@ enum STANCE
 {
 	STANCE_ATTACK = true,
 	STANCE_DEFENCE = false
+};
+
+enum OUTCOME
+{
+	OUTCOME_DRAW,
+	OUTCOME_WIN,
+	OUTCOME_LOSE
 };
 
 class Game
@@ -32,18 +44,23 @@ private:
 	int m_iUserLevel;	//레벨
 	int m_iUserGetExp;	//몹한테 주는 경험치
 	bool m_bUserStance;	//공방 상태
+	//여기까지 유저 관련 변수
+	int m_iMonsterPopulation;	//몹 개체수
 	Monster *MonsterArr;
 public:
 	Game();
 	void GetName(string name);
-	bool InitUserInfo();	//유저 정보 초기화, 텍스트를 성공적으로 읽어들였을 경우 true를 반환하고 이어나가지면 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
+	bool InitUserInfo();	//유저 정보 초기화, 텍스트를 성공적으로 읽어들였을 경우 true를 반환하고 마을로 들어가고 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
 	bool InitMonsterInfo();	//몹 정보 초기화. InitUserInfo()와 똑같은 매커니즘
-	void TownMenu();
-	void NowBattle();	//전투 화면
+	void TownMenu();	//마을 목록
+	void DungeonList();	//던전 목록
+	void NowBattle(int MonsterNumber);	//전투 화면
+	void PrintMessage(int Outcome);	//시스템 메시지 출력
 	void ShowUserBattle();	//전투 중 유저 정보 보여줌
-	void ShowMonsterBattle();	//전투 중 몹 정보 보여줌
+	void ShowMonsterBattle(int MonsterNumber);	//전투 중 몹 정보 보여줌
 	void ShowResult();	//몹 잡고 상세 스테이터스 보여줌
 	void ShowUserInfo();
+	void ShowMonsterInfo();
 	void DeleteInfo();
 	inline void gotoxy(int x, int y)
 	{
