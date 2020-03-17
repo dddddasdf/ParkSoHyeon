@@ -2,7 +2,11 @@
 #define ROCK 1
 #define SCISSORS 2
 #define PAPER 3
+#define OBJECT_Y 13
+#define USER_ATTACK 10
+#define MONSTER_ATTACK 11
 
+//몹 레벨업 시스템 제거 대신에 패배로 전투 종료시 몹 HP 풀 회복 및 골드 삥 뜯김
 
 Game::Game()
 {
@@ -106,11 +110,11 @@ bool Game::InitMonsterInfo()
 void Game::TownMenu()
 {
 	int iSelect;
-
+	
 	while (1)
 	{
 		GameMap.BoxErase(WIDTH, HEIGHT);
-
+		
 		BLUE_GREEN
 		gotoxy(23, 8);
 		cout << "==== 마을 ====";
@@ -196,103 +200,172 @@ void Game::DungeonList()
 
 void Game::NowBattle(int MonsterNumber)
 {
-	int iObjectY = 13;	//글자 "너"와 몹"이 표시되는 Y축
-	char ch;	//getch()용
+	char iGetKey = 0;	//getch()용
 	int iMonsterCard;	//몹이 뭐 냈는지 저장용
+
+	GameMap.BoxErase(WIDTH, HEIGHT);
+
+	ShowUserBattle();
+	ShowMonsterBattle(MonsterNumber);
+
+	PrintObject();
+
+	//가위: A    바위: S     보: D
 
 	while (1)
 	{
-		GameMap.BoxErase(WIDTH, HEIGHT);
+		if (iGetKey == 0)
+			iGetKey = _getch();	//최초 입력
+
+		iMonsterCard = (rand() % 3) + 1;
+
+		if (iGetKey == 'S' || iGetKey == 's')
+		{
+			if (iMonsterCard == ROCK)
+				PrintMessage(OUTCOME_DRAW, MonsterNumber);
+			else if (iMonsterCard == SCISSORS)
+				PrintMessage(OUTCOME_WIN, MonsterNumber);
+			else
+				PrintMessage(OUTCOME_LOSE, MonsterNumber);
+
+			gotoxy(24, OBJECT_Y - 1);
+			cout << "바위";
+		}
+		else if (iGetKey == 'A' || iGetKey == 'a')
+		{
+			if (iMonsterCard == SCISSORS)
+				PrintMessage(OUTCOME_DRAW, MonsterNumber);
+			else if (iMonsterCard == PAPER)
+				PrintMessage(OUTCOME_WIN, MonsterNumber);
+			else
+				PrintMessage(OUTCOME_LOSE, MonsterNumber);
+
+			gotoxy(24, OBJECT_Y - 1);
+			cout << "가위";
+		}
+		else if (iGetKey == 'D' || iGetKey == 'd')
+		{
+			if (iMonsterCard == PAPER)
+				PrintMessage(OUTCOME_DRAW, MonsterNumber);
+			else if (iMonsterCard == ROCK)
+				PrintMessage(OUTCOME_WIN, MonsterNumber);
+			else
+				PrintMessage(OUTCOME_LOSE, MonsterNumber);
+
+			gotoxy(25, OBJECT_Y - 1);
+			cout << "보";
+		}
+		else
+		{
+			GameMap.BoxErase(WIDTH, HEIGHT);
+
+			ShowUserBattle();
+			ShowMonsterBattle(MonsterNumber);
+
+			PrintObject();
+
+			gotoxy(23, 16);
+			cout << "몹: 집중 안 하냐?";
+			gotoxy(20, 17);
+			cout << "몬스터에게 한대 맞았다...";
+
+			Attack(MONSTER_ATTACK, MonsterNumber);
+			//지정된 키 이외를 입력하면 한대 맞음
+		}
 
 		ShowUserBattle();
 		ShowMonsterBattle(MonsterNumber);
 
-		gotoxy(25, iObjectY);
-		YELLOW
-		cout << "너";
-		ORIGINAL
-
-		gotoxy(35, iObjectY);
-		cout << "몹";
-
-		gotoxy(27, 15);
-		cout << "<시스템>";
-
-		gotoxy(16, 19);
-		cout << "가위: 1    바위: 2     보: 3";
-
-		ch = _getch();
-
-		iMonsterCard = (rand() % 3) + 1;
-
-		if (ch = ROCK)
+		//아래 if문은 몬스터가 낸 패가 무엇인지 출력
+		if (iMonsterCard == ROCK)
 		{
-			if (iMonsterCard == ROCK)
-				PrintMessage(OUTCOME_DRAW);
-			else if (iMonsterCard == SCISSORS)
-				PrintMessage(OUTCOME_WIN);
-			else
-				PrintMessage(OUTCOME_LOSE);
+			gotoxy(34, OBJECT_Y - 1);
+			cout << "바위";
 		}
-		else if (ch = SCISSORS)
+		else if (iMonsterCard == SCISSORS)
 		{
-			if (iMonsterCard == SCISSORS)
-				PrintMessage(OUTCOME_DRAW);
-			else if (iMonsterCard == PAPER)
-				PrintMessage(OUTCOME_WIN);
-			else
-				PrintMessage(OUTCOME_LOSE);
-		}
-		else if (ch = PAPER)
-		{
-			if (iMonsterCard == PAPER)
-				PrintMessage(OUTCOME_DRAW);
-			else if (iMonsterCard == ROCK)
-				PrintMessage(OUTCOME_WIN);
-			else
-				PrintMessage(OUTCOME_LOSE);
+			gotoxy(34, OBJECT_Y - 1);
+			cout << "가위";
 		}
 		else
 		{
-			gotoxy(24, 16);
-			cout << "몹: 집중 안 하냐?";
-			gotoxy(24, 17);
-			cout << "몬스터에게 한대 맞았다...";
+			gotoxy(35, OBJECT_Y - 1);
+			cout << "보";
 		}
 
-		//if (_kbhit())
-		//{
-		//	if (_getch() == KEYBOARD_SPACE)
-		//	{
-		//		//스페이스바 입력 받았을 경우 공방 전환
-		//		if (m_bUserStance == STANCE_ATTACK)
-		//			m_bUserStance = STANCE_DEFENCE;
-		//		else
-		//			m_bUserStance = STANCE_ATTACK;
-		//	}
-		//	else
-		//		m_iUserCurrentLife = 0;	//이거는 사망 이벤트 확인을 위한 테스트용 코드입니다 실전시 삭제요망
-		//}
+		if (MonsterArr[MonsterNumber].MonsterCurrentLife == 0)
+		{
+			BLOOD
+			gotoxy(35, OBJECT_Y);
+			cout << "몹";
+			ORIGINAL
+
+			gotoxy(22, 17);
+			cout << "전투에서 승리했다.";
+			system("pause>null");
+
+			ShowResult(MonsterNumber);
+
+			return;
+		}
 
 		if (m_iUserCurrentLife == 0)
 		{
 			//유저의 체력이 다할 경우 유저 사망
-			gotoxy(26, iObjectY);
+			gotoxy(25, OBJECT_Y);
 			BLOOD
 			cout << "너";
 			gotoxy(8, 17);
 			cout << "전투에서 패배했다. 당신은 눈 앞이 깜깜해졌다...";
+			gotoxy(20, 18);
+			cout << "가진 돈 일부를 빼앗겼다.";
 			ORIGINAL
+
+
 			system("pause>null");
 
 			m_iUserCurrentLife = m_iUserMaxLife;
+			MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterMaxLife;
+			
+			if (m_iUserGold > 0)
+			{
+				double dForfeitGold;	//몰수 골드
+				dForfeitGold = static_cast<double>(m_iUserGold / 10) * 9;
+				m_iUserGold -= static_cast<int>(dForfeitGold);	//가진 돈 1/10이 뺏긴다
+			}
+				
 			return;
 		}
+
+		iGetKey = _getch();
 	}
 }
 
-void Game::PrintMessage(int Outcome)
+void Game::PrintObject()
 {
+	gotoxy(25, OBJECT_Y);
+	YELLOW
+	cout << "너";
+	ORIGINAL
+
+	PUPPLE
+	gotoxy(35, OBJECT_Y);
+	cout << "몹";
+	ORIGINAL
+
+	gotoxy(27, 15);
+	cout << "<시스템>";
+
+	gotoxy(16, 19);
+	cout << "가위: A    바위: S     보: D";
+}
+
+void Game::PrintMessage(int Outcome, int MonsterNumber)
+{
+	GameMap.BoxErase(WIDTH, HEIGHT);
+
+	PrintObject();
+
 	switch (Outcome)
 	{
 	case OUTCOME_DRAW:
@@ -300,20 +373,40 @@ void Game::PrintMessage(int Outcome)
 		cout << "비겼다";
 		break;
 	case OUTCOME_LOSE:
-		gotoxy(25, 16);
+		gotoxy(24, 16);
 		cout << "몬스터의 승리";
+		Attack(MONSTER_ATTACK, MonsterNumber);
 		break;
 	case OUTCOME_WIN:
-		gotoxy(26, 16);
+		gotoxy(25, 16);
 		cout << "당신의 승리";
+		Attack(USER_ATTACK, MonsterNumber);
 		break;
+	}
+}
+
+void Game::Attack(int Attacker, int MonsterNumber)
+{
+	if (Attacker == USER_ATTACK)
+	{
+		if (MonsterArr[MonsterNumber].MonsterCurrentLife - m_iUserAttack >= 0)
+			MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterCurrentLife - m_iUserAttack;
+		else
+			MonsterArr[MonsterNumber].MonsterCurrentLife = 0;
+	}
+	else if (Attacker == MONSTER_ATTACK)
+	{
+		if (m_iUserCurrentLife - MonsterArr[MonsterNumber].MonsterAttck >= 0)
+			m_iUserCurrentLife = m_iUserCurrentLife - MonsterArr[MonsterNumber].MonsterAttck;
+		else
+			m_iUserCurrentLife = 0;
 	}
 }
 
 void Game::ShowUserBattle()
 {
 	YELLOW
-		gotoxy(19, 2);
+	gotoxy(19, 2);
 	cout << "=======당신의 정보=======";
 	ORIGINAL
 
@@ -348,6 +441,58 @@ void Game::ShowMonsterBattle(int MonsterNumber)
 	cout << "경험치: " << MonsterArr[MonsterNumber].MonsterCurrentExp << "/" << MonsterArr[MonsterNumber].MonsterMaxExp;
 	gotoxy(34, 26);
 	cout << "획득 골드: " << MonsterArr[MonsterNumber].MonsterDropGold;
+}
+
+void Game::ShowResult(int MonsterNumber)
+{
+	GameMap.BoxErase(WIDTH, HEIGHT);
+
+	GOLD
+	gotoxy(21, 13);
+	cout << MonsterArr[MonsterNumber].MonsterName << " 토벌 성공!";
+
+	gotoxy(23, 15);
+	cout << "획득 경험치: " << MonsterArr[MonsterNumber].MonsterDropExp;
+
+	gotoxy(24, 17);
+	cout << "획득 골드: " << MonsterArr[MonsterNumber].MonsterDropGold;
+	ORIGINAL
+
+	m_iUserCurrentExp += MonsterArr[MonsterNumber].MonsterDropExp;
+	m_iUserGold += MonsterArr[MonsterNumber].MonsterDropGold;
+
+	system("pause>null");
+
+	if (m_iUserCurrentExp >= m_iUserMaxExp)
+	{
+		//유저 레벨업
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		GREEN
+		gotoxy(21, 13);
+		m_iUserLevel++;
+		cout << m_iUserLevel <<"레벨로 레벨 업 했다";
+
+		//공격력은 1~5, 생명력은 1~10 중 랜덤한 숫자로 증가
+		int iAttackPlus = (rand() % 4) + 1;
+		int iLifePlus = (rand() % 9) + 1;
+
+		gotoxy(24, 15);
+		cout << "공격력 "<< iAttackPlus << " 증가";
+		gotoxy(21, 17);
+		cout << "최대 생명력 "<< iLifePlus << " 증가";
+		ORIGINAL
+
+		m_iUserAttack += iAttackPlus;
+		m_iUserMaxLife += iLifePlus;
+		m_iUserCurrentExp = 0;
+		m_iUserMaxExp += 3;
+		m_iUserCurrentLife = m_iUserMaxLife;
+
+		system("pause>null");
+	}
+
+	MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterMaxLife;
 }
 
 //배틀 관련 함수 종료

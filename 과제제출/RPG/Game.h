@@ -55,10 +55,12 @@ public:
 	void TownMenu();	//마을 목록
 	void DungeonList();	//던전 목록
 	void NowBattle(int MonsterNumber);	//전투 화면
-	void PrintMessage(int Outcome);	//시스템 메시지 출력
+	void PrintObject();
+	void PrintMessage(int Outcome, int MonsterNumber);	//시스템 메시지 출력
+	void Attack(int Attacker, int MonsterNumber);	//공격 함수
 	void ShowUserBattle();	//전투 중 유저 정보 보여줌
 	void ShowMonsterBattle(int MonsterNumber);	//전투 중 몹 정보 보여줌
-	void ShowResult();	//몹 잡고 상세 스테이터스 보여줌
+	void ShowResult(int MonsterNumber);	//몹 잡고 상세 스테이터스 보여줌
 	void ShowUserInfo();
 	void ShowMonsterInfo();
 	void DeleteInfo();
