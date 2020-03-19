@@ -143,15 +143,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Dagger.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Headers.h" />
     <ClInclude Include="MapDraw.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Dagger.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="MapDraw.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="메인.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,7 @@
 #pragma once
 #include "Headers.h"
 #include "MapDraw.h"
+#include "Weapon.h"
 
 struct Monster
 {
@@ -14,13 +15,6 @@ struct Monster
 	int MonsterMaxExp;	//다음 레벨 가기 위한 요구 경험치
 	int MonsterDropExp;	//몹이 주는 경험치
 	int Delay;	//몬스터가 공격을 하기까지 걸리는 시간
-	bool Stance;
-};
-
-enum STANCE
-{
-	STANCE_ATTACK = true,
-	STANCE_DEFENCE = false
 };
 
 enum OUTCOME
@@ -30,7 +24,7 @@ enum OUTCOME
 	OUTCOME_LOSE
 };
 
-class Game
+class Game: public Weapon
 {
 private:
 	MapDraw GameMap;
@@ -42,16 +36,17 @@ private:
 	int m_iUserMaxExp;	//다음 레벨로 넘어가기 위한 최대 경험치
 	int m_iUserGold;	//소지 골드
 	int m_iUserLevel;	//레벨
-	int m_iUserGetExp;	//몹한테 주는 경험치
-	bool m_bUserStance;	//공방 상태
+	int m_iHaveWeapon;	//무기 갖고 있나 아닌가...
 	//여기까지 유저 관련 변수
 	int m_iMonsterPopulation;	//몹 개체수
 	Monster *MonsterArr;
 public:
 	Game();
 	void GetName(string name);
-	bool InitUserInfo();	//유저 정보 초기화, 텍스트를 성공적으로 읽어들였을 경우 true를 반환하고 마을로 들어가고 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
-	bool InitMonsterInfo();	//몹 정보 초기화. InitUserInfo()와 똑같은 매커니즘
+	bool InitUserData();	//유저 정보 초기화, 텍스트를 성공적으로 읽어들였을 경우 true를 반환하고 마을로 들어가고 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
+	bool InitMonsterData();	//몹 정보 초기화. InitUserInfo()와 똑같은 매커니즘
+	void LoadUserData();	//저장된 유저 정보 불러오기
+	void LoadMonsterData();	//저장된 몹 정보 불러오기
 	void TownMenu();	//마을 목록
 	void DungeonList();	//던전 목록
 	void NowBattle(int MonsterNumber);	//전투 화면
@@ -63,6 +58,9 @@ public:
 	void ShowResult(int MonsterNumber);	//몹 잡고 상세 스테이터스 보여줌
 	void ShowUserInfo();
 	void ShowMonsterInfo();
+	void WeaponShop();
+	void SaveMenu();
+	void SaveData(int DataNumber);	//데이터 저장
 	void DeleteInfo();
 	inline void gotoxy(int x, int y)
 	{

@@ -5,6 +5,8 @@
 #define OBJECT_Y 13
 #define USER_ATTACK 10
 #define MONSTER_ATTACK 11
+#define WEAPON_OK 1
+#define WEAPON_NO 0	//무기 갖고 있으면 1 아님 0
 
 //몹 레벨업 시스템 제거 대신에 패배로 전투 종료시 몹 HP 풀 회복 및 골드 삥 뜯김
 
@@ -18,11 +20,11 @@ void Game::GetName(string name)
 	m_sUserName = name;	//새게임 시작할 때 메뉴 클래스 쪽에서 이름 받아옴
 }
 
-bool Game::InitUserInfo()
+bool Game::InitUserData()
 {
 	//디폴트 유저 정보 텍스트 파일 읽어올 때 숫자가 의미하는 순서
 	//공격력 최대생명력 렙업하기위한경험치 현재경험치 레벨 소지골드
-	//코드에서 추가로 설정해줘야 하는 변수 현재경험치 몹한테 주는 경험치 현재생명력 공방상태
+	//코드에서 추가로 설정해줘야 하는 변수 현재경험치 몹한테 주는 경험치 현재생명력
 	
 	ifstream InfoLoad;
 	InfoLoad.open("DefaultUserInfo.txt");
@@ -35,8 +37,7 @@ bool Game::InitUserInfo()
 		InfoLoad >> m_iUserLevel;
 		InfoLoad >> m_iUserGold;
 		m_iUserCurrentLife = m_iUserMaxLife;
-		m_iUserGetExp = 5;
-		m_bUserStance = STANCE_DEFENCE;
+		m_iHaveWeapon = WEAPON_NO;
 		return true;
 	}
 	else
@@ -55,13 +56,12 @@ bool Game::InitUserInfo()
 	}
 }
 
-bool Game::InitMonsterInfo()
+bool Game::InitMonsterData()
 {
 	//맨 위의 숫자는 등장하는 몬스터의 총 수
 	//디폴트 몹 정보 텍스트 파일 읽어올 때 숫자가 의미하는 순서
 	//몹이름, 공격력, 생명력, 렙업 하기 위한 경험치, 주는 경험치, 레벨, 주는 골드
-	//코드에서 추가로 설정해줘야 하는 변수 현재경험치 몹한테 주는 경험치 현재생명력 공방상태
-	//디폴트 파일에 딜레이 추가해줘야 함 추가하면 이 주석 지우셈
+	//코드에서 추가로 설정해줘야 하는 변수 현재경험치 몹한테 주는 경험치 현재생명력
 	
 	ifstream MonsterInfoLoad;
 	MonsterInfoLoad.open("DefaultMonsterInfo.txt");
@@ -83,7 +83,6 @@ bool Game::InitMonsterInfo()
 			MonsterInfoLoad >> MonsterArr[j].MonsterDropGold;
 			MonsterArr[j].MonsterCurrentExp = 0;
 			MonsterArr[j].MonsterCurrentLife = MonsterArr[j].MonsterMaxLife;
-			MonsterArr[j].Stance = STANCE_DEFENCE;
 			j++;
 		}
 
@@ -105,7 +104,7 @@ bool Game::InitMonsterInfo()
 	}
 }
 
-//여기까지 인포 데이터 불러오기 영역
+//여기까지 디폴트 인포 데이터 불러오기 영역
 
 void Game::TownMenu()
 {
@@ -138,7 +137,6 @@ void Game::TownMenu()
 		switch (iSelect)
 		{
 		default:
-			cout << "댕";
 			break;
 		case 1:
 			DungeonList();
@@ -150,6 +148,10 @@ void Game::TownMenu()
 			ShowMonsterInfo();
 			break;
 		case 4:
+			WeaponShop();
+			break;
+		case 5:
+			SaveMenu();
 			break;
 		case 6:
 			DeleteInfo();
@@ -293,6 +295,7 @@ void Game::NowBattle(int MonsterNumber)
 			cout << "보";
 		}
 
+		//승리 조건식
 		if (MonsterArr[MonsterNumber].MonsterCurrentLife == 0)
 		{
 			BLOOD
@@ -309,9 +312,9 @@ void Game::NowBattle(int MonsterNumber)
 			return;
 		}
 
+		//패배 조건식
 		if (m_iUserCurrentLife == 0)
 		{
-			//유저의 체력이 다할 경우 유저 사망
 			gotoxy(25, OBJECT_Y);
 			BLOOD
 			cout << "너";
@@ -321,17 +324,20 @@ void Game::NowBattle(int MonsterNumber)
 			cout << "가진 돈 일부를 빼앗겼다.";
 			ORIGINAL
 
-
 			system("pause>null");
 
 			m_iUserCurrentLife = m_iUserMaxLife;
 			MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterMaxLife;
 			
-			if (m_iUserGold > 0)
+			if (m_iUserGold >= 10)
 			{
 				double dForfeitGold;	//몰수 골드
-				dForfeitGold = static_cast<double>(m_iUserGold / 10) * 9;
+				dForfeitGold = static_cast<double>(m_iUserGold / 10);
 				m_iUserGold -= static_cast<int>(dForfeitGold);	//가진 돈 1/10이 뺏긴다
+			}
+			else if (m_iUserGold > 0 && m_iUserGold < 10)
+			{
+				m_iUserGold--;
 			}
 				
 			return;
@@ -389,8 +395,17 @@ void Game::Attack(int Attacker, int MonsterNumber)
 {
 	if (Attacker == USER_ATTACK)
 	{
-		if (MonsterArr[MonsterNumber].MonsterCurrentLife - m_iUserAttack >= 0)
-			MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterCurrentLife - m_iUserAttack;
+		int iAttackSum;	//무기 공격력과 기존 공격력을 합한 것
+
+		if (m_iHaveWeapon == WEAPON_OK)
+		{
+			//iAttackSum = m_iUserAttack + (무기공격력);
+		}
+		else
+			iAttackSum = m_iUserAttack;
+
+		if (MonsterArr[MonsterNumber].MonsterCurrentLife - iAttackSum >= 0)
+			MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterCurrentLife - iAttackSum;
 		else
 			MonsterArr[MonsterNumber].MonsterCurrentLife = 0;
 	}
@@ -417,7 +432,14 @@ void Game::ShowUserBattle()
 	gotoxy(15, 5);
 	cout << "생명력: " << m_iUserCurrentLife << "/" << m_iUserMaxLife;
 	gotoxy(34, 5);
-	cout << "공격력: " << m_iUserAttack;
+	if (m_iHaveWeapon == WEAPON_OK)
+	{
+		cout << "공격력: " << m_iUserAttack << " + " << "무기공격력 테스트";
+	}
+	else
+	{
+		cout << "공격력: " << m_iUserAttack;
+	}
 	gotoxy(15, 6);
 	cout << "경험치: " << m_iUserCurrentExp << "/" << m_iUserMaxExp;
 	gotoxy(34, 6);
@@ -513,11 +535,26 @@ void Game::ShowUserInfo()
 	gotoxy(19, 15);
 	cout << "생명력: " << m_iUserCurrentLife << "/" << m_iUserMaxLife;
 	gotoxy(19, 16);
-	cout << "공격력: " << m_iUserAttack;
+	
+	if (m_iHaveWeapon == WEAPON_OK)
+	{
+		cout << "공격력: " << m_iUserAttack << " + " << "무기공격력 테스트";
+	}
+	else
+	{
+		cout << "공격력: " << m_iUserAttack;
+	}
+
 	gotoxy(19, 17);
 	cout << "경험치: " << m_iUserCurrentExp << "/" << m_iUserMaxExp;
 	gotoxy(19, 18);
 	cout << "소지 골드: " << m_iUserGold;
+
+	if (m_iHaveWeapon == WEAPON_OK)
+	{
+		gotoxy(19, 19);
+		cout << "소지 중인 무기: " << "무기명 테스트" << "(무기 타입)";
+	}
 
 	system("pause>null");
 }
@@ -548,6 +585,169 @@ void Game::ShowMonsterInfo()
 		i++;
 	}
 	
+	system("pause>null");
+}
+
+void Game::WeaponShop()
+{
+	int iSelect;
+
+	while (1)
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		gotoxy(24, 6);
+		GREEN
+		cout << "◆무기 상점◆";
+		ORIGINAL
+
+		gotoxy(27, 9);
+		cout << "→단검";
+		gotoxy(28, 11);
+		cout << "→총";
+		gotoxy(28, 13);
+		cout << "→칼";
+		gotoxy(27, 15);
+		cout << "→원드";
+		gotoxy(28, 17);
+		cout << "→활";
+		gotoxy(27, 19);
+		cout << "→둔기";
+		gotoxy(23, 21);
+		cout << "마을로 돌아간다";
+
+		/*gotoxy(53, 27);
+		cout << "○";
+		gotoxy(52, 28);
+		cout << "/ ㅣ";
+		gotoxy(30, 27);
+		cout << "( 어이구야 어서옵셔 >";*/
+
+		iSelect = GameMap.MenuSelectCursor(7, 2, 9, 9);
+
+		switch (iSelect)
+		{
+		default:
+			cout << "댕";
+			break;
+		case 7:
+			return;
+		}
+	}
+	
+	
+
+	cout << "ㅇ";
+}
+
+void Game::SaveMenu()
+{
+	int iSelect;
+	
+	while (1)
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		int iXPos = 19, iYPos = 4;
+
+		for (int i = 1; i <= 10; i++)
+		{
+			ifstream DataCheck;	//슬롯의 공란 여부
+			string sFileName = "SavePlayer" + to_string(i) + ".txt";
+
+			DataCheck.open(sFileName);
+			
+			gotoxy(iXPos, iYPos);
+			
+			if (DataCheck.is_open())
+				cout << i << "번 슬롯(파일 여부: O)";
+			else
+				cout << i << "번 슬롯(파일 여부: X)";
+
+			iYPos += 2;
+
+			DataCheck.close();
+		}
+		
+		gotoxy(26, iYPos);
+		cout << "돌아간다";
+
+		iSelect = GameMap.MenuSelectCursor(11, 2, 7, 4);
+
+		switch (iSelect)
+		{
+		default:
+			cout << "댕";
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		{
+			GameMap.BoxErase(WIDTH, HEIGHT);
+			ifstream DataCheck;	//슬롯의 공란 여부
+			string sFileName = "SavePlayer" + to_string(iSelect) + ".txt";
+			if (DataCheck.is_open())
+			{
+				int iAnotherSelect;
+				gotoxy(18, 12);
+				cout << "이미 해당 슬롯에 데이터가 저장되어 있습니다.";
+				gotoxy(22, 14);
+				cout << "덮어씌우시겠습니까?";
+
+				gotoxy(29, 16);
+				cout << "예";
+				gotoxy(28, 18);
+				cout << "아니오";
+
+				iAnotherSelect = GameMap.MenuSelectCursor(2, 2, 12, 16);
+
+				if (iAnotherSelect == 1)
+				{
+					DataCheck.close();
+					SaveData(iSelect);
+				}
+				else
+					break;
+			}
+			else
+				SaveData(iSelect);
+			return;
+		}
+		case 11:
+			return;
+		}
+	}
+}
+
+void Game::SaveData(int DataNumber)
+{
+	//파일 저장할 때 변수 순서->유저 이름, 공격력, 최대 생명력, 렙업하기 위한 경험치, 레벨, 골드, 현재 경험치, 현재 생명력
+	//다음 줄은 무기 여부 무기 있으면 1 쓰고 무기 타입, 무기 이름, 공격력, 골드 없으면 0 쓰고 파일 닫기
+
+	GameMap.BoxErase(WIDTH, HEIGHT);
+
+	string sFileName  = "SavePlayer" + to_string(DataNumber) + ".txt";
+	ofstream DataSave(sFileName);
+	DataSave << m_sUserName << " " << m_iUserAttack << " " << m_iUserMaxLife << " " << m_iUserMaxExp << " " << m_iUserLevel << " "
+		<< m_iUserGold << " " << m_iUserCurrentExp << " " << m_iUserCurrentLife << "\n";
+
+	if (m_iHaveWeapon == WEAPON_NO)
+		DataSave << m_iHaveWeapon;
+	else if (m_iHaveWeapon == WEAPON_OK)
+		DataSave << m_iHaveWeapon;
+
+	DataSave.close();
+
+	gotoxy(28, 15);
+	cout << "저장 완료";
+
 	system("pause>null");
 }
 
