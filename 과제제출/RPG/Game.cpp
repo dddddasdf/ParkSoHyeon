@@ -620,8 +620,8 @@ void Game::WeaponShop()
 		cout << "○";
 		gotoxy(52, 28);
 		cout << "/ ㅣ";
-		gotoxy(30, 27);
-		cout << "( 어이구야 어서옵셔 >";*/
+		gotoxy(35, 27);
+		cout << "( 어서옵셔 >";*/
 
 		iSelect = GameMap.MenuSelectCursor(7, 2, 9, 9);
 
@@ -634,10 +634,6 @@ void Game::WeaponShop()
 			return;
 		}
 	}
-	
-	
-
-	cout << "ㅇ";
 }
 
 void Game::SaveMenu()
@@ -677,7 +673,6 @@ void Game::SaveMenu()
 		switch (iSelect)
 		{
 		default:
-			cout << "댕";
 			break;
 		case 1:
 		case 2:
@@ -693,20 +688,24 @@ void Game::SaveMenu()
 			GameMap.BoxErase(WIDTH, HEIGHT);
 			ifstream DataCheck;	//슬롯의 공란 여부
 			string sFileName = "SavePlayer" + to_string(iSelect) + ".txt";
+			DataCheck.open(sFileName);
 			if (DataCheck.is_open())
 			{
 				int iAnotherSelect;
-				gotoxy(18, 12);
+
+				YELLOW
+				gotoxy(8,11);
 				cout << "이미 해당 슬롯에 데이터가 저장되어 있습니다.";
-				gotoxy(22, 14);
+				gotoxy(22, 13);
 				cout << "덮어씌우시겠습니까?";
+				ORIGINAL
 
 				gotoxy(29, 16);
 				cout << "예";
-				gotoxy(28, 18);
+				gotoxy(27, 18);
 				cout << "아니오";
 
-				iAnotherSelect = GameMap.MenuSelectCursor(2, 2, 12, 16);
+				iAnotherSelect = GameMap.MenuSelectCursor(2, 2, 11, 16);
 
 				if (iAnotherSelect == 1)
 				{
@@ -717,7 +716,10 @@ void Game::SaveMenu()
 					break;
 			}
 			else
+			{
+				DataCheck.close();
 				SaveData(iSelect);
+			}
 			return;
 		}
 		case 11:
@@ -745,7 +747,7 @@ void Game::SaveData(int DataNumber)
 
 	DataSave.close();
 
-	gotoxy(28, 15);
+	gotoxy(27, 15);
 	cout << "저장 완료";
 
 	system("pause>null");

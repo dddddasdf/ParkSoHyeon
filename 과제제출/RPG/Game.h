@@ -40,6 +40,7 @@ private:
 	//여기까지 유저 관련 변수
 	int m_iMonsterPopulation;	//몹 개체수
 	Monster *MonsterArr;
+	Weapon *WeaponPtr;
 public:
 	Game();
 	void GetName(string name);
