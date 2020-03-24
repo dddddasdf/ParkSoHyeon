@@ -61,6 +61,9 @@ void Menu::NewGame()
 	if (RolePlaying.InitMonsterData() == false)
 		return;	//위와 마찬가지
 
+	if (RolePlaying.InitWeaponData() == false)
+		return;
+
 	RolePlaying.TownMenu();
 }
 

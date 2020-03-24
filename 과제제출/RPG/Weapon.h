@@ -22,19 +22,20 @@ enum TYPE
 class Weapon: public MapDraw
 {
 protected:
-	int m_iBowNumber;
-	int m_iDaggerNumber;
-	int m_iGunNumber;
-	int m_iSwordNumber;
-	int m_iWandNumber;
-	int m_iHammerNumber;
+	int m_iBowNumber = 0;
+	int m_iDaggerNumber = 0;
+	int m_iGunNumber = 0;
+	int m_iSwordNumber = 0;
+	int m_iWandNumber = 0;
+	int m_iHammerNumber = 0;
 public:
 	Weapon();
 	bool InitWeaponList();	//무기 리스트 가져옴
 	void InputWeaponData();	//구조체 만들고 데이터 입력
-	void PrintWeaponList(int WeaponType);	//무기 리스트 출력
+	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, WeaponStruct *ChangeWeapon, WeaponStruct *TypeWeapon);	//무기 리스트 출력
 	void FreeWeaopnList();	//무기 리스트 동적할당 해제
 	int ReturnWeaponPower();	//무기 공격력 반환
+	void BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon);	//무기 구매
 	~Weapon();
 };
 
@@ -45,7 +46,7 @@ private:
 public:
 	void CreateSwordArr();
 	void InputSwordData(string WeaponName, int WeaponPrice, int WeaponPower);
-	void PrintSwordList();
+	int PrintSwordList(int HaveGold, WeaponStruct *ChangeWeapon);
 };
 
 class Bow : public Weapon

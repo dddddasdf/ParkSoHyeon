@@ -104,6 +104,60 @@ bool Game::InitMonsterData()
 	}
 }
 
+bool Game::InitWeaponData()
+{
+	if ((WeaponPtr->InitWeaponList()) == false)
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		RED
+		gotoxy(26, 14);
+		cout << "에러 발생";
+		gotoxy(8, 16);
+		cout << "무기 정보 텍스트 파일을 읽어올 수 없습니다...";
+		ORIGINAL
+
+		system("pause>null");
+
+		return false;
+	}
+	else
+	{
+		//정상적으로 파일을 읽었다면 각 무기 개수가 몇개인지 카운트 되어있음
+		//작동 순서: 무기 배열 생성 함수->무기 배열에 지역 변수를 매개 변수로 넣어서 데이터 입력
+		SwordPtr->CreateSwordArr();
+
+		ifstream WeaponLoad;
+		WeaponLoad.open("WeaponList.txt");
+		if (WeaponLoad.is_open())
+		{
+			string sWeaponType;
+			string sWeaponName;
+			int iWeaponPrice;
+			int iWeaponPower;
+
+			while (!WeaponLoad.eof())
+			{
+				WeaponLoad >> sWeaponType;
+
+				if (sWeaponType == "Sword")
+				{
+					WeaponLoad >> sWeaponName;
+					WeaponLoad >> iWeaponPower;
+					WeaponLoad >> iWeaponPrice;
+					SwordPtr->InputSwordData(sWeaponName, iWeaponPrice, iWeaponPower);
+				}
+			}
+		}
+
+		//유저가 갖고 있는 무기 데이터 초기화
+		OwnWeapon->iWeaponPower = 0;
+		OwnWeapon->iWeaponPrice = 0;
+		OwnWeapon->sWeaponName = "";
+		return true;
+	}
+}
+
 //여기까지 디폴트 인포 데이터 불러오기 영역
 
 void Game::TownMenu()
@@ -636,6 +690,23 @@ void Game::WeaponShop()
 	}
 }
 
+void Game::CallMenu(int PageNumber)
+{
+	//무기 페이지 불러올 때 보다 편리하게 하기 위해서
+	//댕대댕ㄷㅇ댕댕 씨발 죽고 싶다
+
+	switch (PageNumber)
+	{
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+		break;
+	}
+}
+
 void Game::SaveMenu()
 {
 	int iSelect;
@@ -732,6 +803,7 @@ void Game::SaveData(int DataNumber)
 {
 	//파일 저장할 때 변수 순서->유저 이름, 공격력, 최대 생명력, 렙업하기 위한 경험치, 레벨, 골드, 현재 경험치, 현재 생명력
 	//다음 줄은 무기 여부 무기 있으면 1 쓰고 무기 타입, 무기 이름, 공격력, 골드 없으면 0 쓰고 파일 닫기
+	//몹 상태를 저장해야 할 필요가 있을까??
 
 	GameMap.BoxErase(WIDTH, HEIGHT);
 
