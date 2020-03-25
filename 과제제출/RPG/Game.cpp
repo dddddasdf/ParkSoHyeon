@@ -126,6 +126,8 @@ bool Game::InitWeaponData()
 		//정상적으로 파일을 읽었다면 각 무기 개수가 몇개인지 카운트 되어있음
 		//작동 순서: 무기 배열 생성 함수->무기 배열에 지역 변수를 매개 변수로 넣어서 데이터 입력
 		SwordPtr->CreateSwordArr();
+		BowPtr->CreateBowArr();
+		DaggerPtr->CreateDaggerArr();
 
 		ifstream WeaponLoad;
 		WeaponLoad.open("WeaponList.txt");
@@ -147,13 +149,28 @@ bool Game::InitWeaponData()
 					WeaponLoad >> iWeaponPrice;
 					SwordPtr->InputSwordData(sWeaponName, iWeaponPrice, iWeaponPower);
 				}
+				else if (sWeaponType == "Bow")
+				{
+					WeaponLoad >> sWeaponName;
+					WeaponLoad >> iWeaponPower;
+					WeaponLoad >> iWeaponPrice;
+					BowPtr->InputBowData(sWeaponName, iWeaponPrice, iWeaponPower);
+				}
+				else if (sWeaponType == "Dagger")
+				{
+					WeaponLoad >> sWeaponName;
+					WeaponLoad >> iWeaponPower;
+					WeaponLoad >> iWeaponPrice;
+					DaggerPtr->InputDaggerData(sWeaponName, iWeaponPrice, iWeaponPower);
+				}
 			}
 		}
 
 		//유저가 갖고 있는 무기 데이터 초기화
-		OwnWeapon->iWeaponPower = 0;
-		OwnWeapon->iWeaponPrice = 0;
+		OwnWeapon->iWeaponPower = NULL;
+		OwnWeapon->iWeaponPrice = NULL;
 		OwnWeapon->sWeaponName = "";
+		OwnWeapon->iWeaponType = NULL;
 		return true;
 	}
 }
@@ -163,6 +180,8 @@ bool Game::InitWeaponData()
 void Game::TownMenu()
 {
 	int iSelect;
+
+	m_iUserGold = 50;	//무기 구매 확인용
 	
 	while (1)
 	{
@@ -576,38 +595,52 @@ void Game::ShowResult(int MonsterNumber)
 void Game::ShowUserInfo()
 {
 	GameMap.BoxErase(WIDTH, HEIGHT);
+	int iXPos = 16;
 	
 	YELLOW
 	gotoxy(18, 10);
 	cout << "=======당신의 정보=======";
 	ORIGINAL
 
-	gotoxy(19, 13);
+	gotoxy(iXPos, 13);
 	cout << "이름: " << m_sUserName;
-	gotoxy(19, 14);
+	gotoxy(iXPos, 14);
 	cout << "레벨: " << m_iUserLevel;
-	gotoxy(19, 15);
+	gotoxy(iXPos, 15);
 	cout << "생명력: " << m_iUserCurrentLife << "/" << m_iUserMaxLife;
-	gotoxy(19, 16);
+	gotoxy(iXPos, 16);
 	
 	if (m_iHaveWeapon == WEAPON_OK)
 	{
-		cout << "공격력: " << m_iUserAttack << " + " << "무기공격력 테스트";
+		cout << "공격력: " << m_iUserAttack << " + " << OwnWeapon->iWeaponPower;
 	}
 	else
 	{
 		cout << "공격력: " << m_iUserAttack;
 	}
 
-	gotoxy(19, 17);
+	gotoxy(iXPos, 17);
 	cout << "경험치: " << m_iUserCurrentExp << "/" << m_iUserMaxExp;
-	gotoxy(19, 18);
+	gotoxy(iXPos, 18);
 	cout << "소지 골드: " << m_iUserGold;
 
 	if (m_iHaveWeapon == WEAPON_OK)
 	{
-		gotoxy(19, 19);
-		cout << "소지 중인 무기: " << "무기명 테스트" << "(무기 타입)";
+		gotoxy(iXPos, 19);
+		cout << "소지 중인 무기: " << OwnWeapon->sWeaponName;
+
+		if (OwnWeapon->iWeaponType == TYPE_BOW)
+			cout << "(활)";
+		else if (OwnWeapon->iWeaponType == TYPE_DAGGER)
+			cout << "(단검)";
+		else if (OwnWeapon->iWeaponType == TYPE_HAMMER)
+			cout << "(둔기)";
+		else if (OwnWeapon->iWeaponType == TYPE_SWORD)
+			cout << "(칼)";
+		else if (OwnWeapon->iWeaponType == TYPE_WAND)
+			cout << "(원드)";
+		else if (OwnWeapon->iWeaponType == TYPE_GUN)
+			cout << "(총)";
 	}
 
 	system("pause>null");
@@ -670,19 +703,65 @@ void Game::WeaponShop()
 		gotoxy(23, 21);
 		cout << "마을로 돌아간다";
 
-		/*gotoxy(53, 27);
-		cout << "○";
-		gotoxy(52, 28);
-		cout << "/ ㅣ";
-		gotoxy(35, 27);
-		cout << "( 어서옵셔 >";*/
-
 		iSelect = GameMap.MenuSelectCursor(7, 2, 9, 9);
+
+		int iBuyOrNot;
 
 		switch (iSelect)
 		{
 		default:
 			cout << "댕";
+			break;
+		case 1:
+			iBuyOrNot = DaggerPtr->PrintDaggerList(m_iUserGold, OwnWeapon);
+			if (iBuyOrNot == PAGE_NEXT)
+				;
+			else if (iBuyOrNot == PAGE_PREVIOUS)
+				;
+			else if (iBuyOrNot == 0)
+				;
+			else if (iBuyOrNot == CANNOT_BUY)
+				PrintBuyMessage(false);
+			else
+			{
+				PrintBuyMessage(true);
+				m_iUserGold -= iBuyOrNot;
+				m_iHaveWeapon = WEAPON_OK;
+			}
+			break;
+		case 3:
+			iBuyOrNot = SwordPtr->PrintSwordList(m_iUserGold, OwnWeapon);
+			if (iBuyOrNot == PAGE_NEXT)
+				;
+			else if (iBuyOrNot == PAGE_PREVIOUS)
+				;
+			else if (iBuyOrNot == 0)
+				;
+			else if (iBuyOrNot  == CANNOT_BUY)
+				PrintBuyMessage(false);
+			else
+			{
+				PrintBuyMessage(true);
+				m_iUserGold -= iBuyOrNot;
+				m_iHaveWeapon = WEAPON_OK;
+			}
+			break;
+		case 5:
+			iBuyOrNot = BowPtr->PrintBowList(m_iUserGold, OwnWeapon);
+			if (iBuyOrNot == PAGE_NEXT)
+				;
+			else if (iBuyOrNot == PAGE_PREVIOUS)
+				;
+			else if (iBuyOrNot == 0)
+				;
+			else if (iBuyOrNot == CANNOT_BUY)
+				PrintBuyMessage(false);
+			else
+			{
+				PrintBuyMessage(true);
+				m_iUserGold -= iBuyOrNot;
+				m_iHaveWeapon = WEAPON_OK;
+			}
 			break;
 		case 7:
 			return;
@@ -705,6 +784,27 @@ void Game::CallMenu(int PageNumber)
 	case 6:
 		break;
 	}
+}
+
+void Game::PrintBuyMessage(int YesOrNo)
+{
+	if (YesOrNo == true)
+	{
+		gotoxy(26, 28);
+		YELLOW
+			cout << "구매 성공";
+		ORIGINAL
+	}
+	else if (YesOrNo == false)
+	{
+		gotoxy(17, 28);
+		YELLOW
+			cout << "소지 중인 골드가 부족합니다.";
+		ORIGINAL
+	}
+	Sleep(1000);
+
+	//아이템 구매 성공 실패 여부에 따라 메시지 출력
 }
 
 void Game::SaveMenu()
@@ -828,6 +928,10 @@ void Game::SaveData(int DataNumber)
 void Game::DeleteInfo()
 {
 	delete[] MonsterArr;
+	SwordPtr->~Sword();
+	DaggerPtr->~Dagger();
+	BowPtr->~Bow();
+	delete OwnWeapon;
 }
 
 Game::~Game()

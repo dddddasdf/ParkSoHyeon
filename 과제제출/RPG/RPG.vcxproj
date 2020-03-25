@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Dagger.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Headers.h" />
     <ClInclude Include="MapDraw.h" />
@@ -152,7 +151,6 @@
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Dagger.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="MapDraw.cpp" />
     <ClCompile Include="Menu.cpp" />

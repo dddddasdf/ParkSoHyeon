@@ -1,10 +1,15 @@
 #include "Weapon.h"
-#define PURCHASE_NOT -5
-
 
 Weapon::Weapon()
 {
 }
+
+int Weapon::m_iBowNumber = 0;
+int Weapon::m_iDaggerNumber = 0;
+int Weapon::m_iGunNumber = 0;
+int Weapon::m_iSwordNumber = 0;
+int Weapon::m_iWandNumber = 0;
+int Weapon::m_iHammerNumber = 0;
 
 bool Weapon::InitWeaponList()
 {
@@ -39,9 +44,18 @@ bool Weapon::InitWeaponList()
 		return false;	//무기 파일이 없을 경우 에러임을 표시하고 메인 화면으로 돌아간다
 }
 
-void Weapon::InputWeaponData()
+void Weapon::InputWeaponData(string WeaponName, int WeaponPrice, int WeaponPower, int WeaponNumber, WeaponStruct *InputWeaponStruct)
 {
-	
+	int i = 0;
+	for (; i < WeaponNumber; i++)
+	{
+		if (InputWeaponStruct[i].iWeaponPower == NULL)
+			break;
+	}
+
+	InputWeaponStruct[i].sWeaponName = WeaponName;
+	InputWeaponStruct[i].iWeaponPrice = WeaponPrice;
+	InputWeaponStruct[i].iWeaponPower = WeaponPower;
 }
 
 int Weapon::PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, WeaponStruct *ChangeWeapon, WeaponStruct *TypeWeapon)
@@ -52,7 +66,7 @@ int Weapon::PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, Weap
 	{
 		BoxErase(WIDTH, HEIGHT);
 
-		int iYPos = 6;
+		int iYPos = 3;
 
 		for (int i = 0; i < WeaponNumber; i++)
 		{
@@ -84,44 +98,49 @@ int Weapon::PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, Weap
 		gotoxy(24, iYPos);
 		cout << "이전 페이지";
 
-		iYPos += 2;
+		iYPos += 3;
 
 		gotoxy(24, iYPos);
 		cout << "다음 페이지";
 
-		iYPos += 2;
+		iYPos += 3;
 
 		gotoxy(26, iYPos);
 		cout << "돌아간다";
 
-		iSelect = MenuSelectCursor(WeaponNumber + 3, 2, 3, 6);
+		iSelect = MenuSelectCursor(WeaponNumber + 3, 3, 3, 3);
 
 		if (iSelect == WeaponNumber + 3)
 			return 0;
 		else if (iSelect == WeaponNumber + 2)
-			return (WeaponType + 1);
+			return PAGE_NEXT;
 		else if (iSelect == WeaponNumber + 1)
-			return (WeaponType - 1);
+			return PAGE_PREVIOUS;
 		else
 		{
-			if (HaveGold >= TypeWeapon[iSelect].iWeaponPrice)
+			if (HaveGold >= TypeWeapon[iSelect -1].iWeaponPrice)
 			{
 				if (!ChangeWeapon->sWeaponName.empty())
 				{
 					ChangeWeapon->sWeaponName.clear();	//유저가 무기를 들고 있으면 문자열 초기화하고 집어 넣어야...
 				}
-				ChangeWeapon->sWeaponName = TypeWeapon[iSelect].sWeaponName;
-				ChangeWeapon->iWeaponPower = TypeWeapon[iSelect].iWeaponPower;
-				ChangeWeapon->iWeaponPrice = TypeWeapon[iSelect].iWeaponPrice;
+				ChangeWeapon->sWeaponName = TypeWeapon[iSelect - 1].sWeaponName;
+				ChangeWeapon->iWeaponPower = TypeWeapon[iSelect - 1].iWeaponPower;
+				ChangeWeapon->iWeaponPrice = TypeWeapon[iSelect - 1].iWeaponPrice;
+				ChangeWeapon->iWeaponType = TypeWeapon[iSelect - 1].iWeaponType;
+
+				return (TypeWeapon[iSelect - 1].iWeaponPrice);
 			}
 			else
-				return PURCHASE_NOT;
+				return CANNOT_BUY;	//소지 중인 골드가 무기 가격보다 적으면 구매 못함을 반환
 		}
 	}
 }
 
 void Weapon::BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon)
 {
+	//지금은 안 쓰는 함수 혹시나 싶어서 남겨 뒀는데 안 쓰는 거 확정 되면 지워야 할 문단
+	
 	if (!ChangeWeapon->sWeaponName.empty())
 	{
 		ChangeWeapon->sWeaponName.clear();	//유저가 무기를 들고 있으면 문자열 초기화하고 집어 넣어야...
@@ -133,21 +152,23 @@ void Weapon::BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon)
 
 void Sword::CreateSwordArr()
 {
-	SwordArr = new WeaponStruct[m_iSwordNumber];
+	SwordStruct = new WeaponStruct[m_iSwordNumber];
 
 	for (int i = 0; i < m_iSwordNumber; i++)
 	{
-		SwordArr[i].iWeaponPower = NULL;
-		SwordArr[i].iWeaponPrice = NULL;
+		SwordStruct[i].iWeaponPower = NULL;
+		SwordStruct[i].iWeaponPrice = NULL;
+		SwordStruct[i].iWeaponType = TYPE_SWORD;
 	}
 }
 
 void Sword::InputSwordData(string WeaponName, int WeaponPrice, int WeaponPower)
 {
 	//무슨 생각으로 윗놈과 이놈을 만들엇지,,,
-	//아마도 Game 소스 파일에서 배열 먼저 만들고 그쪽 지역 변수들로 차례차례 대입하려 했나봄 근데 더 나은 방법은 없는가?
+	//Weapon 클래스에 담당할 함수 만들었음. 만약을 위해 기존 함수 파트 주석 처리로 보관 
+	//Game.cpp에서 읽어들인 문자열, 변수 두개를 각각 이름과 가격 및 공격력으로 대입
 
-	int i = 0;
+	/*int i = 0;
 	for (; i < m_iSwordNumber; i++)
 	{
 		if (SwordArr[i].iWeaponPower == NULL)
@@ -156,13 +177,65 @@ void Sword::InputSwordData(string WeaponName, int WeaponPrice, int WeaponPower)
 
 	SwordArr[i].sWeaponName = WeaponName;
 	SwordArr[i].iWeaponPrice = WeaponPrice;
-	SwordArr[i].iWeaponPower = WeaponPower;
+	SwordArr[i].iWeaponPower = WeaponPower;*/
+
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iSwordNumber, SwordStruct);
 }
 
 int Sword::PrintSwordList(int HaveGold, WeaponStruct *ChangeWeapon)
 {
 	int iReturnConstant;
-	iReturnConstant = PrintWeaponList(HaveGold, TYPE_SWORD, m_iSwordNumber, ChangeWeapon, SwordArr);
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_SWORD, m_iSwordNumber, ChangeWeapon, SwordStruct);
+
+	return iReturnConstant;
+}
+
+void Bow::CreateBowArr()
+{
+	BowStruct = new WeaponStruct[m_iBowNumber];
+
+	for (int i = 0; i < m_iBowNumber; i++)
+	{
+		BowStruct[i].iWeaponPower = NULL;
+		BowStruct[i].iWeaponPrice = NULL;
+		BowStruct[i].iWeaponType = TYPE_BOW;
+	}
+}
+
+void Bow::InputBowData(string WeaponName, int WeaponPrice, int WeaponPower)
+{
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iBowNumber, BowStruct);
+}
+
+int Bow::PrintBowList(int HaveGold, WeaponStruct *ChangeWeapon)
+{
+	int iReturnConstant;
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_BOW, m_iBowNumber, ChangeWeapon, BowStruct);
+
+	return iReturnConstant;
+}
+
+void Dagger::CreateDaggerArr()
+{
+	DaggerStruct = new WeaponStruct[m_iDaggerNumber];
+
+	for (int i = 0; i < m_iDaggerNumber; i++)
+	{
+		DaggerStruct[i].iWeaponPower = NULL;
+		DaggerStruct[i].iWeaponPrice = NULL;
+		DaggerStruct[i].iWeaponType = TYPE_DAGGER;
+	}
+}
+
+void Dagger::InputDaggerData(string WeaponName, int WeaponPrice, int WeaponPower)
+{
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iDaggerNumber, DaggerStruct);
+}
+
+int Dagger::PrintDaggerList(int HaveGold, WeaponStruct *ChangeWeapon)
+{
+	int iReturnConstant;
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_DAGGER, m_iDaggerNumber, ChangeWeapon, DaggerStruct);
 
 	return iReturnConstant;
 }

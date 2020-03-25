@@ -24,7 +24,7 @@ enum OUTCOME
 	OUTCOME_LOSE
 };
 
-class Game: public Weapon
+class Game
 {
 private:
 	MapDraw GameMap;
@@ -40,9 +40,11 @@ private:
 	//여기까지 유저 관련 변수
 	int m_iMonsterPopulation;	//몹 개체수
 	Monster *MonsterArr;
-	Weapon *WeaponPtr;
-	Sword *SwordPtr;
-	WeaponStruct *OwnWeapon;	//유저가 갖고 있는 무기
+	Weapon *WeaponPtr = new Weapon;
+	Sword *SwordPtr = new Sword;
+	Bow *BowPtr = new Bow;
+	Dagger *DaggerPtr = new Dagger;
+	WeaponStruct *OwnWeapon = new WeaponStruct;	//유저가 갖고 있는 무기
 public:
 	Game();
 	void GetName(string name);
@@ -64,6 +66,7 @@ public:
 	void ShowMonsterInfo();
 	void WeaponShop();
 	void CallMenu(int PageNumber);
+	void PrintBuyMessage(int YesOrNo);
 	void SaveMenu();
 	void SaveData(int DataNumber);	//데이터 저장
 	void DeleteInfo();
