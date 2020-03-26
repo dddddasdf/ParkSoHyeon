@@ -7,8 +7,14 @@
 #define MONSTER_ATTACK 11
 #define WEAPON_OK 1
 #define WEAPON_NO 0	//무기 갖고 있으면 1 아님 0
+#define CLOSE -10	//무기 상점 탭 닫기
 
 //몹 레벨업 시스템 제거 대신에 패배로 전투 종료시 몹 HP 풀 회복 및 골드 삥 뜯김
+//해야 하는 거: 유저 데이터를 다른 클래스로 분리
+//객체 포인터는 어케 동적할당 해제하지
+
+//디폴트 유저 파일과 초기화 하는 유저 파일 함수 구분해서 새로 만들 것
+//3월 26일하다 말은 것: 유저 이름 가져오는 함수가 유저 정보 초기화보다 먼저 이루어져서 연속 새게임 진행시 옳게 안 굴러간다 확인요망
 
 Game::Game()
 {
@@ -20,7 +26,20 @@ void Game::GetName(string name)
 	m_sUserName = name;	//새게임 시작할 때 메뉴 클래스 쪽에서 이름 받아옴
 }
 
-bool Game::InitUserData()
+void Game::InitUserData()
+{
+	m_sUserName = "";
+	m_iUserCurrentLife = NULL;
+	m_iUserMaxLife = NULL;
+	m_iUserAttack = NULL;
+	m_iUserCurrentExp = NULL;
+	m_iUserMaxExp = NULL;
+	m_iUserGold = NULL;
+	m_iUserLevel = NULL;
+	m_iHaveWeapon = NULL;
+}
+
+bool Game::LoadDefaultUserData()
 {
 	//디폴트 유저 정보 텍스트 파일 읽어올 때 숫자가 의미하는 순서
 	//공격력 최대생명력 렙업하기위한경험치 현재경험치 레벨 소지골드
@@ -30,6 +49,8 @@ bool Game::InitUserData()
 	InfoLoad.open("DefaultUserInfo.txt");
 	if (InfoLoad.is_open())
 	{
+		InitUserData();
+
 		InfoLoad >> m_iUserAttack;
 		InfoLoad >> m_iUserMaxLife;
 		InfoLoad >> m_iUserMaxExp;
@@ -106,7 +127,7 @@ bool Game::InitMonsterData()
 
 bool Game::InitWeaponData()
 {
-	if ((WeaponPtr->InitWeaponList()) == false)
+	if ((WeaponPtr->InitWeaponCount()) == false)
 	{
 		GameMap.BoxErase(WIDTH, HEIGHT);
 
@@ -128,6 +149,9 @@ bool Game::InitWeaponData()
 		SwordPtr->CreateSwordArr();
 		BowPtr->CreateBowArr();
 		DaggerPtr->CreateDaggerArr();
+		GunPtr->CreateGunArr();
+		WandPtr->CreateWandArr();
+		HammerPtr->CreateHammerArr();
 
 		ifstream WeaponLoad;
 		WeaponLoad.open("WeaponList.txt");
@@ -163,25 +187,89 @@ bool Game::InitWeaponData()
 					WeaponLoad >> iWeaponPrice;
 					DaggerPtr->InputDaggerData(sWeaponName, iWeaponPrice, iWeaponPower);
 				}
+				else if (sWeaponType == "Gun")
+				{
+					WeaponLoad >> sWeaponName;
+					WeaponLoad >> iWeaponPower;
+					WeaponLoad >> iWeaponPrice;
+					GunPtr->InputGunData(sWeaponName, iWeaponPrice, iWeaponPower);
+				}
+				else if (sWeaponType == "Wand")
+				{
+					WeaponLoad >> sWeaponName;
+					WeaponLoad >> iWeaponPower;
+					WeaponLoad >> iWeaponPrice;
+					WandPtr->InputWandData(sWeaponName, iWeaponPrice, iWeaponPower);
+				}
+				else if (sWeaponType == "Hammer")
+				{
+					WeaponLoad >> sWeaponName;
+					WeaponLoad >> iWeaponPower;
+					WeaponLoad >> iWeaponPrice;
+					HammerPtr->InputHammerData(sWeaponName, iWeaponPrice, iWeaponPower);
+				}
 			}
 		}
 
-		//유저가 갖고 있는 무기 데이터 초기화
-		OwnWeapon->iWeaponPower = NULL;
-		OwnWeapon->iWeaponPrice = NULL;
-		OwnWeapon->sWeaponName = "";
-		OwnWeapon->iWeaponType = NULL;
 		return true;
 	}
 }
 
 //여기까지 디폴트 인포 데이터 불러오기 영역
 
+bool Game::LoadUserData(int DataNumber)
+{
+	//변수 순서->유저 이름, 공격력, 최대 생명력, 렙업하기 위한 경험치, 레벨, 골드, 현재 경험치, 현재 생명력
+	//다음 줄은 무기 여부 무기 있으면 1 무기 타입, 무기 이름, 공격력, 가격 / 없으면 0
+
+	ifstream InfoLoad;
+	string sFileName = "SavePlayer" + to_string(DataNumber) + ".txt";
+	InfoLoad.open(sFileName);
+	if (InfoLoad.is_open())
+	{
+		InitUserData();
+
+		InfoLoad >> m_sUserName;
+		InfoLoad >> m_iUserAttack;
+		InfoLoad >> m_iUserMaxLife;
+		InfoLoad >> m_iUserMaxExp;
+		InfoLoad >> m_iUserLevel;
+		InfoLoad >> m_iUserGold;
+		InfoLoad >> m_iUserCurrentExp;
+		InfoLoad >> m_iUserCurrentLife;
+		InfoLoad >> m_iHaveWeapon;
+		if (m_iHaveWeapon == WEAPON_NO)
+			InfoLoad.close();
+		else if (m_iHaveWeapon == WEAPON_OK)
+		{
+			InfoLoad >> OwnWeapon->iWeaponType;
+			InfoLoad >> OwnWeapon->sWeaponName;
+			InfoLoad >> OwnWeapon->iWeaponPower;
+			InfoLoad >> OwnWeapon->iWeaponPrice;
+		}
+		return true;
+	}
+	else
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		RED
+			gotoxy(26, 14);
+		cout << "에러 발생";
+		gotoxy(6, 16);
+		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
+		ORIGINAL
+
+			system("pause>null");
+		return false;	//디폴트 유저 파일이 없을 경우 에러임을 표시하고 메인 화면으로 돌아간다
+	}
+}
+
+//아래부터 게임 메뉴 시작
+
 void Game::TownMenu()
 {
 	int iSelect;
-
-	m_iUserGold = 50;	//무기 구매 확인용
 	
 	while (1)
 	{
@@ -472,7 +560,7 @@ void Game::Attack(int Attacker, int MonsterNumber)
 
 		if (m_iHaveWeapon == WEAPON_OK)
 		{
-			//iAttackSum = m_iUserAttack + (무기공격력);
+			iAttackSum = m_iUserAttack + OwnWeapon->iWeaponPower;
 		}
 		else
 			iAttackSum = m_iUserAttack;
@@ -493,6 +581,7 @@ void Game::Attack(int Attacker, int MonsterNumber)
 
 void Game::ShowUserBattle()
 {
+	//아래 마을에서 보여지는 유저 정보와는 다른 인터페이스라 그냥 분리함
 	YELLOW
 	gotoxy(19, 2);
 	cout << "=======당신의 정보=======";
@@ -507,7 +596,7 @@ void Game::ShowUserBattle()
 	gotoxy(34, 5);
 	if (m_iHaveWeapon == WEAPON_OK)
 	{
-		cout << "공격력: " << m_iUserAttack << " + " << "무기공격력 테스트";
+		cout << "공격력: " << m_iUserAttack << " + " << OwnWeapon->iWeaponPower;
 	}
 	else
 	{
@@ -706,83 +795,87 @@ void Game::WeaponShop()
 		iSelect = GameMap.MenuSelectCursor(7, 2, 9, 9);
 
 		int iBuyOrNot;
+		int iGesture = NULL;
 
-		switch (iSelect)
+		while (iGesture != CLOSE)
 		{
-		default:
-			cout << "댕";
-			break;
-		case 1:
-			iBuyOrNot = DaggerPtr->PrintDaggerList(m_iUserGold, OwnWeapon);
-			if (iBuyOrNot == PAGE_NEXT)
-				;
-			else if (iBuyOrNot == PAGE_PREVIOUS)
-				;
-			else if (iBuyOrNot == 0)
-				;
-			else if (iBuyOrNot == CANNOT_BUY)
-				PrintBuyMessage(false);
-			else
+			switch (iSelect)
 			{
-				PrintBuyMessage(true);
-				m_iUserGold -= iBuyOrNot;
-				m_iHaveWeapon = WEAPON_OK;
+			case 1:
+				iBuyOrNot = DaggerPtr->PrintDaggerList(m_iUserGold, OwnWeapon);
+				iGesture = BuyScript(iBuyOrNot);
+				if (iGesture == PAGE_NEXT)
+					iSelect = 2;
+				else if (iGesture == PAGE_PREVIOUS)
+					iSelect = 6;
+				break;
+			case 2:
+				iBuyOrNot = GunPtr->PrintGunList(m_iUserGold, OwnWeapon);
+				iGesture = BuyScript(iBuyOrNot);
+				if (iGesture == PAGE_NEXT)
+					iSelect = 3;
+				else if (iGesture == PAGE_PREVIOUS)
+					iSelect = 1;
+				break;
+			case 3:
+				iBuyOrNot = SwordPtr->PrintSwordList(m_iUserGold, OwnWeapon);
+				iGesture = BuyScript(iBuyOrNot);
+				if (iGesture == PAGE_NEXT)
+					iSelect = 4;
+				else if (iGesture == PAGE_PREVIOUS)
+					iSelect = 2;
+				break;
+			case 4:
+				iBuyOrNot = WandPtr->PrintWandList(m_iUserGold, OwnWeapon);
+				iGesture = BuyScript(iBuyOrNot);
+				if (iGesture == PAGE_NEXT)
+					iSelect = 5;
+				else if (iGesture == PAGE_PREVIOUS)
+					iSelect = 3;
+				break;
+			case 5:
+				iBuyOrNot = BowPtr->PrintBowList(m_iUserGold, OwnWeapon);
+				iGesture = BuyScript(iBuyOrNot);
+				if (iGesture == PAGE_NEXT)
+					iSelect = 6;
+				else if (iGesture == PAGE_PREVIOUS)
+					iSelect = 4;
+				break;
+			case 6:
+				iBuyOrNot = HammerPtr->PrintHammerList(m_iUserGold, OwnWeapon);
+				iGesture = BuyScript(iBuyOrNot);
+				if (iGesture == PAGE_NEXT)
+					iSelect = 1;
+				else if (iGesture == PAGE_PREVIOUS)
+					iSelect = 5;
+				break;
+			case 7:
+				return;
 			}
-			break;
-		case 3:
-			iBuyOrNot = SwordPtr->PrintSwordList(m_iUserGold, OwnWeapon);
-			if (iBuyOrNot == PAGE_NEXT)
-				;
-			else if (iBuyOrNot == PAGE_PREVIOUS)
-				;
-			else if (iBuyOrNot == 0)
-				;
-			else if (iBuyOrNot  == CANNOT_BUY)
-				PrintBuyMessage(false);
-			else
-			{
-				PrintBuyMessage(true);
-				m_iUserGold -= iBuyOrNot;
-				m_iHaveWeapon = WEAPON_OK;
-			}
-			break;
-		case 5:
-			iBuyOrNot = BowPtr->PrintBowList(m_iUserGold, OwnWeapon);
-			if (iBuyOrNot == PAGE_NEXT)
-				;
-			else if (iBuyOrNot == PAGE_PREVIOUS)
-				;
-			else if (iBuyOrNot == 0)
-				;
-			else if (iBuyOrNot == CANNOT_BUY)
-				PrintBuyMessage(false);
-			else
-			{
-				PrintBuyMessage(true);
-				m_iUserGold -= iBuyOrNot;
-				m_iHaveWeapon = WEAPON_OK;
-			}
-			break;
-		case 7:
-			return;
 		}
 	}
 }
 
-void Game::CallMenu(int PageNumber)
+int Game::BuyScript(int iBuyOrNot)
 {
-	//무기 페이지 불러올 때 보다 편리하게 하기 위해서
-	//댕대댕ㄷㅇ댕댕 씨발 죽고 싶다
-
-	switch (PageNumber)
+	//가게에서 물건 살때 동작... 이전 페이지 다음 페이지 구현을 위해 만들었음
+	if (iBuyOrNot == PAGE_NEXT)
+		return PAGE_NEXT;
+	else if (iBuyOrNot == PAGE_PREVIOUS)
+		return PAGE_PREVIOUS;
+	else if (iBuyOrNot == 0)	//돌아가기 버튼 눌렀다
+		return CLOSE;
+	else if (iBuyOrNot == CANNOT_BUY)
 	{
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-		break;
+		PrintBuyMessage(false);
+		return CLOSE;
+	}
+	else
+	{
+		PrintBuyMessage(true);
+		m_iUserGold -= iBuyOrNot;
+		m_iHaveWeapon = WEAPON_OK;
+		return CLOSE;
 	}
 }
 
@@ -904,6 +997,7 @@ void Game::SaveData(int DataNumber)
 	//파일 저장할 때 변수 순서->유저 이름, 공격력, 최대 생명력, 렙업하기 위한 경험치, 레벨, 골드, 현재 경험치, 현재 생명력
 	//다음 줄은 무기 여부 무기 있으면 1 쓰고 무기 타입, 무기 이름, 공격력, 골드 없으면 0 쓰고 파일 닫기
 	//몹 상태를 저장해야 할 필요가 있을까??
+	//ㄴ고심 끝에 몹 상태 저장 텍스트 파일을 해체하기로...
 
 	GameMap.BoxErase(WIDTH, HEIGHT);
 
@@ -915,7 +1009,8 @@ void Game::SaveData(int DataNumber)
 	if (m_iHaveWeapon == WEAPON_NO)
 		DataSave << m_iHaveWeapon;
 	else if (m_iHaveWeapon == WEAPON_OK)
-		DataSave << m_iHaveWeapon;
+		DataSave << m_iHaveWeapon << " " << OwnWeapon->iWeaponType << " " << OwnWeapon->sWeaponName << " "
+		<< OwnWeapon->iWeaponPower << " " << OwnWeapon->iWeaponPrice;
 
 	DataSave.close();
 
@@ -931,7 +1026,12 @@ void Game::DeleteInfo()
 	SwordPtr->~Sword();
 	DaggerPtr->~Dagger();
 	BowPtr->~Bow();
+	GunPtr->~Gun();
+	WandPtr->~Wand();
+	HammerPtr->~Hammer();
 	delete OwnWeapon;
+
+	//동적 할당된 놈들 해제
 }
 
 Game::~Game()

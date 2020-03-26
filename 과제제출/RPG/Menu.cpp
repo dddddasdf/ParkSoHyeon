@@ -55,7 +55,7 @@ void Menu::NewGame()
 	cin >> sNewPlayer;
 
 	RolePlaying.GetName(sNewPlayer);
-	if (RolePlaying.InitUserData() == false)
+	if (RolePlaying.LoadDefaultUserData() == false)
 		return;	//유저 정보 초기화 과정에서 텍스트 파일이 없을 경우 새 게임을 진행하지 않고 메인 화면으로 돌아감
 
 	if (RolePlaying.InitMonsterData() == false)
@@ -69,26 +69,95 @@ void Menu::NewGame()
 
 void Menu::LoadData()
 {
-	MenuMap.BoxErase(WIDTH, HEIGHT);
-
 	int iSelect;
-	for (int i = 1; i <= 10; i++)
-	{
-		gotoxy(20, 2 + (i * 2));
-		cout << "지금은 테스트용 문장" << i;
-	}
-	gotoxy(27, 24);
-	cout << "돌아간다";
 
-	iSelect = MenuMap.MenuSelectCursor(11, 2, 8, 4);
-
-	switch (iSelect)
+	while (1)
 	{
-	default:
-		cout << "댕";
-		break;
-	case 11:
-		return;
+		MenuMap.BoxErase(WIDTH, HEIGHT);
+
+		int iXPos = 19, iYPos = 4;
+
+		for (int i = 1; i <= 10; i++)
+		{
+			ifstream DataCheck;	//슬롯의 공란 여부
+			string sFileName = "SavePlayer" + to_string(i) + ".txt";
+
+			DataCheck.open(sFileName);
+
+			gotoxy(iXPos, iYPos);
+
+			if (DataCheck.is_open())
+				cout << i << "번 슬롯(파일 여부: O)";
+			else
+				cout << i << "번 슬롯(파일 여부: X)";
+
+			iYPos += 2;
+
+			DataCheck.close();
+		}
+
+		gotoxy(26, iYPos);
+		cout << "돌아간다";
+
+		iSelect = MenuMap.MenuSelectCursor(11, 2, 7, 4);
+
+		switch (iSelect)
+		{
+		default:
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		{
+			MenuMap.BoxErase(WIDTH, HEIGHT);
+			ifstream DataCheck;	//슬롯의 공란 여부
+			string sFileName = "SavePlayer" + to_string(iSelect) + ".txt";
+			DataCheck.open(sFileName);
+			if (DataCheck.is_open())
+			{
+				if (RolePlaying.LoadUserData(iSelect) == false)
+					return;	//유저 정보 초기화 과정에서 텍스트 파일이 없을 경우 새 게임을 진행하지 않고 메인 화면으로 돌아감
+
+				if (RolePlaying.InitMonsterData() == false)
+					return;	//위와 마찬가지
+
+				if (RolePlaying.InitWeaponData() == false)
+					return;
+
+				gotoxy(17, 15);
+				YELLOW
+				cout << "저장된 데이터 불러오기 성공";
+				ORIGINAL
+
+					Sleep(1000);
+
+				RolePlaying.TownMenu();
+
+				return;
+			}
+			else
+			{
+				MenuMap.BoxErase(WIDTH, HEIGHT);
+
+				gotoxy(14, 15);
+				YELLOW
+				cout << "해당 슬롯에 저장된 데이터가 없습니다.";
+				ORIGINAL
+
+				system("pause>null");
+			}
+			break;
+		}
+		case 11:
+			return;
+		}
 	}
 }
 

@@ -4,14 +4,14 @@ Weapon::Weapon()
 {
 }
 
-int Weapon::m_iBowNumber = 0;
-int Weapon::m_iDaggerNumber = 0;
-int Weapon::m_iGunNumber = 0;
-int Weapon::m_iSwordNumber = 0;
-int Weapon::m_iWandNumber = 0;
-int Weapon::m_iHammerNumber = 0;
+int Weapon::m_iBowCount = 0;
+int Weapon::m_iDaggerCount = 0;
+int Weapon::m_iGunCount = 0;
+int Weapon::m_iSwordCount = 0;
+int Weapon::m_iWandCount = 0;
+int Weapon::m_iHammerCount = 0;
 
-bool Weapon::InitWeaponList()
+bool Weapon::InitWeaponCount()
 {
 	ifstream WeaponLoad;
 	WeaponLoad.open("WeaponList.txt");
@@ -24,17 +24,17 @@ bool Weapon::InitWeaponList()
 			WeaponLoad >> sWeaponType;
 
 			if (sWeaponType == "Bow")
-				m_iBowNumber++;
+				m_iBowCount++;
 			else if (sWeaponType == "Dagger")
-				m_iDaggerNumber++;
+				m_iDaggerCount++;
 			else if (sWeaponType == "Gun")
-				m_iGunNumber++;
+				m_iGunCount++;
 			else if (sWeaponType == "Wand")
-				m_iWandNumber++;
+				m_iWandCount++;
 			else if (sWeaponType == "Hammer")
-				m_iHammerNumber++;
+				m_iHammerCount++;
 			else if (sWeaponType == "Sword")
-				m_iSwordNumber++;
+				m_iSwordCount++;
 		}
 
 		WeaponLoad.close();
@@ -56,6 +56,16 @@ void Weapon::InputWeaponData(string WeaponName, int WeaponPrice, int WeaponPower
 	InputWeaponStruct[i].sWeaponName = WeaponName;
 	InputWeaponStruct[i].iWeaponPrice = WeaponPrice;
 	InputWeaponStruct[i].iWeaponPower = WeaponPower;
+}
+
+void Weapon::InitWeaponInt(WeaponStruct *MakeWeaponArr, int WeaponNumber, int WeaponType)
+{
+	for (int i = 0; i < WeaponNumber; i++)
+	{
+		MakeWeaponArr[i].iWeaponPower = NULL;
+		MakeWeaponArr[i].iWeaponPrice = NULL;
+		MakeWeaponArr[i].iWeaponType = WeaponType;
+	}
 }
 
 int Weapon::PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, WeaponStruct *ChangeWeapon, WeaponStruct *TypeWeapon)
@@ -152,14 +162,9 @@ void Weapon::BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon)
 
 void Sword::CreateSwordArr()
 {
-	SwordStruct = new WeaponStruct[m_iSwordNumber];
+	SwordStruct = new WeaponStruct[m_iSwordCount];
 
-	for (int i = 0; i < m_iSwordNumber; i++)
-	{
-		SwordStruct[i].iWeaponPower = NULL;
-		SwordStruct[i].iWeaponPrice = NULL;
-		SwordStruct[i].iWeaponType = TYPE_SWORD;
-	}
+	InitWeaponInt(SwordStruct, m_iSwordCount, TYPE_SWORD);
 }
 
 void Sword::InputSwordData(string WeaponName, int WeaponPrice, int WeaponPower)
@@ -179,63 +184,122 @@ void Sword::InputSwordData(string WeaponName, int WeaponPrice, int WeaponPower)
 	SwordArr[i].iWeaponPrice = WeaponPrice;
 	SwordArr[i].iWeaponPower = WeaponPower;*/
 
-	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iSwordNumber, SwordStruct);
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iSwordCount, SwordStruct);
 }
 
 int Sword::PrintSwordList(int HaveGold, WeaponStruct *ChangeWeapon)
 {
 	int iReturnConstant;
-	iReturnConstant = PrintWeaponList(HaveGold, TYPE_SWORD, m_iSwordNumber, ChangeWeapon, SwordStruct);
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_SWORD, m_iSwordCount, ChangeWeapon, SwordStruct);
 
 	return iReturnConstant;
 }
 
 void Bow::CreateBowArr()
 {
-	BowStruct = new WeaponStruct[m_iBowNumber];
+	BowStruct = new WeaponStruct[m_iBowCount];
 
-	for (int i = 0; i < m_iBowNumber; i++)
-	{
-		BowStruct[i].iWeaponPower = NULL;
-		BowStruct[i].iWeaponPrice = NULL;
-		BowStruct[i].iWeaponType = TYPE_BOW;
-	}
+	InitWeaponInt(BowStruct, m_iBowCount, TYPE_BOW);
 }
 
 void Bow::InputBowData(string WeaponName, int WeaponPrice, int WeaponPower)
 {
-	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iBowNumber, BowStruct);
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iBowCount, BowStruct);
 }
 
 int Bow::PrintBowList(int HaveGold, WeaponStruct *ChangeWeapon)
 {
 	int iReturnConstant;
-	iReturnConstant = PrintWeaponList(HaveGold, TYPE_BOW, m_iBowNumber, ChangeWeapon, BowStruct);
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_BOW, m_iBowCount, ChangeWeapon, BowStruct);
 
 	return iReturnConstant;
 }
 
 void Dagger::CreateDaggerArr()
 {
-	DaggerStruct = new WeaponStruct[m_iDaggerNumber];
+	DaggerStruct = new WeaponStruct[m_iDaggerCount];
+	
+	InitWeaponInt(DaggerStruct, m_iDaggerCount, TYPE_DAGGER);
+
+	/*DaggerStruct = new WeaponStruct[m_iDaggerNumber];
 
 	for (int i = 0; i < m_iDaggerNumber; i++)
 	{
 		DaggerStruct[i].iWeaponPower = NULL;
 		DaggerStruct[i].iWeaponPrice = NULL;
 		DaggerStruct[i].iWeaponType = TYPE_DAGGER;
-	}
+	}*/
 }
 
 void Dagger::InputDaggerData(string WeaponName, int WeaponPrice, int WeaponPower)
 {
-	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iDaggerNumber, DaggerStruct);
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iDaggerCount, DaggerStruct);
 }
 
 int Dagger::PrintDaggerList(int HaveGold, WeaponStruct *ChangeWeapon)
 {
 	int iReturnConstant;
-	iReturnConstant = PrintWeaponList(HaveGold, TYPE_DAGGER, m_iDaggerNumber, ChangeWeapon, DaggerStruct);
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_DAGGER, m_iDaggerCount, ChangeWeapon, DaggerStruct);
+
+	return iReturnConstant;
+}
+
+void Gun::CreateGunArr()
+{
+	GunStruct = new WeaponStruct[m_iGunCount];
+
+	InitWeaponInt(GunStruct, m_iGunCount, TYPE_GUN);
+}
+
+void Gun::InputGunData(string WeaponName, int WeaponPrice, int WeaponPower)
+{
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iGunCount, GunStruct);
+}
+
+int Gun::PrintGunList(int HaveGold, WeaponStruct *ChangeWeapon)
+{
+	int iReturnConstant;
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_GUN, m_iGunCount, ChangeWeapon, GunStruct);
+
+	return iReturnConstant;
+}
+
+void Wand::CreateWandArr()
+{
+	WandStruct = new WeaponStruct[m_iWandCount];
+
+	InitWeaponInt(WandStruct, m_iWandCount, TYPE_WAND);
+}
+
+void Wand::InputWandData(string WeaponName, int WeaponPrice, int WeaponPower)
+{
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iWandCount, WandStruct);
+}
+
+int Wand::PrintWandList(int HaveGold, WeaponStruct *ChangeWeapon)
+{
+	int iReturnConstant;
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_WAND, m_iWandCount, ChangeWeapon, WandStruct);
+
+	return iReturnConstant;
+}
+
+void Hammer::CreateHammerArr()
+{
+	HammerStruct = new WeaponStruct[m_iHammerCount];
+
+	InitWeaponInt(HammerStruct, m_iHammerCount, TYPE_HAMMER);
+}
+
+void Hammer::InputHammerData(string WeaponName, int WeaponPrice, int WeaponPower)
+{
+	InputWeaponData(WeaponName, WeaponPrice, WeaponPower, m_iHammerCount, HammerStruct);
+}
+
+int Hammer::PrintHammerList(int HaveGold, WeaponStruct *ChangeWeapon)
+{
+	int iReturnConstant;
+	iReturnConstant = PrintWeaponList(HaveGold, TYPE_HAMMER, m_iHammerCount, ChangeWeapon, HammerStruct);
 
 	return iReturnConstant;
 }

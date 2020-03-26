@@ -38,21 +38,25 @@ private:
 	int m_iUserLevel;	//레벨
 	int m_iHaveWeapon;	//무기 갖고 있나 아닌가...
 	//여기까지 유저 관련 변수
+
 	int m_iMonsterPopulation;	//몹 개체수
 	Monster *MonsterArr;
 	Weapon *WeaponPtr = new Weapon;
 	Sword *SwordPtr = new Sword;
 	Bow *BowPtr = new Bow;
 	Dagger *DaggerPtr = new Dagger;
+	Gun *GunPtr = new Gun;
+	Wand *WandPtr = new Wand;
+	Hammer *HammerPtr = new Hammer;
 	WeaponStruct *OwnWeapon = new WeaponStruct;	//유저가 갖고 있는 무기
 public:
 	Game();
 	void GetName(string name);
-	bool InitUserData();	//유저 정보 초기화, 텍스트를 성공적으로 읽어들였을 경우 true를 반환하고 마을로 들어가고 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
+	void InitUserData();	//유저 정보 초기화
+	bool LoadDefaultUserData();	//디폴트 유저 파일 읽어오기, 텍스트를 성공적으로 읽어들였을 경우 true를 반환 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
 	bool InitMonsterData();	//몹 정보 초기화. InitUserInfo()와 똑같은 매커니즘
 	bool InitWeaponData();	//무기 정보 초기화. 저 둘을 베이스로 하지만 조금 다르다
-	void LoadUserData();	//저장된 유저 정보 불러오기
-	void LoadMonsterData();	//저장된 몹 정보 불러오기
+	bool LoadUserData(int DataNumber);	//저장된 유저 정보 불러오기
 	void TownMenu();	//마을 목록
 	void DungeonList();	//던전 목록
 	void NowBattle(int MonsterNumber);	//전투 화면
@@ -65,7 +69,7 @@ public:
 	void ShowUserInfo();
 	void ShowMonsterInfo();
 	void WeaponShop();
-	void CallMenu(int PageNumber);
+	int BuyScript(int iBuyOrNot);
 	void PrintBuyMessage(int YesOrNo);
 	void SaveMenu();
 	void SaveData(int DataNumber);	//데이터 저장

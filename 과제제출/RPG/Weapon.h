@@ -26,16 +26,17 @@ enum TYPE
 class Weapon: public MapDraw
 {
 protected:
-	static int m_iBowNumber;
-	static int m_iDaggerNumber;
-	static int m_iGunNumber;
-	static int m_iSwordNumber;
-	static int m_iWandNumber;
-	static int m_iHammerNumber;
+	static int m_iBowCount;
+	static int m_iDaggerCount;
+	static int m_iGunCount;
+	static int m_iSwordCount;
+	static int m_iWandCount;
+	static int m_iHammerCount;
 public:
 	Weapon();
-	bool InitWeaponList();	//무기 리스트 가져옴
+	bool InitWeaponCount();	//무기 리스트 가져옴
 	void InputWeaponData(string WeaponName, int WeaponPrice, int WeaponPower, int WeaponNumber, WeaponStruct *InputWeaponStruct);	//데이터 입력
+	void InitWeaponInt(WeaponStruct *MakeWeaponArr, int WeaponNumber, int WeaponType);
 	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, WeaponStruct *ChangeWeapon, WeaponStruct *TypeWeapon);	//무기 리스트 출력
 	void FreeWeaopnList();	//무기 리스트 동적할당 해제
 	void BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon);	//무기 구매
@@ -84,7 +85,10 @@ private:
 	WeaponStruct *GunStruct;
 public:
 	Gun() { }
-	~Gun() { }
+	void CreateGunArr();
+	void InputGunData(string WeaponName, int WeaponPrice, int WeaponPower);
+	int PrintGunList(int HaveGold, WeaponStruct *ChangeWeapon);
+	~Gun() { delete[] GunStruct; }
 };
 
 class Wand : public Weapon
@@ -93,7 +97,10 @@ private:
 	WeaponStruct *WandStruct;
 public:
 	Wand() { }
-	~Wand() { }
+	void CreateWandArr();
+	void InputWandData(string WeaponName, int WeaponPrice, int WeaponPower);
+	int PrintWandList(int HaveGold, WeaponStruct *ChangeWeapon);
+	~Wand() { delete[] WandStruct; }
 };
 
 class Hammer : public Weapon
@@ -102,5 +109,8 @@ private:
 	WeaponStruct *HammerStruct;
 public:
 	Hammer() { }
-	~Hammer() { }
+	void CreateHammerArr();
+	void InputHammerData(string WeaponName, int WeaponPrice, int WeaponPower);
+	int PrintHammerList(int HaveGold, WeaponStruct *ChangeWeapon);
+	~Hammer() { delete[] HammerStruct; }
 };
