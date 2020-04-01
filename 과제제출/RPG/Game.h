@@ -41,14 +41,21 @@ private:
 
 	int m_iMonsterPopulation;	//몹 개체수
 	Monster *MonsterArr;
-	Weapon *WeaponPtr = new Weapon;
+	/*Weapon *WeaponPtr = new Weapon;
 	Sword *SwordPtr = new Sword;
 	Bow *BowPtr = new Bow;
 	Dagger *DaggerPtr = new Dagger;
 	Gun *GunPtr = new Gun;
 	Wand *WandPtr = new Wand;
-	Hammer *HammerPtr = new Hammer;
-	WeaponStruct *OwnWeapon = new WeaponStruct;	//유저가 갖고 있는 무기
+	Hammer *HammerPtr = new Hammer;*/
+	Weapon *WeaponPtr;
+	Sword *SwordPtr;
+	Bow *BowPtr;
+	Dagger *DaggerPtr;
+	Gun *GunPtr;
+	Wand *WandPtr;
+	Hammer *HammerPtr;
+	WeaponStruct *OwnWeapon;	//유저가 갖고 있는 무기
 public:
 	Game();
 	void GetName(string name);

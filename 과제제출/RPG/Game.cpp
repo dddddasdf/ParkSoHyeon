@@ -11,10 +11,9 @@
 
 //몹 레벨업 시스템 제거 대신에 패배로 전투 종료시 몹 HP 풀 회복 및 골드 삥 뜯김
 //해야 하는 거: 유저 데이터를 다른 클래스로 분리
-//객체 포인터는 어케 동적할당 해제하지
+//메모리 누수 잡았다
 
 //디폴트 유저 파일과 초기화 하는 유저 파일 함수 구분해서 새로 만들 것
-//3월 26일하다 말은 것: 유저 이름 가져오는 함수가 유저 정보 초기화보다 먼저 이루어져서 연속 새게임 진행시 옳게 안 굴러간다 확인요망
 
 Game::Game()
 {
@@ -23,6 +22,8 @@ Game::Game()
 
 void Game::GetName(string name)
 {
+	InitUserData();
+
 	m_sUserName = name;	//새게임 시작할 때 메뉴 클래스 쪽에서 이름 받아옴
 }
 
@@ -37,6 +38,20 @@ void Game::InitUserData()
 	m_iUserGold = NULL;
 	m_iUserLevel = NULL;
 	m_iHaveWeapon = NULL;
+
+	OwnWeapon = new WeaponStruct;
+	OwnWeapon->sWeaponName = "";
+	OwnWeapon->iWeaponPrice = NULL;
+	OwnWeapon->iWeaponPower = NULL;
+	OwnWeapon->iWeaponType = NULL;
+
+	WeaponPtr = new Weapon;
+	SwordPtr = new Sword;
+	BowPtr = new Bow;
+	DaggerPtr = new Dagger;
+	GunPtr = new Gun;
+	WandPtr = new Wand;
+	HammerPtr = new Hammer;
 }
 
 bool Game::LoadDefaultUserData()
@@ -49,8 +64,6 @@ bool Game::LoadDefaultUserData()
 	InfoLoad.open("DefaultUserInfo.txt");
 	if (InfoLoad.is_open())
 	{
-		InitUserData();
-
 		InfoLoad >> m_iUserAttack;
 		InfoLoad >> m_iUserMaxLife;
 		InfoLoad >> m_iUserMaxExp;
@@ -260,7 +273,7 @@ bool Game::LoadUserData(int DataNumber)
 		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
 		ORIGINAL
 
-			system("pause>null");
+		system("pause>null");
 		return false;	//디폴트 유저 파일이 없을 경우 에러임을 표시하고 메인 화면으로 돌아간다
 	}
 }
@@ -1023,13 +1036,21 @@ void Game::SaveData(int DataNumber)
 void Game::DeleteInfo()
 {
 	delete[] MonsterArr;
-	SwordPtr->~Sword();
+	/*SwordPtr->~Sword();
 	DaggerPtr->~Dagger();
 	BowPtr->~Bow();
 	GunPtr->~Gun();
 	WandPtr->~Wand();
-	HammerPtr->~Hammer();
+	HammerPtr->~Hammer();*/
 	delete OwnWeapon;
+
+	delete WeaponPtr;
+	delete SwordPtr;
+	delete BowPtr;
+	delete DaggerPtr;
+	delete GunPtr;
+	delete WandPtr;
+	delete HammerPtr;
 
 	//동적 할당된 놈들 해제
 }
