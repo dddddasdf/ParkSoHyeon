@@ -20,6 +20,11 @@ User::User()
 	m_iHaveWeaponType = -1;	//마찬가지
 }
 
+void User::ChangeName(string Name)
+{
+	m_sUserName = Name;
+}
+
 bool User::LoadDefaultUserData()
 {
 	//디폴트 유저 정보 텍스트 파일 읽어올 때 숫자가 의미하는 순서
@@ -59,7 +64,7 @@ bool User::LoadDefaultUserData()
 bool User::LoadUserData(int DataNumber)
 {
 	//변수 순서->유저 이름, 공격력, 최대 생명력, 렙업하기 위한 경험치, 레벨, 골드, 현재 경험치, 현재 생명력
-	//다음 줄은 무기 여부 무기 있으면 1 무기 타입, 무기 이름, 공격력, 가격 / 없으면 0
+	//다음 줄은 무기 여부 무기 있으면 1 무기 타입, 무기 타입, 무기 인덱스 / 없으면 0
 
 	ifstream InfoLoad;
 	string sFileName = "SavePlayer" + to_string(DataNumber) + ".txt";
@@ -79,7 +84,8 @@ bool User::LoadUserData(int DataNumber)
 			InfoLoad.close();
 		else if (m_iHaveWeapon == WEAPON_OK)
 		{
-			
+			InfoLoad >> m_iHaveWeaponType;
+			InfoLoad >> m_iHaveWeaponIndex;
 		}
 		return true;
 	}
@@ -109,9 +115,107 @@ void User::SaveUserData(int DataNumber)
 	if (m_iHaveWeapon == WEAPON_NO)
 		DataSave << m_iHaveWeapon;
 	else if (m_iHaveWeapon == WEAPON_OK)
-		DataSave << m_iHaveWeapon << " ";
+		DataSave << m_iHaveWeapon << " " << m_iHaveWeaponType << " " << m_iHaveWeaponIndex;
 
 	DataSave.close();
+}
+
+void User::ChangeWeapon(int WeaponType, int WeaponIndex)
+{
+	m_iHaveWeaponIndex = WeaponIndex;
+	m_iHaveWeaponType = WeaponType;
+}
+
+void User::LifeDamaged(int Damage)
+{
+	if (m_iUserCurrentLife - Damage >= 0)
+		m_iUserCurrentLife -= Damage;
+	else
+		m_iUserCurrentLife = 0;
+}
+
+void User::LifeReset()
+{
+	m_iUserCurrentLife = m_iUserMaxLife;
+}
+
+bool User::AcquireReward(int GetExp, int GetGold)
+{
+	m_iUserCurrentExp += GetExp;
+	m_iUserGold += GetGold;
+
+	if (m_iUserCurrentExp >= m_iUserMaxExp)
+		return true;
+	
+	return false;
+}
+
+void User::LevelUp(int *IncreaseAttack, int *IncreaseLife)
+{
+	m_iUserLevel++;
+	cout << m_iUserLevel << "레벨로 레벨 업 했다";
+
+	//공격력은 1~5, 생명력은 1~10 중 랜덤한 숫자로 증가
+	int iAttackPlus = (rand() % 4) + 1;
+	int iLifePlus = (rand() % 9) + 1;
+
+	m_iUserAttack += iAttackPlus;
+	m_iUserMaxLife += iLifePlus;
+	m_iUserCurrentExp = 0;
+	m_iUserMaxExp += 3;
+	m_iUserCurrentLife = m_iUserMaxLife;
+
+	IncreaseAttack = &iAttackPlus;
+	IncreaseLife = &iLifePlus;
+}
+
+void User::ForFeitGold()
+{
+	if (m_iUserGold >= 10)
+	{
+		double dForfeitGold;	//몰수 골드
+		dForfeitGold = static_cast<double>(m_iUserGold / 10);
+		m_iUserGold -= static_cast<int>(dForfeitGold);	//가진 돈 1/10이 뺏긴다
+	}
+	else if (m_iUserGold > 0 && m_iUserGold < 10)
+	{
+		m_iUserGold--;
+	}
+}
+
+void User::DeductGold(int WeaponPrice)
+{
+	m_iUserGold -= WeaponPrice;
+
+	if (m_iHaveWeapon == WEAPON_NO)
+		m_iHaveWeapon = WEAPON_OK;	//겸사겸사 무기 소지 여부 변수도 토글되게 변경
+}
+
+int User::ReturnUserInt(int VariableName)
+{
+	switch (VariableName)
+	{
+	case VARIABLE_ATTACK:
+		return m_iUserAttack;
+	case VARIABLE_CURRENTLIFE:
+		return m_iUserCurrentLife;
+	case VARIABLE_MAXLIFE:
+		return m_iUserMaxLife;
+	case VARIABLE_GOLD:
+		return m_iUserGold;
+	case VARIABLE_HAVEWEAPON:
+		return m_iHaveWeapon;
+	case VARIABLE_LEVEL:
+		return m_iUserLevel;
+	case VARIABLE_MAXEXP:
+		return m_iUserMaxExp;
+	case VARIABLE_WEAPONINDEX:
+		return m_iHaveWeaponIndex;
+	case VARIABLE_WEAPONTYPE:
+		return m_iHaveWeaponType;
+	case VARIABLE_CURRENTEXP:
+		return m_iUserCurrentExp;
+	}
 }
 
 User::~User()

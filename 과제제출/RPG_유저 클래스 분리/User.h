@@ -1,7 +1,25 @@
 #pragma once
 #include "Headers.h"
-#include "Weapon.h"
 #include "MapDraw.h"
+
+//멤버 변수 반환을 어떻게 하는 게 좋나
+//1. 하나하나 정성스럽게 리턴 함수 만들어줌
+//2. enum으로 변수 명칭 지정해주고 받으면 해당값 리턴
+//일단은 2번으로 해본다 솔직히 함수 너무 많으면 복잡하다
+
+enum VARIABLE
+{
+	VARIABLE_CURRENTLIFE,
+	VARIABLE_MAXLIFE,
+	VARIABLE_ATTACK,
+	VARIABLE_MAXEXP,
+	VARIABLE_GOLD,
+	VARIABLE_LEVEL,
+	VARIABLE_HAVEWEAPON,
+	VARIABLE_WEAPONINDEX,
+	VARIABLE_WEAPONTYPE,
+	VARIABLE_CURRENTEXP
+};
 
 class User
 {
@@ -21,18 +39,23 @@ private:
 	MapDraw UserMap;
 public:
 	User();
+	void ChangeName(string Name);
 	bool LoadDefaultUserData();	//디폴트 유저 파일 읽어오기, 텍스트를 성공적으로 읽어들였을 경우 true를 반환 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
 	bool LoadUserData(int DataNumber);	//저장된 유저 정보 불러오기
 	void SaveUserData(int DataNumber);
 	void ChangeWeapon(int WeaponIndex, int iHeaveWeaponType);
-	string ReturnUserName()
+	void LifeDamaged(int Damage);	//몹한테 대미지 입으면 피통 변경
+	void LifeReset();	//풀피로 회복
+	bool AcquireReward(int GetExp, int GetGold);	//보상 획득, 만약 레벨업시 true 반환 아닐시 false 반환
+	void LevelUp(int *IncreaseAttack, int *IncreaseLife);	//렙업해서 스탯 랜덤 증가
+	void ForFeitGold();	//지면 골드 빼앗김
+	void DeductGold(int WeaponPrice);	//무기 구매하면 골드 까야지
+
+	void ReturnUserName()
 	{
-		return m_sUserName;
+		cout << m_sUserName;
 	}
-	int ReturnUserCurrentLife()
-	{
-		return m_iUserCurrentLife;
-	}
+	int ReturnUserInt(int VariableName);	//매개변수에 따라 유저의 멤버변수 반환
 
 	inline void gotoxy(int x, int y)
 	{
