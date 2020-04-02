@@ -37,3 +37,12 @@ enum KEYBOARD
 };	//엔터 상하 스페이스 입력
 
 
+enum TYPE
+{
+	TYPE_DAGGER = 1,
+	TYPE_GUN = 2,
+	TYPE_SWORD = 3,
+	TYPE_WAND = 4,
+	TYPE_BOW = 5,
+	TYPE_HAMMER = 6
+};

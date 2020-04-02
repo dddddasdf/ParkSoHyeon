@@ -14,15 +14,7 @@ struct WeaponStruct
 	int iWeaponType;	//무기 타입
 };
 
-enum TYPE
-{
-	TYPE_DAGGER = 1,
-	TYPE_GUN = 2,
-	TYPE_SWORD = 3,
-	TYPE_WAND = 4,
-	TYPE_BOW = 5,
-	TYPE_HAMMER = 6
-};
+
 
 class Weapon: public MapDraw
 {
@@ -38,7 +30,7 @@ public:
 	bool InitWeaponCount();	//무기 리스트 가져옴
 	void InputWeaponData(string WeaponName, int WeaponPrice, int WeaponPower, int WeaponNumber, WeaponStruct *InputWeaponStruct);	//데이터 입력
 	void InitWeaponInt(WeaponStruct *MakeWeaponArr, int WeaponNumber, int WeaponType);
-	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int ChangeWeaponType, int ChangeWeaponIndex, WeaponStruct *TypeWeapon);	//무기 리스트 출력
+	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int *ChangeWeaponType, int *ChangeWeaponIndex, WeaponStruct *TypeWeapon);	//무기 리스트 출력
 	void BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon);	//무기 구매
 	~Weapon();
 };

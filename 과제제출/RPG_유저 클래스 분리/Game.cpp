@@ -84,6 +84,14 @@ bool Game::InitMonsterData()
 
 bool Game::InitWeaponData()
 {
+	WeaponPtr = new Weapon;
+	SwordPtr = new Sword;
+	BowPtr = new Bow;
+	DaggerPtr = new Dagger;
+	GunPtr = new Gun;
+	WandPtr = new Wand;
+	HammerPtr = new Hammer;
+
 	if ((WeaponPtr->InitWeaponCount()) == false)
 	{
 		GameMap.BoxErase(WIDTH, HEIGHT);
@@ -103,7 +111,7 @@ bool Game::InitWeaponData()
 	{
 		//정상적으로 파일을 읽었다면 각 무기 개수가 몇개인지 카운트 되어있음
 		//작동 순서: 무기 배열 생성 함수->무기 배열에 지역 변수를 매개 변수로 넣어서 데이터 입력
-		//SwordPtr->CreateSwordArr();
+		SwordPtr->CreateSwordArr();
 		BowPtr->CreateBowArr();
 		DaggerPtr->CreateDaggerArr();
 		GunPtr->CreateGunArr();
@@ -475,7 +483,7 @@ void Game::Attack(int Attacker, int MonsterNumber)
 			iAttackSum = Player->ReturnUserInt(VARIABLE_ATTACK) + GetWeaponPower();
 		}
 		else
-			iAttackSum = m_iUserAttack;
+			iAttackSum = Player->ReturnUserInt(VARIABLE_ATTACK);
 
 		if (MonsterArr[MonsterNumber].MonsterCurrentLife - iAttackSum >= 0)
 			MonsterArr[MonsterNumber].MonsterCurrentLife = MonsterArr[MonsterNumber].MonsterCurrentLife - iAttackSum;
@@ -503,7 +511,7 @@ void Game::ShowUserBattle()
 	gotoxy(15, 5);
 	cout << "생명력: " << Player->ReturnUserInt(VARIABLE_CURRENTLIFE) << "/" << Player->ReturnUserInt(VARIABLE_MAXLIFE);
 	gotoxy(34, 5);
-	if (m_iHaveWeapon == WEAPON_OK)
+	if (Player->ReturnUserInt(VARIABLE_HAVEWEAPON) == WEAPON_OK)
 	{
 		cout << "공격력: " << Player->ReturnUserInt(VARIABLE_ATTACK) << " + " << GetWeaponPower();
 	}
@@ -600,7 +608,7 @@ void Game::ShowUserInfo()
 	cout << "생명력: " << Player->ReturnUserInt(VARIABLE_CURRENTLIFE) << "/" << Player->ReturnUserInt(VARIABLE_MAXLIFE);
 	gotoxy(iXPos, 16);
 	
-	if (m_iHaveWeapon == WEAPON_OK)
+	if (Player->ReturnUserInt(VARIABLE_HAVEWEAPON) == WEAPON_OK)
 	{
 		int iWeaponPower = GetWeaponPower();
 		cout << "공격력: " << Player->ReturnUserInt(VARIABLE_ATTACK) << " + " << iWeaponPower;
@@ -615,7 +623,7 @@ void Game::ShowUserInfo()
 	gotoxy(iXPos, 18);
 	cout << "소지 골드: " << Player->ReturnUserInt(VARIABLE_GOLD);
 
-	if (m_iHaveWeapon == WEAPON_OK)
+	if (Player->ReturnUserInt(VARIABLE_HAVEWEAPON) == WEAPON_OK)
 	{
 		gotoxy(iXPos, 19);
 		int iWeaponType = Player->ReturnUserInt(VARIABLE_WEAPONTYPE);
@@ -676,21 +684,18 @@ int Game::GetWeaponPower()
 	int iWeaponType = Player->ReturnUserInt(VARIABLE_WEAPONTYPE);
 	int iWeaponIndex = Player->ReturnUserInt(VARIABLE_WEAPONINDEX);
 
-	switch (iWeaponType)
-	{
-	case TYPE_DAGGER:
+	if (iWeaponType == TYPE_DAGGER)
 		return DaggerPtr->ReturnDaggerPower(iWeaponIndex);
-	case TYPE_GUN:
+	else if (iWeaponType == TYPE_GUN)
 		return GunPtr->ReturnGunPower(iWeaponIndex);
-	case TYPE_WAND:
+	else if (iWeaponType == TYPE_WAND)
 		return WandPtr->ReturnWandPower(iWeaponIndex);
-	case TYPE_SWORD:
+	else if (iWeaponType == TYPE_SWORD)
 		return SwordPtr->ReturnSwordPower(iWeaponIndex);
-	case TYPE_HAMMER:
+	else if (iWeaponType == TYPE_HAMMER)
 		return HammerPtr->ReturnHammerPower(iWeaponIndex);
-	case TYPE_BOW:
+	else
 		return BowPtr->ReturnBowPower(iWeaponIndex);
-	}
 }
 
 void Game::ShowMonsterInfo()
@@ -847,14 +852,14 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex)
 
 void Game::PrintBuyMessage(int YesOrNo)
 {
-	if (YesOrNo == true)
+	if (YesOrNo == 1)
 	{
 		gotoxy(26, 28);
 		YELLOW
 			cout << "구매 성공";
 		ORIGINAL
 	}
-	else if (YesOrNo == false)
+	else if (YesOrNo == 0)
 	{
 		gotoxy(17, 28);
 		YELLOW

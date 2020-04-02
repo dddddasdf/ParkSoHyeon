@@ -43,6 +43,8 @@ bool User::LoadDefaultUserData()
 		InfoLoad >> m_iUserGold;
 		m_iUserCurrentLife = m_iUserMaxLife;
 		m_iHaveWeapon = WEAPON_NO;
+
+		m_iUserGold = 20;
 		return true;
 	}
 	else
@@ -153,7 +155,6 @@ bool User::AcquireReward(int GetExp, int GetGold)
 void User::LevelUp(int *IncreaseAttack, int *IncreaseLife)
 {
 	m_iUserLevel++;
-	cout << m_iUserLevel << "레벨로 레벨 업 했다";
 
 	//공격력은 1~5, 생명력은 1~10 중 랜덤한 숫자로 증가
 	int iAttackPlus = (rand() % 4) + 1;
@@ -165,8 +166,8 @@ void User::LevelUp(int *IncreaseAttack, int *IncreaseLife)
 	m_iUserMaxExp += 3;
 	m_iUserCurrentLife = m_iUserMaxLife;
 
-	IncreaseAttack = &iAttackPlus;
-	IncreaseLife = &iLifePlus;
+	*IncreaseAttack = iAttackPlus;
+	*IncreaseLife = iLifePlus;
 }
 
 void User::ForFeitGold()
