@@ -30,7 +30,7 @@ public:
 	bool InitWeaponCount();	//무기 리스트 가져옴
 	void InputWeaponData(string WeaponName, int WeaponPrice, int WeaponPower, int WeaponNumber, WeaponStruct *InputWeaponStruct);	//데이터 입력
 	void InitWeaponInt(WeaponStruct *MakeWeaponArr, int WeaponNumber, int WeaponType);
-	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int *ChangeWeaponType, int *ChangeWeaponIndex, WeaponStruct *TypeWeapon);	//무기 리스트 출력
+	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int &ChangeWeaponType, int &ChangeWeaponIndex, WeaponStruct *TypeWeapon);	//무기 리스트 출력
 	void BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon);	//무기 구매
 	~Weapon();
 };

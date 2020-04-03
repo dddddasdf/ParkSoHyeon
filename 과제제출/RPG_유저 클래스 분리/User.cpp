@@ -44,23 +44,10 @@ bool User::LoadDefaultUserData()
 		m_iUserCurrentLife = m_iUserMaxLife;
 		m_iHaveWeapon = WEAPON_NO;
 
-		m_iUserGold = 20;
 		return true;
 	}
-	else
-	{
-		UserMap.BoxErase(WIDTH, HEIGHT);
-
-		RED
-			gotoxy(26, 14);
-		cout << "에러 발생";
-		gotoxy(6, 16);
-		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
-		ORIGINAL
-
-		system("pause>null");
+	else	
 		return false;	//디폴트 유저 파일이 없을 경우 에러임을 표시하고 메인 화면으로 돌아간다
-	}
 }
 
 bool User::LoadUserData(int DataNumber)
@@ -92,19 +79,7 @@ bool User::LoadUserData(int DataNumber)
 		return true;
 	}
 	else
-	{
-		UserMap.BoxErase(WIDTH, HEIGHT);
-
-		RED
-		gotoxy(26, 14);
-		cout << "에러 발생";
-		gotoxy(6, 16);
-		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
-		ORIGINAL
-
-		system("pause>null");
 		return false;	//디폴트 유저 파일이 없을 경우 에러임을 표시하고 메인 화면으로 돌아간다
-	}
 }
 
 void User::SaveUserData(int DataNumber)

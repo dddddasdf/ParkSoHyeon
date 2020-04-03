@@ -31,6 +31,20 @@ bool Game::LoadDefaultUserData()
 {
 	bool bIsOpen = Player->LoadDefaultUserData();
 
+	if (bIsOpen == false)
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		RED
+			gotoxy(26, 14);
+		cout << "에러 발생";
+		gotoxy(6, 16);
+		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
+		ORIGINAL
+
+		system("pause>null");
+	}
+
 	return bIsOpen;
 }
 
@@ -190,6 +204,20 @@ bool Game::LoadUserData(int DataNumber)
 	Player = new User;
 
 	bool bIsOpen = Player->LoadUserData(DataNumber);
+
+	if (bIsOpen == false)
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		RED
+			gotoxy(26, 14);
+		cout << "에러 발생";
+		gotoxy(6, 16);
+		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
+		ORIGINAL
+
+			system("pause>null");
+	}
 
 	return bIsOpen;
 }
@@ -955,6 +983,12 @@ void Game::SaveMenu()
 				DataCheck.close();
 				Player->SaveUserData(iSelect);
 			}
+			GameMap.BoxErase(WIDTH, HEIGHT);
+			gotoxy(20, 15);
+			YELLOW
+			cout << "데이터 저장하기 성공";
+			ORIGINAL
+			system("pause>null");
 			return;
 		}
 		case 11:
