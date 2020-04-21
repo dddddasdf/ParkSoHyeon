@@ -7,6 +7,7 @@ private:
 	MapDraw GameInterface;
 	int m_iLife;
 	int m_iScore;
+	int m_iStageNumber;
 	string m_sUserName;
 public:
 	void PlayMain();	//플레이 메인 함수 
@@ -19,7 +20,9 @@ public:
 	void PrintScore();
 	void PrintName();
 	void GetName();
-	
+	void PrintStageNumber();
+
+
 	Play();
 	~Play();
 };

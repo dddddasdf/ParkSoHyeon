@@ -12,7 +12,7 @@ void MainMenu::PrintMenu()
 	while (1)
 	{
 		MenuInterface.CleaningTop();
-		//MenuInterface.CleaningBottom();
+		MenuInterface.CleaningBottom();
 
 		ChangeColor(COLOR_BLUE);
 		gotoxy(61, 8);
@@ -33,6 +33,7 @@ void MainMenu::PrintMenu()
 		{
 		case 1:
 			NowPlaying.PlayMain();
+			break;
 		case 3:
 			return;
 		}

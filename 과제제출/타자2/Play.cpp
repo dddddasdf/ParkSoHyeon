@@ -1,4 +1,5 @@
 #include "Play.h"
+#define QUEUESIZE 11
 
 //4월 20일 진행도: 이름 입력 받아서 실시간으로 뭐 썼나 보여줘ㄷ야 됨
 Play::Play()
@@ -11,11 +12,13 @@ void Play::PlayMain()
 	Init();
 	PrintSynopsis();
 
+	GetName();
 	PrintBottomArea();
 	PrintLife();
 	PrintScore();
 	PrintName();
-	GetName();
+
+	PrintStageNumber();
 }
 
 void Play::PrintSynopsis()
@@ -54,7 +57,10 @@ void Play::PrintSynopsis()
 			{
 				cIsSkip = _getch();
 				if (cIsSkip == 'S' || cIsSkip == 's')
+				{
+					delete[] SynopsisArr;
 					return;
+				}
 			}
 			if (i < 10)
 			{
@@ -86,6 +92,15 @@ void Play::PrintSynopsis()
 		{
 			Sleep(800);
 			CleanParticularArea(30, 100, 8, 19);
+			if (_kbhit())
+			{
+				cIsSkip = _getch();
+				if (cIsSkip == 'S' || cIsSkip == 's')
+				{
+					delete[] SynopsisArr;
+					return;
+				}
+			}
 			int YTmp = 0;
 			for (int j = iLines - (10 - i); j < iLines; j++)
 			{
@@ -95,7 +110,9 @@ void Play::PrintSynopsis()
 			}
 		}
 
-		Sleep(700);
+		delete[] SynopsisArr;
+
+		Sleep(800);
 		CleanParticularArea(15, 50, 8, 19);
 
 		ORIGINAL
@@ -138,6 +155,7 @@ void Play::Init()
 	m_iLife = 9;
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
+	m_iStageNumber = 1;
 }
 
 void Play::PrintBottomArea()
@@ -203,23 +221,61 @@ void Play::GetName()
 
 		CleanParticularArea(50, 80, 15, 19);
 
-		gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
 
 		if ((cInputChar >= '0' && cInputChar <= '9') || (cInputChar >= 'A' && cInputChar <= 'Z')
 			|| (cInputChar >= 'a' && cInputChar <= 'z'))
 		{
-
+			if (sNameTmp.length() == 10)
+			{
+				ChangeColor(COLOR_BLUE);
+				gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
+				cout << sNameTmp;
+				ChangeColor(COLOR_RED);
+				gotoxy(50, 19);
+				cout << "이름은 10자를 초과할 수 없음";
+			}
+			else
+			{
+				ChangeColor(COLOR_BLUE);
+				sNameTmp += cInputChar;
+				gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
+				cout << sNameTmp;
+			}
+		}
+		else if (cInputChar == KEYBOARD_ENTER)
+		{
+			m_sUserName = sNameTmp;
+			ORIGINAL
+			return;
+		}
+		else if (cInputChar == KEYBOARD_BACKSPACE)
+		{
+			sNameTmp.erase(sNameTmp.length() - 1);
+			ChangeColor(COLOR_BLUE);
+			gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
+			cout << sNameTmp;
 		}
 		else
 		{
+			ChangeColor(COLOR_BLUE);
+			gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
+			cout << sNameTmp;
 			ChangeColor(COLOR_RED);
 			gotoxy(54, 19);
 			cout << "영문 또는 숫자만 입력";
 		}
 	}
-	
+}
 
-	
+void Play::PrintStageNumber()
+{
+	GameInterface.CleaningTop();
+	ChangeColor(COLOR_BLUE);
+	gotoxy(60, 17);
+	cout << "스테이지 " << m_iStageNumber;
+	ORIGINAL
+
+	Sleep(1000);
 }
 
 Play::~Play()

@@ -16,6 +16,7 @@ using namespace std;
 
 enum KEYBOARD
 {
+	KEYBOARD_BACKSPACE = 8,
 	KEYBOARD_ENTER = 13,
 	KEYBOARD_UP = 72,
 	KEYBOARD_DOWN = 80,

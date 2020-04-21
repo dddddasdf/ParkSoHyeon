@@ -155,13 +155,20 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MapDraw.cpp" />
     <ClCompile Include="Play.cpp" />
+    <ClCompile Include="Rank.cpp" />
     <ClCompile Include="Taja.cpp" />
+    <ClCompile Include="Ward.cpp" />
+    <ClCompile Include="WardManager.cpp" />
+    <ClCompile Include="백업용.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MapDraw.h" />
     <ClInclude Include="Play.h" />
+    <ClInclude Include="Rank.h" />
+    <ClInclude Include="Ward.h" />
+    <ClInclude Include="WardManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
