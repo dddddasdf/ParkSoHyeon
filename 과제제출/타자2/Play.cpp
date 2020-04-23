@@ -10,6 +10,14 @@ Play::Play()
 void Play::PlayMain()
 {
 	Init();
+	if (GameWordManager.LoadWordTextFile() == false)
+	{
+		ChangeColor(COLOR_RED);
+		gotoxy(38, 17);
+		cout << "에러: 단어 텍스트 파일이 없음";
+		return;
+	}
+
 	PrintSynopsis();
 
 	GetName();
@@ -19,6 +27,7 @@ void Play::PlayMain()
 	PrintName();
 
 	PrintStageNumber();
+	GameWordManager.DeleteStringArr();
 }
 
 void Play::PrintSynopsis()
@@ -36,9 +45,8 @@ void Play::PrintSynopsis()
 		cout << "스킵하기: S키";
 
 		int iTopY = 18;	//9	//길이 10
-		char cIsSkip;
 
-		int iLines;
+		int iLines;	//총 줄 개수
 
 		SynopsisText >> iLines;
 
@@ -48,71 +56,64 @@ void Play::PrintSynopsis()
 			getline(SynopsisText, SynopsisArr[i]);
 
 		int iPrintLine = 0;	//출력 중인 줄이 10줄에 도달하면 출력이 시작되는 배열이 다음 걸로 넘어갈 수 있게
+		int iTopLine = 0;	//현재 맨 윗줄이 되어야 할 인덱스 번호
+		bool bIsEnd = false;
 
-		for (int i = 0; i < iLines; i++)
+		while (1)
 		{
-			Sleep(800);
-			CleanParticularArea(30, 100, 8, 19);
 			if (_kbhit())
 			{
-				cIsSkip = _getch();
-				if (cIsSkip == 'S' || cIsSkip == 's')
-				{
-					delete[] SynopsisArr;
-					return;
-				}
+				if (_getch() == 's' || _getch() == 'S')
+					break;;	//스킵 키 입력시 시놉시스 출력 함수 탈출
 			}
-			if (i < 10)
+
+			Sleep(500);
+			CleanParticularArea(30, 100, 8, 19);
+
+			if (iPrintLine < 10)
 			{
 				int YTmp = 0;
-				for (int j = iPrintLine; j <= i; j++)
+				for (int i = iTopLine; i <= iPrintLine; i++)
 				{
-					gotoxy(WIDTH - (SynopsisArr[j].length() / 2), iTopY + YTmp);
-					cout << SynopsisArr[j];
+					gotoxy(WIDTH - (SynopsisArr[i].length() / 2), iTopY + YTmp);
+					cout << SynopsisArr[i];
 					YTmp++;
 				}
 				if (iTopY > 9)
 					iTopY--;
+				iPrintLine++;
+			}
+			else if (iPrintLine >= 10 && iPrintLine < (iLines - 10))
+			{
+				iTopLine++;
+				int YTmp = 0;
+				for (int i = iTopLine; i <= iPrintLine; i++)
+				{
+					gotoxy(WIDTH - (SynopsisArr[i].length() / 2), iTopY + YTmp);
+					cout << SynopsisArr[i];
+					YTmp++;
+				}
+				iPrintLine++;
 			}
 			else
 			{
-				iPrintLine++;
+				iTopLine++;
 				int YTmp = 0;
-				for (int j = iPrintLine; j <= i; j++)
+				for (int i = iTopLine; i <= iPrintLine; i++)
 				{
-					gotoxy(WIDTH - (SynopsisArr[j].length() / 2), iTopY + YTmp);
-					cout << SynopsisArr[j];
-					YTmp++;
+					gotoxy(WIDTH - (SynopsisArr[i].length() / 2), iTopY + YTmp);
+					cout << SynopsisArr[i];
+					YTmp++;	
 				}
-			}
-		}
-
-		//앞으로 출력해야 하는 줄이 10줄 이하
-		for (int i = 1; i < 10; i++)
-		{
-			Sleep(800);
-			CleanParticularArea(30, 100, 8, 19);
-			if (_kbhit())
-			{
-				cIsSkip = _getch();
-				if (cIsSkip == 'S' || cIsSkip == 's')
-				{
-					delete[] SynopsisArr;
-					return;
-				}
-			}
-			int YTmp = 0;
-			for (int j = iLines - (10 - i); j < iLines; j++)
-			{
-				gotoxy(WIDTH - (SynopsisArr[j].length() / 2), iTopY + YTmp);
-				cout << SynopsisArr[j];
-				YTmp++;
+				if (iPrintLine != (iLines - 1))
+					iPrintLine++;
+				if (iTopLine == iLines)
+					break;
 			}
 		}
 
 		delete[] SynopsisArr;
 
-		Sleep(800);
 		CleanParticularArea(15, 50, 8, 19);
 
 		ORIGINAL
@@ -183,7 +184,7 @@ void Play::PrintLife()
 	ORIGINAL
 }
 
-void Play:: PrintScore()
+void Play::PrintScore()
 {
 	ChangeColor(COLOR_RED);
 
@@ -208,8 +209,8 @@ void Play::GetName()
 	GameInterface.CleaningTop();
 
 	ChangeColor(COLOR_BLUE);
-	gotoxy(54, 12);
-	cout << "이름 입력(영문, 숫자)";
+	gotoxy(53, 12);
+	cout << "=이름 입력(영문, 숫자)=";
 
 	string sNameTmp;
 	char cInputChar;
@@ -244,6 +245,8 @@ void Play::GetName()
 		}
 		else if (cInputChar == KEYBOARD_ENTER)
 		{
+			if (sNameTmp == "")
+				sNameTmp = "AAA";
 			m_sUserName = sNameTmp;
 			ORIGINAL
 			return;

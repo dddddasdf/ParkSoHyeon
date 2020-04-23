@@ -1,10 +1,13 @@
 #pragma once
 #include "MapDraw.h"
+#include "WordManager.h"
 
 class Play
 {
 private:
 	MapDraw GameInterface;
+	WordManager GameWordManager;
+
 	int m_iLife;
 	int m_iScore;
 	int m_iStageNumber;

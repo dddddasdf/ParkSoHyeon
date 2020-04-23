@@ -11,7 +11,6 @@ void MapDraw::PaintWall(int Width, int Height)
 	ChangeColor(COLOR_DARL_GRAY);
 	for (int y = 0; y < Height; y++)
 	{
-		//gotoxy(0, y);
 		for (int x = 0; x < Width; x++)
 		{
 			gotoxy(x * 2, y);
