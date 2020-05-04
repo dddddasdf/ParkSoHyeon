@@ -11,8 +11,9 @@ private:
 public:
 	bool LoadWordTextFile();
 	void CreatNewEnemy();
-	void MoveEnemy();
-	void CheckIsCorrect(string InputString);
+	bool MoveEnemy();
+	void PrintEnemy();
+	int CheckIsCorrect(string InputString);
 	void DeleteStringArr();
 	
 	WordManager();

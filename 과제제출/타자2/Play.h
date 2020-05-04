@@ -11,6 +11,8 @@ private:
 	int m_iLife;
 	int m_iScore;
 	int m_iStageNumber;
+	int m_iSpawnSpeed;
+	int m_iMovingSpeed;
 	string m_sUserName;
 public:
 	void PlayMain();	//플레이 메인 함수 

@@ -27,6 +27,37 @@ void Play::PlayMain()
 	PrintName();
 
 	PrintStageNumber();
+	GameInterface.CleaningTop();
+
+	int iSpawnTimer, iSpawnCounter = clock();
+	int iMovingTimer, iMovingCounter = clock();
+	
+
+	while (m_iLife != 0)
+	{
+		iSpawnTimer = clock();
+		iMovingTimer = clock();
+
+		if (iSpawnTimer - iSpawnCounter >= m_iSpawnSpeed)
+		{
+			GameWordManager.CreatNewEnemy();
+		}
+
+		if (iMovingTimer - iMovingCounter >= m_iMovingSpeed)
+		{
+			bool bTmp;
+			bTmp = GameWordManager.MoveEnemy();
+			GameInterface.CleaningTop();
+			GameWordManager.PrintEnemy();
+
+			if (bTmp == true)
+			{
+				m_iLife--;
+				PrintLife();
+			}
+		}
+	}
+
 	GameWordManager.DeleteStringArr();
 }
 
@@ -157,6 +188,8 @@ void Play::Init()
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
 	m_iStageNumber = 1;
+	m_iSpawnSpeed = 10000;
+	m_iMovingSpeed = 3000;
 }
 
 void Play::PrintBottomArea()
@@ -253,10 +286,13 @@ void Play::GetName()
 		}
 		else if (cInputChar == KEYBOARD_BACKSPACE)
 		{
-			sNameTmp.erase(sNameTmp.length() - 1);
-			ChangeColor(COLOR_BLUE);
-			gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
-			cout << sNameTmp;
+			if (sNameTmp != "")
+			{
+				sNameTmp.erase(sNameTmp.length() - 1);
+				ChangeColor(COLOR_BLUE);
+				gotoxy(WIDTH - (sNameTmp.length() / 2), 16);
+				cout << sNameTmp;
+			}
 		}
 		else
 		{

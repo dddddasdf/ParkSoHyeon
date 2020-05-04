@@ -29,7 +29,27 @@ bool WordManager::LoadWordTextFile()
 void WordManager::CreatNewEnemy()
 {
 	int iRandomNumber = rand() % m_iNumberofWords;
-	Words.NewDropWord(m_sWordArr[iRandomNumber]);
+	Words.MakeNewWordStruct(m_sWordArr[iRandomNumber]);
+}
+
+bool WordManager::MoveEnemy()
+{
+	bool bTmp;
+	bTmp = Words.Dropping();
+	return bTmp;
+}
+
+void WordManager::PrintEnemy()
+{
+	Words.Print();
+}
+
+int WordManager::CheckIsCorrect(string InputString)
+{
+	int iTmp;
+	iTmp = Words.CheckCorrect(InputString);
+
+	return iTmp;
 }
 
 void WordManager::DeleteStringArr()
