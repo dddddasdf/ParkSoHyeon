@@ -1,13 +1,16 @@
 #include "Play.h"
 #define QUEUESIZE 11
+#define INFORMATION_LINE 40
 
-//4월 20일 진행도: 이름 입력 받아서 실시간으로 뭐 썼나 보여줘ㄷ야 됨
+//5월 6일 지금 해결 해야 하는 문제,,,
+//하다가 뻗음 이건 이유 모르겠음
+
 Play::Play()
 {
 
 }
 
-void Play::PlayMain()
+void Play::PlayMain(string &NameTmp, int &ScoreTmp)
 {
 	Init();
 	if (GameWordManager.LoadWordTextFile() == false)
@@ -31,16 +34,63 @@ void Play::PlayMain()
 
 	int iSpawnTimer, iSpawnCounter = clock();
 	int iMovingTimer, iMovingCounter = clock();
-	
+	int iCombo = 0;
+	string sWordTyping = "";
+	char cInputChar;
 
 	while (m_iLife != 0)
 	{
 		iSpawnTimer = clock();
 		iMovingTimer = clock();
 
+		if (_kbhit())
+		{
+			cInputChar = _getch();
+
+			CleanParticularArea(55, 75, HORIZON + 2, HORIZON + 2);
+
+			if (cInputChar == KEYBOARD_ENTER)
+			{
+				if (sWordTyping == "")
+				{
+					cout << "자폭";
+					break;
+				}
+				
+				int iTmp = GameWordManager.CheckIsCorrect(sWordTyping);
+
+				if (iTmp != NO_ACCORDING_STRING)
+				{
+					m_iScore += 100;
+					PrintScore();
+				}
+				sWordTyping = "";
+			}
+			else if (cInputChar == KEYBOARD_BACKSPACE)
+			{
+				if (sWordTyping != "")
+				{
+					sWordTyping.erase(sWordTyping.length() - 1);
+					ChangeColor(COLOR_BLUE_GREEN);
+					gotoxy(WIDTH - (sWordTyping.length() / 2), HORIZON + 2);
+					cout << sWordTyping;
+					ORIGINAL
+				}
+			}
+			else
+			{
+				ChangeColor(COLOR_BLUE_GREEN);
+				sWordTyping += cInputChar;
+				gotoxy(WIDTH - (sWordTyping.length() / 2), HORIZON + 2);
+				cout << sWordTyping;
+				ORIGINAL
+			}
+		}
+
 		if (iSpawnTimer - iSpawnCounter >= m_iSpawnSpeed)
 		{
 			GameWordManager.CreatNewEnemy();
+			iSpawnCounter = iSpawnTimer;
 		}
 
 		if (iMovingTimer - iMovingCounter >= m_iMovingSpeed)
@@ -49,14 +99,27 @@ void Play::PlayMain()
 			bTmp = GameWordManager.MoveEnemy();
 			GameInterface.CleaningTop();
 			GameWordManager.PrintEnemy();
+			iMovingCounter = iMovingTimer;
 
 			if (bTmp == true)
 			{
 				m_iLife--;
+				CleanParticularArea((9 + m_iLife * 2), (9 + (m_iLife + 1) * 2), INFORMATION_LINE, INFORMATION_LINE);
 				PrintLife();
 			}
 		}
+
 	}
+
+	GameInterface.CleaningTop();
+	gotoxy(61, (HEIGHT) / 2);
+	ChangeColor(COLOR_BLOOD);
+	std::cout << "게임 오버";
+	ORIGINAL
+	Sleep(500);
+
+	NameTmp = m_sUserName;
+	ScoreTmp = m_iScore;
 
 	GameWordManager.DeleteStringArr();
 }
@@ -157,19 +220,6 @@ void Play::PrintSynopsis()
 	}
 }
 
-//void Play::CleaningSynopsisArea()
-//{
-//	시놉시스 출력 구간 청소
-//	for (int y = 8; y < 19; y++)
-//	{
-//		for (int x = 15; x < 50; x++)
-//		{
-//			gotoxy(x * 2, y);
-//			cout << "  ";
-//		}
-//	}
-//}
-
 void Play::CleanParticularArea(int StartX, int EndX, int StartY, int EndY)
 {
 	for (int y = StartY; y <= EndY; y++)
@@ -188,28 +238,31 @@ void Play::Init()
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
 	m_iStageNumber = 1;
-	m_iSpawnSpeed = 10000;
-	m_iMovingSpeed = 3000;
+	m_iSpawnSpeed = 1200;
+	m_iMovingSpeed = 400;
 }
 
 void Play::PrintBottomArea()
 {
+	gotoxy(55, HORIZON + 3);
+	ChangeColor(COLOR_BLUE_GREEN);
+	cout << "────────────────────";
+	ORIGINAL
+
 	ChangeColor(COLOR_RED);
-
-	gotoxy(1, HORIZON + 2);
+	gotoxy(1, INFORMATION_LINE);
 	cout << "생명력: ";
-	gotoxy(60, HORIZON + 2);
+	gotoxy(60, INFORMATION_LINE);
 	cout << "점수: ";
-	gotoxy(110, HORIZON + 2);
+	gotoxy(110, INFORMATION_LINE);
 	cout << "이름: ";
-
 	ORIGINAL
 }
 
 void Play::PrintLife()
 {
 	ChangeColor(COLOR_RED);
-	gotoxy(9, HORIZON + 2);
+	gotoxy(9, INFORMATION_LINE);
 
 	for (int i = 0; i < m_iLife; i++)
 		cout << "♥";
@@ -221,7 +274,7 @@ void Play::PrintScore()
 {
 	ChangeColor(COLOR_RED);
 
-	gotoxy(66, HORIZON + 2);
+	gotoxy(66, INFORMATION_LINE);
 	cout << m_iScore;
 
 	ORIGINAL
@@ -231,7 +284,7 @@ void Play::PrintName()
 {
 	ChangeColor(COLOR_RED);
 
-	gotoxy(116, HORIZON + 2);
+	gotoxy(116, INFORMATION_LINE);
 	cout << m_sUserName;
 
 	ORIGINAL;

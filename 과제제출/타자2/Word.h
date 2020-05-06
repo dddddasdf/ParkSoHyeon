@@ -1,6 +1,8 @@
 #pragma once
 #include "Headers.h"
 #define MAKE_ITEM 6
+#define DUMMYPOSITION -1
+#define NO_ACCORDING_STRING -1
 
 enum ITEM
 {
@@ -32,7 +34,7 @@ public:
 	bool Dropping();	//´Ü¾î ¶³±¸±â
 	void Print();
 	int CheckCorrect(string GetWord);
-	
+	void DeleteAllWords();
 
 	Word();
 	~Word();

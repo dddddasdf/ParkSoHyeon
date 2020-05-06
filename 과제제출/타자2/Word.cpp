@@ -1,6 +1,5 @@
 #include "Word.h"
-#define DUMMYPOSITION -1
-#define NO_ACCORDING_STRING -1
+
 
 Word::Word()
 {
@@ -21,6 +20,8 @@ void Word::InitNodes()
 	LastNode->iYPos = DUMMYPOSITION;
 	LastNode->sWord = "";
 	LastNode->Next = NULL;
+
+	LastNode = FirstNode;
 }
 
 void Word::MakeNewWordStruct(string NewWord)
@@ -29,15 +30,24 @@ void Word::MakeNewWordStruct(string NewWord)
 	{
 		FirstNode->sWord = NewWord;
 		FirstNode->iXPos = rand() % (WIDTH * 2);
+		if ((FirstNode->sWord.length() + FirstNode->iXPos) > (WIDTH * 2))
+		{
+			FirstNode->iXPos -= (FirstNode->sWord.length() + FirstNode->iXPos) - (WIDTH * 2);
+		}
+			
 		FirstNode->iYPos = 0;
 		FirstNode->iIsHaveItem = rand() % MAKE_ITEM;
-		LastNode = FirstNode;
 	}
 	else
 	{
 		WordStatus *NewWordTmp = new WordStatus;
 		NewWordTmp->sWord = NewWord;
 		NewWordTmp->iXPos = rand() % (WIDTH * 2);
+		if ((NewWordTmp->sWord.length() + NewWordTmp->iXPos) > (WIDTH * 2))
+		{
+			NewWordTmp->iXPos -= NewWordTmp->sWord.length();
+		}
+
 		NewWordTmp->iYPos = 0;
 		NewWordTmp->iIsHaveItem = rand() % MAKE_ITEM;
 		NewWordTmp->Next = NULL;
@@ -48,7 +58,7 @@ void Word::MakeNewWordStruct(string NewWord)
 
 bool Word::Dropping()
 {
-	int bTmp = false;	//만약 첫번째 노드가 땅에 닿는다면 true를 반환해서 피를 깔 수 있도록 한다
+	bool bTmp = false;	//만약 첫번째 노드가 땅에 닿는다면 true를 반환해서 피를 깔 수 있도록 한다
 
 	if (FirstNode->sWord != "")
 	{
@@ -62,6 +72,8 @@ bool Word::Dropping()
 			{
 				WordStatus *TmpH = FirstNode;
 				FirstNode = FirstNode->Next;
+				Tmp = FirstNode;
+				Tmp->iYPos++;
 				TmpH->iIsHaveItem = 0;
 				TmpH->iXPos = DUMMYPOSITION;
 				TmpH->iYPos = DUMMYPOSITION;
@@ -140,6 +152,31 @@ int Word::CheckCorrect(string GetWord)
 	}
 
 	return NO_ACCORDING_STRING;
+}
+
+void Word::DeleteAllWords()
+{
+	if (FirstNode->sWord != "")
+	{
+		while (1)
+		{
+			if (FirstNode == LastNode)
+			{
+				delete FirstNode;
+				break;
+			}
+			WordStatus *Tmp = FirstNode;
+			FirstNode = FirstNode->Next;
+			Tmp->iXPos = DUMMYPOSITION;
+			Tmp->iYPos = DUMMYPOSITION;
+			Tmp->iIsHaveItem = 0;
+			Tmp->sWord = "";
+			delete Tmp;
+		}
+	}
+	else
+		delete FirstNode;
+
 }
 
 Word::~Word()

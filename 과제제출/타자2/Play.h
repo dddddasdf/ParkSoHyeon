@@ -15,9 +15,8 @@ private:
 	int m_iMovingSpeed;
 	string m_sUserName;
 public:
-	void PlayMain();	//플레이 메인 함수 
+	void PlayMain(string &NameTmp, int &ScoreTmp);	//플레이 메인 함수 
 	void PrintSynopsis();
-	void CleaningSynopsisArea();	//시놉시스 출력 구간 청소
 	void CleanParticularArea(int StartX, int EndX, int StartY, int EndY);	//특정 구간 청소
 	void Init();
 	void PrintBottomArea();

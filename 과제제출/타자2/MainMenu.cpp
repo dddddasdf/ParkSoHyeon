@@ -32,8 +32,12 @@ void MainMenu::PrintMenu()
 		switch (iSelect)
 		{
 		case 1:
-			NowPlaying.PlayMain();
+		{
+			string NameTmp;
+			int ScoreTmp = 0;
+			NowPlaying.PlayMain(NameTmp, ScoreTmp);
 			break;
+		}
 		case 3:
 			return;
 		}

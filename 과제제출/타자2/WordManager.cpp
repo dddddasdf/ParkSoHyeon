@@ -19,7 +19,7 @@ bool WordManager::LoadWordTextFile()
 			WordFile >> m_sWordArr[i];
 
 		Words.InitNodes();
-
+		WordFile.close();
 		return true;
 	}
 	else
@@ -54,6 +54,7 @@ int WordManager::CheckIsCorrect(string InputString)
 
 void WordManager::DeleteStringArr()
 {
+	Words.DeleteAllWords();
 	delete[] m_sWordArr;
 }
 
