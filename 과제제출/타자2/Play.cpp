@@ -4,13 +4,20 @@
 
 //5월 6일 지금 해결 해야 하는 문제,,,
 //하다가 뻗음 이건 이유 모르겠음
+//ㄴ자꾸 중간에 노드가 붕 뜨는 게 원인이라 걍 단방향 연결리스트이던 구조를 양방향으로 바꿔버림
+//ㄴ일단 지금은 별도로 에러 뱉지 않는 듯
+//5월 7일 지금 해결 해야 하는 문제
+//깜빡임 너무 심함, 메모리 누수 발생
+//일단 스테이지와 랭킹 구현 마저하고 보자->랭크 텍스트파일 생성까진 완료함  2. 랭크 불러와서 정렬 후 출력 3. 아이템 기능 구현 남음
+//문제 하나 잡으면 문제 하나가 나오는 기적
+//분명 랜덤하게 숫자가 나와서 조건을 만족해야 스폰 타이머가 돌아가는데 좆까고 계속 돌아간다 이유가 멀까
 
 Play::Play()
 {
 
 }
 
-void Play::PlayMain(string &NameTmp, int &ScoreTmp)
+void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 {
 	Init();
 	if (GameWordManager.LoadWordTextFile() == false)
@@ -32,15 +39,23 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp)
 	PrintStageNumber();
 	GameInterface.CleaningTop();
 
-	int iSpawnTimer, iSpawnCounter = clock();
-	int iMovingTimer, iMovingCounter = clock();
-	int iCombo = 0;
+	int iSpawnTimer = clock(), iSpawnCounter = clock();
+	int iMovingTimer = 0, iMovingCounter = clock();
+	int iItemEffectTimer, iItemEffectCounter = clock();	//아이템 효과 지속용
 	string sWordTyping = "";
 	char cInputChar;
 
 	while (m_iLife != 0)
 	{
-		iSpawnTimer = clock();
+		int iTmp = 0;
+		iTmp = rand() % 1000;
+		
+		if (iTmp <= 10 * m_iStageNumber)
+		{
+			iSpawnTimer = clock();
+			
+		}
+
 		iMovingTimer = clock();
 
 		if (_kbhit())
@@ -53,7 +68,7 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp)
 			{
 				if (sWordTyping == "")
 				{
-					cout << "자폭";
+					cout << "자폭";	//테스트용 임시코드 완료되면 삭제할 것
 					break;
 				}
 				
@@ -61,10 +76,20 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp)
 
 				if (iTmp != NO_ACCORDING_STRING)
 				{
-					m_iScore += 100;
-					PrintScore();
+					GameInterface.CleaningTop();
+					GameWordManager.PrintEnemy();
+					m_iScore += 50;
+					m_iNumberOfKilledEnemy++;	
+					PrintScore();	//올바르게 입력했다면 잡은 몹 숫자 올라가고 점수도 쌓임
 				}
 				sWordTyping = "";
+
+				if ((5 + 3 * m_iStageNumber) == m_iNumberOfKilledEnemy && m_iStageNumber < 10)
+				{
+					MoveToNextStage();	//일정 개체수를 해치우면 다음 단계로 넘어감, 하지만 10단계가 최종이라 더 안 올라감(무한대로 해놓으면 타이머 카운터가 망가진다)
+					GameWordManager.ClearWords();
+					continue;
+				}
 			}
 			else if (cInputChar == KEYBOARD_BACKSPACE)
 			{
@@ -87,19 +112,21 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp)
 			}
 		}
 
-		if (iSpawnTimer - iSpawnCounter >= m_iSpawnSpeed)
+		if (iSpawnTimer - iSpawnCounter > m_iSpawnSpeed)
 		{
 			GameWordManager.CreatNewEnemy();
 			iSpawnCounter = iSpawnTimer;
 		}
 
-		if (iMovingTimer - iMovingCounter >= m_iMovingSpeed)
+		if (iMovingTimer - iMovingCounter > m_iMovingSpeed)
 		{
 			bool bTmp;
 			bTmp = GameWordManager.MoveEnemy();
 			GameInterface.CleaningTop();
 			GameWordManager.PrintEnemy();
 			iMovingCounter = iMovingTimer;
+
+			cout << iTmp;
 
 			if (bTmp == true)
 			{
@@ -116,12 +143,13 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp)
 	ChangeColor(COLOR_BLOOD);
 	std::cout << "게임 오버";
 	ORIGINAL
-	Sleep(500);
+	Sleep(1000);
 
 	NameTmp = m_sUserName;
 	ScoreTmp = m_iScore;
+	StageTmp = m_iStageNumber;
 
-	GameWordManager.DeleteStringArr();
+	GameWordManager.DeleteStringArray();
 }
 
 void Play::PrintSynopsis()
@@ -238,8 +266,9 @@ void Play::Init()
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
 	m_iStageNumber = 1;
-	m_iSpawnSpeed = 1200;
-	m_iMovingSpeed = 400;
+	m_iNumberOfKilledEnemy = 0;
+	m_iSpawnSpeed = 2500;
+	m_iMovingSpeed = 600;
 }
 
 void Play::PrintBottomArea()
@@ -368,6 +397,17 @@ void Play::PrintStageNumber()
 	ORIGINAL
 
 	Sleep(1000);
+}
+
+void Play::MoveToNextStage()
+{
+	CleanParticularArea(66, 75, INFORMATION_LINE, INFORMATION_LINE);
+	m_iScore = 0;
+	m_iNumberOfKilledEnemy = 0;
+	m_iStageNumber++;
+	PrintStageNumber();
+	m_iSpawnSpeed -= 100;
+	m_iMovingSpeed -= 50;
 }
 
 Play::~Play()

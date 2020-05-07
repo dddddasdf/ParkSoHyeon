@@ -14,7 +14,8 @@ public:
 	bool MoveEnemy();
 	void PrintEnemy();
 	int CheckIsCorrect(string InputString);
-	void DeleteStringArr();
+	void DeleteStringArray();
+	void ClearWords();
 	
 	WordManager();
 	~WordManager();

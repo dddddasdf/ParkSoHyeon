@@ -20,6 +20,7 @@ struct WordStatus
 	int iYPos;
 	int iIsHaveItem;
 	string sWord;
+	WordStatus *Previous;
 	WordStatus *Next;
 };
 

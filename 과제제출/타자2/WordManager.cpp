@@ -52,10 +52,16 @@ int WordManager::CheckIsCorrect(string InputString)
 	return iTmp;
 }
 
-void WordManager::DeleteStringArr()
+void WordManager::DeleteStringArray()
 {
 	Words.DeleteAllWords();
 	delete[] m_sWordArr;
+}
+
+void WordManager::ClearWords()
+{
+	Words.DeleteAllWords();
+	Words.InitNodes();
 }
 
 WordManager::~WordManager()

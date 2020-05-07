@@ -35,7 +35,9 @@ void MainMenu::PrintMenu()
 		{
 			string NameTmp;
 			int ScoreTmp = 0;
-			NowPlaying.PlayMain(NameTmp, ScoreTmp);
+			int StageTmp = 0;
+			NowPlaying.PlayMain(NameTmp, ScoreTmp, StageTmp);
+			Ranking.GetNameAndScore(NameTmp, ScoreTmp, StageTmp);
 			break;
 		}
 		case 3:

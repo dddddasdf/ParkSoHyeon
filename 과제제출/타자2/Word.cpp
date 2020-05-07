@@ -15,11 +15,13 @@ void Word::InitNodes()
 	FirstNode->iYPos = DUMMYPOSITION;
 	FirstNode->sWord = "";
 	FirstNode->Next = NULL;
+	FirstNode->Previous = NULL;
 
 	LastNode->iXPos = DUMMYPOSITION;
 	LastNode->iYPos = DUMMYPOSITION;
 	LastNode->sWord = "";
 	LastNode->Next = NULL;
+	LastNode->Previous = NULL;
 
 	LastNode = FirstNode;
 }
@@ -52,6 +54,7 @@ void Word::MakeNewWordStruct(string NewWord)
 		NewWordTmp->iIsHaveItem = rand() % MAKE_ITEM;
 		NewWordTmp->Next = NULL;
 		LastNode->Next = NewWordTmp;
+		NewWordTmp->Previous = LastNode;
 		LastNode = NewWordTmp;
 	}
 }
@@ -116,26 +119,25 @@ int Word::CheckCorrect(string GetWord)
 
 	WordStatus *TmpCurrent = FirstNode;
 
-	if (FirstNode->sWord == GetWord)
-	{
-		FirstNode = FirstNode->Next;
-		int iTmpItemNumber = TmpCurrent->iIsHaveItem;
-		TmpCurrent->iIsHaveItem = 0;
-		TmpCurrent->iXPos = DUMMYPOSITION;
-		TmpCurrent->iYPos = DUMMYPOSITION;
-		delete TmpCurrent;
-		return iTmpItemNumber;
-	}
-	else
-		TmpCurrent = TmpCurrent->Next;
-	
-	WordStatus *TmpPrevious = TmpCurrent;	//이전 노드로 가는 참조 없이 단방향이기 때문에 이전 노드의 주소를 저장할 별도의 임시 구조체 필요
-
 	while (1)
 	{
 		if (TmpCurrent->sWord == GetWord)
 		{
-			TmpPrevious->Next = TmpCurrent->Next;	//지워야 할 노드의 이전 노드의 다음 노드를 지워야 할 노드의 다음 노드로 변경
+			if (TmpCurrent == FirstNode)
+			{
+				FirstNode = FirstNode->Next;
+				FirstNode->Previous = NULL;	//첫번째 노드를 다음 노드로 변경한 다음 다음 노드의 이전 단계로 가는 것을 막는다
+			}
+			else if (TmpCurrent == LastNode)
+			{
+				LastNode = TmpCurrent->Previous;
+				LastNode->Next = NULL;	//마지막 노드를 이전 노드로 변경한 다음 이전 노드의 다음 단계로 가는 것을 막는다
+			}
+			else
+			{
+				(TmpCurrent->Previous)->Next = TmpCurrent->Next;
+				(TmpCurrent->Next)->Previous = TmpCurrent->Previous;	//현재 노드의 이전 노드와 다음 노드를 이어준다
+			}
 			int iTmpItemNumber = TmpCurrent->iIsHaveItem;
 			TmpCurrent->iIsHaveItem = 0;
 			TmpCurrent->iXPos = DUMMYPOSITION;
@@ -143,11 +145,9 @@ int Word::CheckCorrect(string GetWord)
 			delete TmpCurrent;
 			return iTmpItemNumber;
 		}
-		
 		if (TmpCurrent->Next == NULL)
 			break;
-		
-		TmpPrevious = TmpCurrent;
+
 		TmpCurrent = TmpCurrent->Next;
 	}
 
