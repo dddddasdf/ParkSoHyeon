@@ -39,9 +39,9 @@ bool WordManager::MoveEnemy()
 	return bTmp;
 }
 
-void WordManager::PrintEnemy()
+void WordManager::PrintEnemy(bool IsHiding)
 {
-	Words.Print();
+	Words.Print(IsHiding);
 }
 
 int WordManager::CheckIsCorrect(string InputString)

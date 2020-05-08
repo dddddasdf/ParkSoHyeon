@@ -33,8 +33,10 @@ public:
 	void InitNodes();
 	void MakeNewWordStruct(string NewWord);	//새 단어 구조체 생성
 	bool Dropping();	//단어 떨구기
-	void Print();
+	void Print(bool IsHiding);
 	int CheckCorrect(string GetWord);
+	void CleanEachWord(int iXPos, int iYPos, int WordLength);	//맞는 단어를 화면상에서 지워버리기
+
 	void DeleteAllWords();
 
 	Word();

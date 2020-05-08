@@ -12,7 +12,7 @@ public:
 	bool LoadWordTextFile();
 	void CreatNewEnemy();
 	bool MoveEnemy();
-	void PrintEnemy();
+	void PrintEnemy(bool IsHiding);
 	int CheckIsCorrect(string InputString);
 	void DeleteStringArray();
 	void ClearWords();

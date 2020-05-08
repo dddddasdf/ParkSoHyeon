@@ -1,6 +1,9 @@
 #include "Play.h"
 #define QUEUESIZE 11
 #define INFORMATION_LINE 40
+#define MAX_STAGE 10
+#define HIDING_TIME 1500
+#define VELOCITY_TIME 2000
 
 //5월 6일 지금 해결 해야 하는 문제,,,
 //하다가 뻗음 이건 이유 모르겠음
@@ -8,9 +11,9 @@
 //ㄴ일단 지금은 별도로 에러 뱉지 않는 듯
 //5월 7일 지금 해결 해야 하는 문제
 //깜빡임 너무 심함, 메모리 누수 발생
-//일단 스테이지와 랭킹 구현 마저하고 보자->랭크 텍스트파일 생성까진 완료함  2. 랭크 불러와서 정렬 후 출력 3. 아이템 기능 구현 남음
-//문제 하나 잡으면 문제 하나가 나오는 기적
-//분명 랜덤하게 숫자가 나와서 조건을 만족해야 스폰 타이머가 돌아가는데 좆까고 계속 돌아간다 이유가 멀까
+//일단 스테이지와 랭킹 구현 마저하고 보자->랭크 텍스트파일 생성까진 완료함  2. 랭크 불러와서 정렬 후 출력
+//깜빡임 고침 공정률 95%
+
 
 Play::Play()
 {
@@ -39,25 +42,20 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 	PrintStageNumber();
 	GameInterface.CleaningTop();
 
-	int iSpawnTimer = clock(), iSpawnCounter = clock();
 	int iMovingTimer = 0, iMovingCounter = clock();
-	int iItemEffectTimer, iItemEffectCounter = clock();	//아이템 효과 지속용
+	int iSlowEffectTimer = 0, iSlowEffectCounter = 0;	//아이템-느리게 효과 지속용
+	int iFastEffectTimer = 0, iFastEffectCounter = 0;	//아이템-빠르게 효과 지속용
+	int iStopEffectTimer = 0, iStopEffectCounter = 0;	//아이템-멈춤 효과 지속용
+	int iHidingEffectTimer = 0, iHidingEffectCounter = 0;	//아이템-감추기 효과 지속용
 	string sWordTyping = "";
 	char cInputChar;
+	bool bIsFast = false;
+	bool bIsSlow = false;
+	bool bIsStop = false;
+	bool bIsHiding = false;
 
 	while (m_iLife != 0)
 	{
-		int iTmp = 0;
-		iTmp = rand() % 1000;
-		
-		if (iTmp <= 10 * m_iStageNumber)
-		{
-			iSpawnTimer = clock();
-			
-		}
-
-		iMovingTimer = clock();
-
 		if (_kbhit())
 		{
 			cInputChar = _getch();
@@ -76,20 +74,54 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 
 				if (iTmp != NO_ACCORDING_STRING)
 				{
-					GameInterface.CleaningTop();
-					GameWordManager.PrintEnemy();
 					m_iScore += 50;
 					m_iNumberOfKilledEnemy++;	
 					PrintScore();	//올바르게 입력했다면 잡은 몹 숫자 올라가고 점수도 쌓임
 				}
 				sWordTyping = "";
 
-				if ((5 + 3 * m_iStageNumber) == m_iNumberOfKilledEnemy && m_iStageNumber < 10)
+				if ((5 + 3 * m_iStageNumber) == m_iNumberOfKilledEnemy && m_iStageNumber < MAX_STAGE)
 				{
+					GameInterface.CleaningTop();
 					MoveToNextStage();	//일정 개체수를 해치우면 다음 단계로 넘어감, 하지만 10단계가 최종이라 더 안 올라감(무한대로 해놓으면 타이머 카운터가 망가진다)
 					GameWordManager.ClearWords();
 					continue;
 				}
+
+				//아이템 발동 목록
+				if (iTmp == ITEM_SLOW)
+				{
+					bIsSlow = true;
+					m_iMovingSpeed = 800;
+					iSlowEffectCounter = clock();
+					iSlowEffectTimer = clock();
+				}
+				else if (iTmp == ITEM_FAST)
+				{
+					bIsFast = true;
+					m_iMovingSpeed = 200;
+					iFastEffectCounter = clock();
+					iFastEffectTimer = clock();
+				}
+				else if (iTmp == ITEM_STOP)
+				{
+					bIsStop = true;
+					iStopEffectCounter = clock();
+					iStopEffectTimer = clock();
+				}
+				else if (iTmp == ITEM_DELETE_ALL)
+				{
+					GameInterface.CleaningTop();
+					GameWordManager.ClearWords();
+				}
+				else if (iTmp == ITEM_HIDE)
+				{
+					bIsHiding = true;
+					GameWordManager.PrintEnemy(bIsHiding);
+					iHidingEffectCounter = clock();
+					iHidingEffectTimer = clock();
+				}
+				//아이템 발동 목록 끝
 			}
 			else if (cInputChar == KEYBOARD_BACKSPACE)
 			{
@@ -112,21 +144,63 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 			}
 		}
 
-		if (iSpawnTimer - iSpawnCounter > m_iSpawnSpeed)
+		if (bIsSlow == true)
 		{
-			GameWordManager.CreatNewEnemy();
-			iSpawnCounter = iSpawnTimer;
+			iSlowEffectTimer = clock();
+			if (iSlowEffectTimer - iSlowEffectCounter >= VELOCITY_TIME)
+			{
+				bIsSlow = false;
+				iSlowEffectCounter = iSlowEffectTimer;
+				m_iMovingSpeed = 600 - 30 * (m_iStageNumber - 1);
+			}
+		}
+
+		if (bIsFast == true)
+		{
+			iFastEffectTimer = clock();
+			if (iFastEffectTimer - iFastEffectCounter >= VELOCITY_TIME)
+			{
+				bIsSlow = false;
+				iFastEffectCounter = iFastEffectTimer;
+				m_iMovingSpeed = 600 - 30 * (m_iStageNumber - 1);
+			}
+		}
+
+		if (bIsStop == true)
+		{
+			iStopEffectTimer = clock();
+			if (iStopEffectTimer - iStopEffectCounter >= VELOCITY_TIME)
+			{
+				bIsStop = false;
+				iStopEffectCounter = iStopEffectTimer;
+			}
+		}
+		else
+			iMovingTimer = clock();
+
+		if (bIsHiding == true)
+		{
+			iHidingEffectTimer = clock();
+			if (iHidingEffectTimer - iHidingEffectCounter >= HIDING_TIME)
+			{
+				bIsHiding = false;
+				m_iMovingSpeed = 600 - 50 * (m_iStageNumber - 1);
+				iHidingEffectCounter = iHidingEffectTimer;
+			}
 		}
 
 		if (iMovingTimer - iMovingCounter > m_iMovingSpeed)
 		{
+			int iTmp = 0;
+			iTmp = rand() % 100;
+
+			if (iTmp <= 10 * m_iStageNumber)
+				GameWordManager.CreatNewEnemy();
+			
 			bool bTmp;
 			bTmp = GameWordManager.MoveEnemy();
-			GameInterface.CleaningTop();
-			GameWordManager.PrintEnemy();
+			GameWordManager.PrintEnemy(bIsHiding);
 			iMovingCounter = iMovingTimer;
-
-			cout << iTmp;
 
 			if (bTmp == true)
 			{
@@ -135,7 +209,6 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 				PrintLife();
 			}
 		}
-
 	}
 
 	GameInterface.CleaningTop();
@@ -265,7 +338,7 @@ void Play::Init()
 	m_iLife = 9;
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
-	m_iStageNumber = 1;
+	m_iStageNumber = 7;
 	m_iNumberOfKilledEnemy = 0;
 	m_iSpawnSpeed = 2500;
 	m_iMovingSpeed = 600;
@@ -397,6 +470,8 @@ void Play::PrintStageNumber()
 	ORIGINAL
 
 	Sleep(1000);
+
+	CleanParticularArea(60, 75, 17, 17);
 }
 
 void Play::MoveToNextStage()
@@ -405,9 +480,10 @@ void Play::MoveToNextStage()
 	m_iScore = 0;
 	m_iNumberOfKilledEnemy = 0;
 	m_iStageNumber++;
+	PrintScore();
 	PrintStageNumber();
 	m_iSpawnSpeed -= 100;
-	m_iMovingSpeed -= 50;
+	m_iMovingSpeed = 600 - 30 * (m_iStageNumber - 1);
 }
 
 Play::~Play()

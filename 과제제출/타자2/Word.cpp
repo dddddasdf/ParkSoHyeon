@@ -31,14 +31,18 @@ void Word::MakeNewWordStruct(string NewWord)
 	if (FirstNode->sWord == "")
 	{
 		FirstNode->sWord = NewWord;
-		FirstNode->iXPos = rand() % (WIDTH * 2);
+		FirstNode->iXPos = rand() % ((WIDTH * 2) - 1);
 		if ((FirstNode->sWord.length() + FirstNode->iXPos) > (WIDTH * 2))
 		{
 			FirstNode->iXPos -= (FirstNode->sWord.length() + FirstNode->iXPos) - (WIDTH * 2);
 		}
 			
 		FirstNode->iYPos = 0;
-		FirstNode->iIsHaveItem = rand() % MAKE_ITEM;
+		int iTmp = rand() % 10;
+		if (iTmp == 0 || iTmp > 5)
+			FirstNode->iIsHaveItem = ITEM_NULL;
+		else
+			FirstNode->iIsHaveItem = iTmp;
 	}
 	else
 	{
@@ -51,7 +55,11 @@ void Word::MakeNewWordStruct(string NewWord)
 		}
 
 		NewWordTmp->iYPos = 0;
-		NewWordTmp->iIsHaveItem = rand() % MAKE_ITEM;
+		int iTmp = rand() % 10;
+		if (iTmp == 0 || iTmp > 5)
+			FirstNode->iIsHaveItem = ITEM_NULL;
+		else
+			FirstNode->iIsHaveItem = iTmp;
 		NewWordTmp->Next = NULL;
 		LastNode->Next = NewWordTmp;
 		NewWordTmp->Previous = LastNode;
@@ -69,6 +77,7 @@ bool Word::Dropping()
 
 		while (1)
 		{
+			CleanEachWord(Tmp->iXPos, Tmp->iYPos, Tmp->sWord.length());
 			Tmp->iYPos++;
 
 			if (FirstNode->iYPos == HORIZON)
@@ -82,11 +91,16 @@ bool Word::Dropping()
 				TmpH->iYPos = DUMMYPOSITION;
 				bTmp = true;	//false이던 bTmp를 true로 변환
 				delete TmpH;
+
+				if (Tmp->Next == NULL)
+					break;
+
+				continue;
 			}
 
 			if (Tmp->Next == NULL)
 				break;
-
+			
 			Tmp = Tmp->Next;
 		}
 	}
@@ -94,22 +108,42 @@ bool Word::Dropping()
 	return bTmp;
 }
 
-void Word::Print()
+void Word::Print(bool IsHiding)
 {
 	WordStatus *Tmp = FirstNode;
-	ChangeColor(COLOR_BLUE);
 
-	while (1)
+	if (IsHiding == false)
 	{
-		gotoxy(Tmp->iXPos, Tmp->iYPos);
-		cout << Tmp->sWord;
+		ChangeColor(COLOR_BLUE);
 
-		if (Tmp->Next == NULL)
-			break;
+		while (1)
+		{
+			gotoxy(Tmp->iXPos, Tmp->iYPos);
+			cout << Tmp->sWord;
 
-		Tmp = Tmp->Next;
+			if (Tmp->Next == NULL)
+				break;
+
+			Tmp = Tmp->Next;
+		}
+		ORIGINAL
 	}
-	ORIGINAL
+	else if (IsHiding == true)
+	{
+		ChangeColor(COLOR_BLUE);
+
+		while (1)
+		{
+			gotoxy(Tmp->iXPos, Tmp->iYPos);
+			cout << "(^^)      ";
+			
+			if (Tmp->Next == NULL)
+				break;
+
+			Tmp = Tmp->Next;
+		}
+		ORIGINAL
+	}
 }
 
 int Word::CheckCorrect(string GetWord)
@@ -125,8 +159,21 @@ int Word::CheckCorrect(string GetWord)
 		{
 			if (TmpCurrent == FirstNode)
 			{
-				FirstNode = FirstNode->Next;
-				FirstNode->Previous = NULL;	//첫번째 노드를 다음 노드로 변경한 다음 다음 노드의 이전 단계로 가는 것을 막는다
+				if (FirstNode->Next != NULL)
+				{
+					FirstNode = FirstNode->Next;
+					FirstNode->Previous = NULL;	//첫번째 노드를 다음 노드로 변경한 다음 다음 노드의 이전 단계로 가는 것을 막는다
+				}
+				else
+				{
+					int iTmpItemNumber = FirstNode->iIsHaveItem;
+					CleanEachWord(FirstNode->iXPos, FirstNode->iYPos, (FirstNode->sWord).length());
+					FirstNode->iIsHaveItem = 0;
+					FirstNode->iXPos = DUMMYPOSITION;
+					FirstNode->iYPos = DUMMYPOSITION;
+					FirstNode->sWord = "";
+					return iTmpItemNumber;	//첫번째 노드만 존재하고 있고 해당 노드를 맞힌 것이면 노드 내용만 청소한다
+				}
 			}
 			else if (TmpCurrent == LastNode)
 			{
@@ -139,6 +186,7 @@ int Word::CheckCorrect(string GetWord)
 				(TmpCurrent->Next)->Previous = TmpCurrent->Previous;	//현재 노드의 이전 노드와 다음 노드를 이어준다
 			}
 			int iTmpItemNumber = TmpCurrent->iIsHaveItem;
+			CleanEachWord(TmpCurrent->iXPos, TmpCurrent->iYPos, (TmpCurrent->sWord).length());
 			TmpCurrent->iIsHaveItem = 0;
 			TmpCurrent->iXPos = DUMMYPOSITION;
 			TmpCurrent->iYPos = DUMMYPOSITION;
@@ -152,6 +200,13 @@ int Word::CheckCorrect(string GetWord)
 	}
 
 	return NO_ACCORDING_STRING;
+}
+
+void Word::CleanEachWord(int iXPos, int iYPos, int WordLength)
+{
+	gotoxy(iXPos, iYPos);
+	for (int i = 0; i <= WordLength; i++)
+		cout << "　";
 }
 
 void Word::DeleteAllWords()
