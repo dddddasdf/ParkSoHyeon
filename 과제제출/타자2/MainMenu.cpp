@@ -40,6 +40,9 @@ void MainMenu::PrintMenu()
 			Ranking.GetNameAndScore(NameTmp, ScoreTmp, StageTmp);
 			break;
 		}
+		case 2:
+			Ranking.ShowRanking();
+			break;
 		case 3:
 			return;
 		}

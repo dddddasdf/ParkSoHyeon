@@ -5,15 +5,6 @@
 #define HIDING_TIME 1500
 #define VELOCITY_TIME 2000
 
-//5월 6일 지금 해결 해야 하는 문제,,,
-//하다가 뻗음 이건 이유 모르겠음
-//ㄴ자꾸 중간에 노드가 붕 뜨는 게 원인이라 걍 단방향 연결리스트이던 구조를 양방향으로 바꿔버림
-//ㄴ일단 지금은 별도로 에러 뱉지 않는 듯
-//5월 7일 지금 해결 해야 하는 문제
-//깜빡임 너무 심함, 메모리 누수 발생
-//일단 스테이지와 랭킹 구현 마저하고 보자->랭크 텍스트파일 생성까진 완료함  2. 랭크 불러와서 정렬 후 출력
-//깜빡임 고침 공정률 95%
-
 
 Play::Play()
 {
@@ -144,6 +135,7 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 			}
 		}
 
+		//아이템 지속시간 체크 시작
 		if (bIsSlow == true)
 		{
 			iSlowEffectTimer = clock();
@@ -188,6 +180,7 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 				iHidingEffectCounter = iHidingEffectTimer;
 			}
 		}
+		//아이템 지속 시간 체크 끝
 
 		if (iMovingTimer - iMovingCounter > m_iMovingSpeed)
 		{
@@ -335,10 +328,10 @@ void Play::CleanParticularArea(int StartX, int EndX, int StartY, int EndY)
 
 void Play::Init()
 {
-	m_iLife = 9;
+	m_iLife = 10;
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
-	m_iStageNumber = 7;
+	m_iStageNumber = 6;
 	m_iNumberOfKilledEnemy = 0;
 	m_iSpawnSpeed = 2500;
 	m_iMovingSpeed = 600;

@@ -85,7 +85,6 @@ bool Word::Dropping()
 				WordStatus *TmpH = FirstNode;
 				FirstNode = FirstNode->Next;
 				Tmp = FirstNode;
-				Tmp->iYPos++;
 				TmpH->iIsHaveItem = 0;
 				TmpH->iXPos = DUMMYPOSITION;
 				TmpH->iYPos = DUMMYPOSITION;
@@ -135,7 +134,7 @@ void Word::Print(bool IsHiding)
 		while (1)
 		{
 			gotoxy(Tmp->iXPos, Tmp->iYPos);
-			cout << "(^^)      ";
+			cout << "(^^)      ";	//단어 가리기 발동시
 			
 			if (Tmp->Next == NULL)
 				break;
