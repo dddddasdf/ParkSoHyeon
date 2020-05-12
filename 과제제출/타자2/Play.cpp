@@ -54,13 +54,7 @@ void Play::PlayMain(string &NameTmp, int &ScoreTmp, int &StageTmp)
 			CleanParticularArea(55, 75, HORIZON + 2, HORIZON + 2);
 
 			if (cInputChar == KEYBOARD_ENTER)
-			{
-				if (sWordTyping == "")
-				{
-					cout << "자폭";	//테스트용 임시코드 완료되면 삭제할 것
-					break;
-				}
-				
+			{				
 				int iTmp = GameWordManager.CheckIsCorrect(sWordTyping);
 
 				if (iTmp != NO_ACCORDING_STRING)
@@ -331,7 +325,7 @@ void Play::Init()
 	m_iLife = 10;
 	m_iScore = 0;
 	m_sUserName = "\? \? \?";
-	m_iStageNumber = 6;
+	m_iStageNumber = 1;
 	m_iNumberOfKilledEnemy = 0;
 	m_iSpawnSpeed = 2500;
 	m_iMovingSpeed = 600;
