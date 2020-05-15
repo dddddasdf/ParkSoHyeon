@@ -40,18 +40,16 @@ void RemoveIntElement(int *Array, int Condition, int &NumberOfData)
 {
 	for (int i = 0; i < LIST_SIZE; i++)
 	{
-		if (0 == (Array[i] % Condition))
+		if (0 == (Array[i] % Condition) && 0 != Array[i])
 		{
 			for (int j = i; j < LIST_SIZE - 1; j++)
 			{
+				Array[j] = Array[j + 1];
 				if (j + 1 == (NumberOfData - 1))
 				{
-					Array[j] = Array[j + 1];
 					Array[j + 1] = 0;
 					break;
-				}
-				else
-					Array[j] = Array[j + 1];
+				}			
 			}
 			NumberOfData--;
 		}
