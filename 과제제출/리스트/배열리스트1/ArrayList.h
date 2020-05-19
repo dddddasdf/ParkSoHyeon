@@ -1,15 +1,32 @@
-#pragma once
-#include <iostream>
-#define LIST_SIZE 9
+#ifndef __ARRAY_LIST_H__
+#define __ARRAY_LIST_H__
+#include <stdio.h>
+#include <stdlib.h>
 
-void CreateIntArray();
+#define TRUE		1 // '참'을 표현하기 위한 매크로 정의
+#define FALSE		0 // '거짓'을 표현하기 위한 매크로 정의
 
-void InitIntArray(int *Array);
+#define LIST_LEN	100
 
-void SearchIntArray(int *Array, int NumberOfData);
+typedef int LData; // LData에 대한 typedef 선언 - int형
 
-void SumIntArray(int *Array, int NumberOfData);
+typedef struct __ArrayList // 배열기반 리스트를 정의한 구조체
+{
+	LData arr[LIST_LEN]; // 리스트의 저장소인 배열
+	int numOfData;		 // 저장된 데이터의 수
+	int curPosition;	 // 데이터 참조위치를 기록
+}ArrayList;
 
-void RemoveIntElement(int *Array, int Condition, int &NumberOfData);
+typedef ArrayList List;
 
-void FreeIntArray(int *Array);
+void ListInit(List* plist); // 초기화
+void LInsert(List* plist, LData data); // 데이터 저장
+
+int LFirst(List* plist, LData* data); // 첫 데이터 참조
+int LNext(List* plist, LData* data); // 두 번째 이후 데이터 참조
+
+LData LRemove(List* plist); // 참조한 데이터 삭제
+int LCount(List* plist); // 저장된 데이터의 수 반환
+
+
+#endif
