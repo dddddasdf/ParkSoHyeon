@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void InputInformation(NameCard *Array[])
+void InputInformation(NameCard Array[], int Size)
 {
 	char NameTmp[NAME_LEN];
 	char PhoneTmp[PHONE_LEN];
@@ -14,40 +14,40 @@ void InputInformation(NameCard *Array[])
 	printf("2. 등록할 연락처 입력: ");
 	scanf("%s", PhoneTmp);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < Size; i++)
 	{
-		if (Array[i]->name == 0)
+		if (strcmp(Array[i].name, "") == 0)
 		{
-			Array[i] = MakeNameCard(NameTmp, PhoneTmp);
+			Array[i] = *MakeNameCard(NameTmp, PhoneTmp);
 			break;
 		}
 	}
 }
 
-void SearchInformation(NameCard *Array[])
+void SearchInformation(NameCard Array[], int Size)
 {
 	printf("검색할 이름 입력: ");
 	char NameSearch[NAME_LEN];
 	scanf("%s", NameSearch);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < Size; i++)
 	{
-		if (NameCompare(Array[i], NameSearch) == 0)
+		if (NameCompare(&Array[i], NameSearch) == 0)
 		{
-			ShowNameCardInfo(Array[i]);
+			ShowNameCardInfo(&Array[i]);
 			return;
 		}
 	}
 	printf("해당하는 이름을 가진 사람이 없습니다.\n");
 }
 
-void SearchPhoneNumber(NameCard *Array[])
+void SearchPhoneNumber(NameCard *Array[], int Size)
 {
 	printf("검색할 이름 입력: ");
 	char NameSearch[NAME_LEN];
 	scanf("%s", NameSearch);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < Size; i++)
 	{
 		if (NameCompare(Array[i], NameSearch) == 0)
 		{
@@ -61,13 +61,13 @@ void SearchPhoneNumber(NameCard *Array[])
 	printf("해당하는 이름을 가진 사람이 없습니다.\n");
 }
 
-void DeleteInformation(NameCard *Array[])
+void DeleteInformation(NameCard *Array[], int *Size)
 {
 	printf("검색할 이름 입력: ");
 	char NameSearch[NAME_LEN];
 	scanf("%s", NameSearch);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < *Size; i++)
 	{
 		if (NameCompare(Array[i], NameSearch) == 0)
 		{
@@ -77,6 +77,7 @@ void DeleteInformation(NameCard *Array[])
 				if (j + 1 == 3)
 				{
 					Array[j] = 0;
+					Size--;
 					return;
 				}
 			}
@@ -85,9 +86,9 @@ void DeleteInformation(NameCard *Array[])
 	printf("해당하는 이름을 가진 사람이 없습니다.\n");
 }
 
-void ShowLinear(NameCard *Array[])
+void ShowLinear(NameCard *Array[], int Size)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < Size; i++)
 	{
 		if (Array[i] != 0)
 			ShowNameCardInfo(Array[i]);
@@ -96,16 +97,24 @@ void ShowLinear(NameCard *Array[])
 
 int main()
 {
-	NameCard *CardArray[3] = { 0 };
+	int iSize = 0;
+	printf("등록할 인원수 입력: ");
+	scanf("%d", &iSize);
 	
-	InputInformation(CardArray);
-	InputInformation(CardArray);
-	InputInformation(CardArray);
+	NameCard *CardArray = (NameCard*)calloc(iSize, sizeof(NameCard));
 
-	SearchInformation(CardArray);
-	SearchPhoneNumber(CardArray);
-	DeleteInformation(CardArray);
-	ShowLinear(CardArray);
+	int iNumberOfInput = 0;
+
+	while (iNumberOfInput != iSize)
+	{
+		InputInformation(CardArray, iSize);
+		iNumberOfInput++;
+	}
+	
+	SearchInformation(&CardArray, iSize);
+	SearchPhoneNumber(&CardArray, iSize);
+	DeleteInformation(&CardArray, &iSize);
+	ShowLinear(&CardArray, iSize);
 
 	return 0;
 }
