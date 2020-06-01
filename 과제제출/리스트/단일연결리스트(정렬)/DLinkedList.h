@@ -19,12 +19,16 @@ typedef struct _linkedlist
 	Node *Current;
 	Node *Previous;
 	int NumberOfData;
+
+	int (*Compare)(int, int);
 }LinkedList;
 
 typedef LinkedList List;
 
 void ListInit(List* plist); // 초기화
+void SetSortRule(List *plist, int(*Compare)(LData D1, LData D2));
 void LInsert(List* plist, LData data); // 데이터 저장
+void SInsert(List* plist, LData data);	//데이터 저장-정렬
 
 int LFirst(List* plist, LData* data); // 첫 데이터 참조
 int LNext(List* plist, LData* data); // 두 번째 이후 데이터 참조

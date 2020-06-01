@@ -2,12 +2,22 @@
 #include <stdlib.h>
 #include "DLinkedList.h"
 
+#define LARGE 2
+#define EQUAL 1
+#define SMALL 0
+
 void ListInit(List* plist)
 {
 	(plist->NumberOfData) = 0; // 리스트에 저장된 데이터의 수는 0!
 	plist->Head = (Node*)malloc(sizeof(Node));
 	plist->Head->Next = NULL;
 	plist->Current = NULL;
+	plist->Compare = NULL;
+}
+
+void SetSortRule(List *plist, int(*Compare)(LData D1, LData D2))
+{
+	plist->Compare = Compare;
 }
 
 void LInsert(List* plist, LData data)
@@ -18,6 +28,41 @@ void LInsert(List* plist, LData data)
 	plist->Head->Next = NewNode;
 	
 	(plist->NumberOfData)++; // 저장된 데이터의 수 증가
+}
+
+void SInsert(List* plist, LData data) 
+{
+	Node *NewNode = (Node*)malloc(sizeof(Node));
+	NewNode->data = data;
+	Node *Tmp = plist->Head;
+
+	int IsCompare = 0;
+
+	while (Tmp->Next != NULL)
+	{
+		IsCompare = plist->Compare(data->xpos, Tmp->Next->data->xpos);
+
+		if (IsCompare == SMALL)
+			break;
+		else if (IsCompare == EQUAL)
+		{
+			IsCompare = plist->Compare(data->ypos, Tmp->Next->data->ypos);
+
+			if (IsCompare == SMALL)
+				break;
+			else
+			{
+				Tmp = Tmp->Next;
+				break;
+			}
+		}
+		Tmp = Tmp->Next;
+	}
+
+	NewNode->Next = Tmp->Next;
+	Tmp->Next = NewNode;
+
+	(plist->NumberOfData)++;
 }
 
 int LFirst(List* plist, LData* pdata) // 첫 번째 조회

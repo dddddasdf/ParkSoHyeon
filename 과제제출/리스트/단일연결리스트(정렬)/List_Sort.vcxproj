@@ -143,6 +143,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DLinkedList.c" />
+    <ClCompile Include="Point.c" />
+    <ClCompile Include="PointListMain.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DLinkedList.h" />
+    <ClInclude Include="Point.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

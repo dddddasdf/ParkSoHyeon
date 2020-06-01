@@ -1,7 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "DLinkedList.h"
 #include "Point.h"
+
+#define LARGE 2
+#define EQUAL 1
+#define SMALL 0
+
+int Standard(int NewObject, int Target)
+{
+	if (NewObject > Target)
+		return LARGE;	//새로 만들어진 노드가 비교 대상보다 클 경우 참 반환
+	else if (NewObject == Target)
+		return EQUAL;
+	else
+		return SMALL;	//아닐시 거짓 반환
+}
 
 int main(void)
 {
@@ -10,23 +25,36 @@ int main(void)
 	Point * ppos;
 
 	ListInit(&list);
+	SetSortRule(&list, Standard);
 
 	/*** 4개의 데이터 저장 ***/
 	ppos = (Point*)malloc(sizeof(Point));
-	SetPointPos(ppos, 2, 1);
+	SetPointPos(ppos, 4, 1);
 	LInsert(&list, ppos);
 
 	ppos = (Point*)malloc(sizeof(Point));
 	SetPointPos(ppos, 2, 2);
-	LInsert(&list, ppos);
+	SInsert(&list, ppos);
 
 	ppos = (Point*)malloc(sizeof(Point));
-	SetPointPos(ppos, 3, 1);
-	LInsert(&list, ppos);
+	SetPointPos(ppos, 3, 6);
+	SInsert(&list, ppos);
 
 	ppos = (Point*)malloc(sizeof(Point));
 	SetPointPos(ppos, 3, 2);
-	LInsert(&list, ppos);
+	SInsert(&list, ppos);
+
+	ppos = (Point*)malloc(sizeof(Point));
+	SetPointPos(ppos, 1, 6);
+	SInsert(&list, ppos);
+
+	ppos = (Point*)malloc(sizeof(Point));
+	SetPointPos(ppos, 10, 2);
+	SInsert(&list, ppos);
+
+	ppos = (Point*)malloc(sizeof(Point));
+	SetPointPos(ppos, 3, 1);
+	SInsert(&list, ppos);
 
 	/*** 저장된 데이터의 출력 ***/
 	printf("현재 데이터의 수: %d \n", LCount(&list));
