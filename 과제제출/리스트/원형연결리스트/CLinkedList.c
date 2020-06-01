@@ -105,7 +105,39 @@ void InitToday(List *plist)
 	plist->Today = plist->Tail->next;
 }
 
-char* ReturnName(List *plist)
+char* ReturnName(List *plist, int Type)
 {
-	return (plist->Today->data->sName);
+	if (Type == 1)
+		return (plist->Today->data->sName);
+	else
+		return (plist->Current->data->sName);
+}
+
+void MoveNextDay(List *plist)
+{
+	plist->Today = plist->Today->next;
+}
+
+int CheckStaff(List *plist, char *Name, int Date)
+{
+	if (plist->Tail == NULL)
+		return 0;
+	
+	plist->Current = plist->Tail->next;
+
+	while (1)
+	{
+		if (strcmp(plist->Current->data->sName, Name) == 0)
+			break;
+
+		if (plist->Current->next == plist->Tail->next)
+			return 1;
+
+		plist->Current = plist->Current->next;
+	}
+
+	for (int i = 0; i < Date; i++)
+		plist->Current = plist->Current->next;
+	
+	return 2;
 }

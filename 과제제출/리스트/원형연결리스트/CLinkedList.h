@@ -40,6 +40,8 @@ Data LRemove(List * plist);
 int LCount(List * plist);
 
 void InitToday(List *plist);
-char* ReturnName(List *plist);
+char* ReturnName(List *plist, int Type);	//Type == 1은 오늘 당직 이름 반환, Type == 0은 현재 이름 반환
+void MoveNextDay(List *plist);
+int CheckStaff(List *plist, char *Name, int Date);
 
 #endif

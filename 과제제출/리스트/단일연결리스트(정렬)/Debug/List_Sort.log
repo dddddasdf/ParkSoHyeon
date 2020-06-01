@@ -1,0 +1,9 @@
+﻿  DLinkedList.c
+e:\github\parksohyeon\과제제출\리스트\단일연결리스트(정렬)\dlinkedlist.c(20): warning C4028: 정식 매개 변수 1이(가) 선언과 다릅니다.
+e:\github\parksohyeon\과제제출\리스트\단일연결리스트(정렬)\dlinkedlist.c(20): warning C4028: 정식 매개 변수 2이(가) 선언과 다릅니다.
+  Point.c
+  PointListMain.c
+e:\github\parksohyeon\과제제출\리스트\단일연결리스트(정렬)\pointlistmain.c(28): warning C4028: 정식 매개 변수 1이(가) 선언과 다릅니다.
+e:\github\parksohyeon\과제제출\리스트\단일연결리스트(정렬)\pointlistmain.c(28): warning C4028: 정식 매개 변수 2이(가) 선언과 다릅니다.
+  코드를 생성하고 있습니다...
+  List_Sort.vcxproj -> E:\GitHub\ParkSoHyeon\과제제출\리스트\단일연결리스트(정렬)\Debug\List_Sort.exe
