@@ -55,7 +55,6 @@ int main()
 				if (ReturnData(DataTmp) == iTmp)
 				{
 					DataTmp = LRemove(&NewList);
-					delete DataTmp;
 				}
 				else
 				{
@@ -65,7 +64,6 @@ int main()
 						if (ReturnData(DataTmp) == iTmp)
 						{
 							DataTmp = LRemove(&NewList);
-							delete DataTmp;
 						}
 					}
 				}

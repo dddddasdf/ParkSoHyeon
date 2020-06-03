@@ -19,10 +19,12 @@ void LInsert(List* plist, Data data)
 	Node *NewNode = new Node;
 	NewNode->data = data;
 	NewNode->Next = NULL;
+	NewNode->Previous = NULL;
 
 	(plist->Tail->Previous)->Next = NewNode;
 	NewNode->Previous = plist->Tail->Previous;
 	NewNode->Next = plist->Tail;
+	plist->Tail->Previous = NewNode;
 	(plist->iNumberOfData)++;
 }
 
