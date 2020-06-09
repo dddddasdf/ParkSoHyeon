@@ -110,11 +110,20 @@ int Weapon::PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int 
 		//아래는 구매 관련 내용
 
 		if (iSelect == WeaponNumber + 3)
+		{
+			delete[] StackTmp.WeaponArray;
 			return 0;	//이전 메뉴로 돌아가게 변수 돌려줌
+		}
 		else if (iSelect == WeaponNumber + 2)
+		{
+			delete[] StackTmp.WeaponArray;
 			return PAGE_NEXT;	//다음 페이지
+		}	
 		else if (iSelect == WeaponNumber + 1)
+		{
+			delete[] StackTmp.WeaponArray;
 			return PAGE_PREVIOUS;	//이전 페이지
+		}
 		else if (iSelect == WeaponNumber + 4)
 			;	//새로 고침
 		else

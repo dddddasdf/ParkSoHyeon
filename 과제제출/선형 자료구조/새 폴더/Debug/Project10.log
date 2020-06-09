@@ -1,0 +1,25 @@
+﻿  Game.cpp
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\game.h(73): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  MapDraw.cpp
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.cpp(26): warning C4018: '>': signed 또는 unsigned가 일치하지 않습니다.
+  Menu.cpp
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\game.h(73): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\menu.h(18): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  User.cpp
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  Weapon.cpp
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  메인.cpp
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\game.h(73): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\menu.h(18): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-03\documents\github\parksohyeon\과제제출\선형 자료구조\새 폴더\메인.cpp(7): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+  코드를 생성하고 있습니다...
+  Project10.vcxproj -> C:\Users\A-03\Documents\GitHub\ParkSoHyeon\과제제출\선형 자료구조\새 폴더\Debug\Project10.exe
