@@ -12,7 +12,7 @@ int main(void)
 
 	while (1)
 	{
-		printf("메뉴 선택(1. 데이터 입력 / 2. 데이터 출력 / 3. 데이터 삭제)\n");
+		printf("메뉴 선택(1. 데이터 입력 / 3. 데이터 삭제)\n");
 		printf("입력: ");
 		scanf("%d", &iSelect);
 
@@ -25,9 +25,6 @@ int main(void)
 			printf("입력할 데이터 입력: ");
 			scanf("%d", &iTmp);
 			DQAddLast(&Queue, iTmp);
-			break;
-		case 2:
-			
 			break;
 		case 3:
 			if (DQIsEmpty(&Queue) == TRUE)
