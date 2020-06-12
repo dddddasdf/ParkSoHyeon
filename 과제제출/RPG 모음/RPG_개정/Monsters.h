@@ -1,5 +1,5 @@
 #pragma once
-#include "MapDraw.h"
+#include "Headers.h"
 
 struct Monster
 {
@@ -12,28 +12,31 @@ struct Monster
 	int MonsterCurrentExp;	//몹 현재 경험치
 	int MonsterMaxExp;	//다음 레벨 가기 위한 요구 경험치
 	int MonsterDropExp;	//몹이 주는 경험치
-	int Delay;	//몬스터가 공격을 하기까지 걸리는 시간
 };
 
 struct MonsterNode
 {
 	Monster MonsterInformaiton;
+	int iMonsterNumber;
 	MonsterNode *Next;
 };
 
-enum OUTCOME
+struct MonsterList
 {
-	OUTCOME_DRAW,
-	OUTCOME_WIN,
-	OUTCOME_LOSE	//승패 출력을 위한 enum
+	MonsterNode *Head;
+	MonsterNode *Current;
+	int iMonsterPopulation;
 };
 
-
-class Game
+class Monsters
 {
 private:
-	Game();
-	void GetName(string name);
-	bool LoadDefaultUserData();	//디폴트 유저 파일 읽어오기, 텍스트를 성공적으로 읽어들였을 경우 true를 반환 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
+	int m_iMonsterPopulation;
+	MonsterList *NewMonsterList;
+public:
+	bool InitMonsterData();	//몹 정보 초기화. InitUserInfo()와 똑같은 매커니즘
+	string ReturnMonsterName(int MonsterNumber);
+	int ReturnMonsterStatus(int MonsterNumber, int StatusType);
+	void DeleteMonsterList();
 };
 
