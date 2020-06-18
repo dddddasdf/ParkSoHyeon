@@ -16,25 +16,32 @@ bool Monsters::InitMonsterData()
 
 		NewMonsterList->Head = new MonsterNode;
 		NewMonsterList->Head->Next = NULL;
-		NewMonsterList->Current = NULL;
+		NewMonsterList->Current = NewMonsterList->Head;
 
-		int j = 0;
+		int iMonsterNumberTmp = 1;
 
 		while (!MonsterInfoLoad.eof())
 		{
 			MonsterNode *NewMonsterNode = new MonsterNode;
 
-			MonsterInfoLoad >> MonsterArray[j].MonsterName;
-			MonsterInfoLoad >> MonsterArray[j].MonsterAttack;
-			MonsterInfoLoad >> MonsterArray[j].MonsterMaxLife;
-			MonsterInfoLoad >> MonsterArray[j].MonsterMaxExp;
-			MonsterInfoLoad >> MonsterArray[j].MonsterDropExp;
-			MonsterInfoLoad >> MonsterArray[j].MonsterLevel;
-			MonsterInfoLoad >> MonsterArray[j].MonsterDropGold;
-			MonsterArray[j].MonsterCurrentExp = 0;
-			MonsterArray[j].MonsterCurrentLife = MonsterArray[j].MonsterMaxLife;
-			j++;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.sMonsterName;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.iMonsterAttack;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.iMonsterMaxLife;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.iMonsterMaxExp;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.iMonsterDropExp;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.iMonsterLevel;
+			MonsterInfoLoad >> NewMonsterNode->MonsterInformation.iMonsterDropGold;
+			NewMonsterNode->MonsterInformation.iMonsterCurrentExp = 0;
+			NewMonsterNode->MonsterInformation.iMonsterCurrentLife = NewMonsterNode->MonsterInformation.iMonsterMaxLife;
+			NewMonsterNode->MonsterInformation.iMonsterNumber = iMonsterNumberTmp;
+			
+			NewMonsterNode->Next = NewMonsterList->Current->Next;
+			NewMonsterList->Current->Next = NewMonsterNode;
+			NewMonsterList->Current = NewMonsterList->Current->Next;	//이렇게 하면 Head 노드에 더미 노드를 쓰면서 맨 마지막 노드에 신규 데이터를 추가할 수 있다
+			iMonsterNumberTmp++;
 		}
+
+		NewMonsterList->Current = NewMonsterList->Head;	//Current 위치 초기화
 
 		return true;
 	}

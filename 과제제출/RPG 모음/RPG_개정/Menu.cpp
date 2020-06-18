@@ -39,12 +39,8 @@ void PrintMainMenu()
 
 void NewGame()
 {
-	BoxErase(WIDTH, HEIGHT);
-
-	string sNewPlayer;
-	gotoxy(15, 14);
-	cout << "유저 이름 입력: ";
-	cin >> sNewPlayer;
+	Game NowGaming;
+	NowGaming.CreateNewGame();
 
 	//RolePlaying.GetName(sNewPlayer);
 	//if (RolePlaying.LoadDefaultUserData() == false)
@@ -57,6 +53,10 @@ void NewGame()
 	//	return;
 
 	//RolePlaying.TownMenu();
+
+	//테스트용 임시로 몬스터 파일 불러오기
+
+
 }
 
 void LoadData()
