@@ -44,4 +44,6 @@ Book* MakeBookData(int ISBN, int KDC, std::string BookName, std::string Writer)
 		NewBook->sBookCatergory = "¿ª»ç";
 		break;
 	}
+
+	return NewBook;
 }
