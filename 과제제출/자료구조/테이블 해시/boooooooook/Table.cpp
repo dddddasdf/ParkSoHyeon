@@ -21,18 +21,26 @@ void TableInsert(BookTable* TableTmp, Key KeyTmp, Book *NewBook)
 	TableTmp->Table[iCategoryNumber][iHashNumber].STATUS = SLOTSTATUS_INUSE;
 }
 
-Book* TableDelete(BookTable* TableTmp, Key KeyTmp)
+bool TableIsEmpty(BookTable* TableTmp, Key KeyTmp)
 {
 	int iHashNumber = TableTmp->KeyFunction(KeyTmp);
 	int iCategoryNumber = TableTmp->CategoryFunction(KeyTmp);
 
 	if (TableTmp->Table[iCategoryNumber][iHashNumber].STATUS != SLOTSTATUS_INUSE)
-		return NULL;
+		return true;
 	else
-	{
-		TableTmp->Table[iCategoryNumber][iHashNumber].STATUS = SLOTSTATUS_DELETED;
-		return TableTmp->Table[iCategoryNumber][iHashNumber].Value;
-	}
+		return false;
+}
+
+Book* TableDelete(BookTable* TableTmp, Key KeyTmp)
+{
+	int iHashNumber = TableTmp->KeyFunction(KeyTmp);
+	int iCategoryNumber = TableTmp->CategoryFunction(KeyTmp);
+
+	TableTmp->Table[iCategoryNumber][iHashNumber].STATUS = SLOTSTATUS_DELETED;
+	TableTmp->Table[iCategoryNumber][iHashNumber].Value = NULL;
+	TableTmp->Table[iCategoryNumber][iHashNumber].kKey = 0;
+	return TableTmp->Table[iCategoryNumber][iHashNumber].Value;
 }
 
 Book* TableSearch(BookTable* TableTmp, Key KeyTmp)
@@ -40,8 +48,5 @@ Book* TableSearch(BookTable* TableTmp, Key KeyTmp)
 	int iHashNumber = TableTmp->KeyFunction(KeyTmp);
 	int iCategoryNumber = TableTmp->CategoryFunction(KeyTmp);
 
-	if (TableTmp->Table[iCategoryNumber][iHashNumber].STATUS != SLOTSTATUS_INUSE)
-		return NULL;
-	else
-		return TableTmp->Table[iCategoryNumber][iHashNumber].Value;
+	return TableTmp->Table[iCategoryNumber][iHashNumber].Value;
 }

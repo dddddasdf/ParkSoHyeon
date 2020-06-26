@@ -16,6 +16,8 @@ void TableInit(BookTable *TableTmp, HashFunction *KeyFunctionTmp, HashFunction *
 
 void TableInsert(BookTable* TableTmp, Key KeyTmp, Book *NewBook);
 
+bool TableIsEmpty(BookTable* TableTmp, Key KeyTmp);
+
 Book* TableDelete(BookTable* TableTmp, Key KeyTmp);
 
 Book* TableSearch(BookTable* TableTmp, Key KeyTmp);
