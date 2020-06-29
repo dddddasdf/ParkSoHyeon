@@ -14,3 +14,5 @@ struct Book
 };
 
 Book* MakeBookData(int ISBN, int KDC, std::string BookName, std::string Writer);
+
+void ShowBookData(Book* BookTmp);

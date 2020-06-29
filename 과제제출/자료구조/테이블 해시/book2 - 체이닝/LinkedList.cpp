@@ -39,24 +39,32 @@ void FirstInsert(List *ListTmp, Slot SlotTmp)
 void SecondInsert(List *ListTmp, Slot SlotTmp)
 {
 	Node *NewNode = new Node;
-	NewNode->Data = SlotTmp;
 	
 	ListTmp->CurrentNode = ListTmp->HeadNode;
 	int iIsCompare = 0;
 
 	while (ListTmp->CurrentNode != NULL)
 	{
-		iIsCompare = ListTmp->CompareFunction(SlotTmp.kKey, ListTmp->CurrentNode->Data.kKey);
+		iIsCompare = ListTmp->CompareFunction(SlotTmp.Value->kKDC, ListTmp->CurrentNode->Data.Value->kKDC);
 
 		if (iIsCompare == COMPARE_SMALL)
 			break;
 		else if (iIsCompare == COMPARE_EQUALL)
 		{
-			NewNode->Data.
+			int iTmp = 0;
+			double dTmp = 0;
+			iTmp = (int)SlotTmp.Value->kKDC;
+			dTmp = SlotTmp.Value->kKDC - iTmp;
+			dTmp = (dTmp / 10) + iTmp;	//KDC가 중복되면 소수점 아래를 1/10 해준다
+			SlotTmp.Value->kKDC = dTmp;
+			
+			std::cout << "기존에 중복되는 KDC 번호 존재... KDC 변경: " << dTmp << "\n";
 		}
 		
 		ListTmp->CurrentNode = ListTmp->CurrentNode->Next;
 	}
+
+	NewNode->Data = SlotTmp;
 
 	NewNode->Previous = ListTmp->CurrentNode->Previous;
 	NewNode->Next = ListTmp->CurrentNode;

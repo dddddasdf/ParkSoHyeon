@@ -47,3 +47,12 @@ Book* MakeBookData(int ISBN, int KDC, std::string BookName, std::string Writer)
 
 	return NewBook;
 }
+
+void ShowBookData(Book* BookTmp)
+{
+	std::cout << "도서명: " << BookTmp->sBookName << "\n";
+	std::cout << "저자명: " << BookTmp->sWriter << "\n";
+	std::cout << "도서 번호: " << BookTmp->iBookNumber << "\n";
+	std::cout << "KDC: " << BookTmp->kKDC << "\n";
+	std::cout << "분류: " << BookTmp->sBookCatergory << "\n";
+}

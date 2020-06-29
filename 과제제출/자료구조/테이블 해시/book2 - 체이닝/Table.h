@@ -21,4 +21,10 @@ bool TableIsEmpty(BookTable* TableTmp, Key KeyTmp);
 
 Book* TableDelete(BookTable* TableTmp, Key KeyTmp);
 
-Book* TableSearch(BookTable* TableTmp, Key KeyTmp);
+Book* TableSearchKDC(BookTable* TableTmp, Key KeyTmp);
+
+Book* TableSearchISBN(BookTable* TableTmp, Key KeyTmp);
+
+Book* TableSearchBookName(BookTable* TableTmp, Key KeyTmp);
+
+Book* TableSearchWriter(BookTable* TableTmp, Key KeyTmp);

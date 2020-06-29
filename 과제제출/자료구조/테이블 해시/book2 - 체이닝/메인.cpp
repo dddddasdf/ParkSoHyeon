@@ -29,6 +29,8 @@ int main()
 	int iKDCTmp = 0;
 	std::string sWriterNameTmp;
 	int iBookNumberTmp = 0;
+
+	std::string sSearchTmp;
 	int iSelect = 0;
 
 	while (1)
@@ -39,6 +41,9 @@ int main()
 
 		switch (iSelect)
 		{
+		default:
+			std::cout << "올바른 번호 입력 요망\n";
+			break;
 		case 1:
 		{
 			Book *BookTmp;
@@ -58,17 +63,40 @@ int main()
 		break;
 		case 2:
 		{
-			std::cout << "도서 KDC 입력: ";
-			std::cin >> iBookNumberTmp;
-			if (TableIsEmpty(&NewBookList, iBookNumberTmp) == false)
+			std::cout << "검색 옵션 선택(1. 도서 번호 / 2. KDC / 3. 도서명 / 4. 저자명)";
+			std::cin >> iSelect;
+
+			if (iSelect == 1)	
 			{
-				Book Searching;
-				Searching = *TableSearch(&NewBookList, iBookNumberTmp);
-				std::cout << "도서 KDC: " << Searching.kKDC << ", 도서 이름: " << Searching.sBookName << ", 도서 저자: " << Searching.sWriter << ", 도서 분류: " << Searching.sBookCatergory <<
-					", 도서 ISBN: " << Searching.iBookNumber << "\n";
+				std::cout << "도서 KDC 입력: ";
+				std::cin >> iBookNumberTmp;
+
 			}
+			else if (iSelect == 2)
+			{
+				std::cout << "도서 KDC 입력: ";
+				std::cin >> iBookNumberTmp;
+
+				if (TableIsEmpty(&NewBookList, iBookNumberTmp) == false)
+				{
+					Book Searching;
+					Searching = *TableSearchKDC(&NewBookList, iBookNumberTmp);
+					ShowBookData(&Searching);
+				}
+				else
+					std::cout << "해당하는 도서 없음\n";
+			}
+			else if (iSelect == 3)
+			{
+				std::cout << "검색할 단어 입력: ";
+				std::cin >> sSearchTmp;
+
+				
+			}
+			else if (iSelect == 4)
+				;
 			else
-				std::cout << "해당하는 도서 없음\n";
+				std::cout << "올바른 번호 입력 요망\n";
 		}
 		break;
 		case 3:

@@ -43,7 +43,7 @@ Book* TableDelete(BookTable* TableTmp, Key KeyTmp)
 	return TableTmp->Table[iCategoryNumber][iHashNumber].Value;
 }
 
-Book* TableSearch(BookTable* TableTmp, Key KeyTmp)
+Book* TableSearchKDC(BookTable* TableTmp, Key KeyTmp)
 {
 	int iHashNumber = TableTmp->KeyFunction(KeyTmp);
 	int iCategoryNumber = TableTmp->CategoryFunction(KeyTmp);
