@@ -6,7 +6,7 @@ using namespace std;
 //{
 //	cout << "전역 함수!" << endl;
 //}
-
+//
 //class Functor
 //{
 //public:
@@ -15,7 +15,7 @@ using namespace std;
 //		cout << "함수 객체!" << endl;
 //	}
 //};
-
+//
 //void main()
 //{
 //	Functor functor;

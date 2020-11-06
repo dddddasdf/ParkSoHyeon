@@ -117,7 +117,7 @@ using namespace std;
 
 //Exam_7
 #include <string> //문자열 string 클래스 헤더
-
+//
 //class IntArray //정수 Array
 //{
 //	int *buf;
@@ -307,8 +307,8 @@ using namespace std;
 //}
 
 //Exam_10
-//template <typename IterT, typename Func>
-//void For_each(IterT begin, IterT end, Func pf)
+//template <typename itert, typename func>
+//void for_each(itert begin, itert end, func pf)
 //{
 //	while (begin != end)
 //	{
@@ -316,12 +316,12 @@ using namespace std;
 //	}
 //}
 //
-//void PrintInt(int data)
+//void printint(int data)
 //{
 //	cout << data << " ";
 //}
 //
-//void PrintString(string data)
+//void printstring(string data)
 //{
 //	cout << data << " ";
 //}
@@ -329,41 +329,41 @@ using namespace std;
 //void main()
 //{
 //	int arr[5] = { 10, 20, 30, 40, 50 };
-//	For_each(arr, arr + 5, PrintInt); // 정수 출력
+//	for_each(arr, arr + 5, printint); // 정수 출력
 //	cout << endl;
 //
-//	string sarr[3] = { "abc","ABCDE","Hello!" };
-//	For_each(sarr, sarr + 3, PrintString); // 문자열 출력
+//	string sarr[3] = { "abc","abcde","hello!" };
+//	for_each(sarr, sarr + 3, printstring); // 문자열 출력
 //	cout << endl;
 //}
 
 //Exam_11
-//template <typename IterT, typename Func>
-//void For_each(IterT begin, IterT end, Func pf)
-//{
-//	while (begin != end)
-//	{
-//		pf(*begin++);
-//	}
-//}
-//void PrintInt(int data)
-//{
-//	cout << data << " ";
-//}
-//void PrintString(string data)
-//{
-//	cout << data << " ";
-//}
-//void main()
-//{
-//	int arr[5] = { 10, 20, 30, 40, 50 };
-//	For_each<int*, void(*)(int) >(arr, arr + 5, PrintInt); // 정수 출력
-//	cout << endl;
-//
-//	string sarr[3] = { "abc","ABCDE","Hello!" };
-//	For_each<string*, void(*)(string) >(sarr, sarr + 3, PrintString); // 문자열 출력
-//	cout << endl;
-//}
+template <typename itert, typename func>
+void for_each(itert begin, itert end, func pf)
+{
+	while (begin != end)
+	{
+		pf(*begin++);
+	}
+}
+void printint(int data)
+{
+	cout << data << " ";
+}
+void printstring(string data)
+{
+	cout << data << " ";
+}
+void main()
+{
+	int arr[5] = { 10, 20, 30, 40, 50 };
+	for_each<int*, void(*)(int) >(arr, arr + 5, printint); // 정수 출력
+	cout << endl;
+
+	string sarr[3] = { "abc","abcde","hello!" };
+	for_each<string*, void(*)(string) >(sarr, sarr + 3, printstring); // 문자열 출력
+	cout << endl;
+}
 
 //Exam_12
 //template <typename IterT, typename Func>
@@ -424,20 +424,20 @@ using namespace std;
 //}
 
 //Exam_14
-template <typename RetType, typename ArgType>
-class Functor
-{
-public:
-	RetType operator( ) (ArgType data)
-	{
-		cout << data << endl;
-		return RetType();
-	}
-};
-void main()
-{
-	Functor< void, int > functor1;
-	functor1(10);
-	Functor< bool, string > functor2;
-	functor2("Hello!");
-}
+//template <typename RetType, typename ArgType>
+//class Functor
+//{
+//public:
+//	RetType operator( ) (ArgType data)
+//	{
+//		cout << data << endl;
+//		return RetType();
+//	}
+//};
+//void main()
+//{
+//	Functor< void, int > functor1;
+//	functor1(10);
+//	Functor< bool, string > functor2;
+//	functor2("Hello!");
+//}

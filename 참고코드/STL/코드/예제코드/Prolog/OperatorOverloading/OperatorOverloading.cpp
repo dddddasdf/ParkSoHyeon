@@ -141,17 +141,17 @@ using namespace std;
 //}
 
 //Exam_7
-//class Point
+//class point
 //{
 //	int x;
 //	int y;
 //
 //public:
 //
-//	Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
-//	void Print() const { cout << x << ',' << y << endl; }
+//	point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+//	void print() const { cout << x << ',' << y << endl; }
 //
-//	const Point operator++ () // 전위 ++
+//	const point operator++ () // 전위 ++
 //	{
 //		++x;
 //		++y;
@@ -159,7 +159,7 @@ using namespace std;
 //		return *this;
 //	}
 //
-//	const Point operator++(int) // 후위 ++
+//	const point operator++(int) // 후위 ++
 //	{
 //		x++;
 //		y++;
@@ -170,16 +170,16 @@ using namespace std;
 //
 //void main()
 //{
-//	Point p1(2, 3), p2(2, 3);
-//	Point result;
+//	point p1(2, 3), p2(2, 3);
+//	point result;
 //
 //	result = ++p1; // p1.operator++(); 와 같습니다.
-//	p1.Print();
-//	result.Print();
+//	p1.print();
+//	result.print();
 //
 //	result = p2++; // p2.operator++(0); 와 같습니다. 
-//	p2.Print();
-//	result.Print();
+//	p2.print();
+//	result.print();
 //}
 
 //Exam_8
@@ -470,58 +470,58 @@ using namespace std;
 //}
 
 //Exam_17
-//class Array
-//{
-//	int *arr;
-//	int size;
-//	int capacity;
-//	// 복사 함수 생략(복사 생성자,복사 대입 연산자)
-//public:
-//	Array(int cap = 100) :arr(0), size(0), capacity(cap)
-//	{
-//		arr = new int[capacity];
-//	}
-//	~Array()
-//	{
-//		delete[] arr;
-//	}
-//	void Add(int data)
-//	{
-//		if (size < capacity)
-//			arr[size++] = data;
-//	}
-//	int Size() const
-//	{
-//		return size;
-//	}
-//	int operator[](int idx) const
-//	{
-//		return arr[idx];
-//	}
-//	int& operator[](int idx)
-//	{
-//		return arr[idx];
-//	}
-//};
-//
-//void main()
-//{
-//	Array ar(10);
-//	ar.Add(10);
-//	ar.Add(20);
-//	ar.Add(30);
-//
-//
-//	cout << ar[0] << endl; // ar.operator[](int) 를 호출합니다.
-//	cout << endl;
-//
-//	const Array& ar2 = ar;	// ar을 참조
-//	cout << ar2[0] << endl; // ar.operator[](int) const 를 호출합니다.
-//	cout << endl;
-//
-//	ar[0] = 100; // ar.operator[](int) 를 호출합니다.
-//	//ar[1] = 100; 에러! 상수 객체(값)를 리턴하므로 대입할 수 없습니다.
-//}
+class Array
+{
+	int *arr;
+	int size;
+	int capacity;
+	// 복사 함수 생략(복사 생성자,복사 대입 연산자)
+public:
+	Array(int cap = 100) :arr(0), size(0), capacity(cap)
+	{
+		arr = new int[capacity];
+	}
+	~Array()
+	{
+		delete[] arr;
+	}
+	void Add(int data)
+	{
+		if (size < capacity)
+			arr[size++] = data;
+	}
+	int Size() const
+	{
+		return size;
+	}
+	int operator[](int idx) const
+	{
+		return arr[idx];
+	}
+	int& operator[](int idx)
+	{
+		return arr[idx];
+	}
+};
+
+void main()
+{
+	Array ar(10);
+	ar.Add(10);
+	ar.Add(20);
+	ar.Add(30);
+
+
+	cout << ar[0] << endl; // ar.operator[](int) 를 호출합니다.
+	cout << endl;
+
+	const Array& ar2 = ar;	// ar을 참조
+	cout << ar2[0] << endl; // ar.operator[](int) const 를 호출합니다.
+	cout << endl;
+
+	ar[0] = 100; // ar.operator[](int) 를 호출합니다.
+	//ar[1] = 100; 에러! 상수 객체(값)를 리턴하므로 대입할 수 없습니다.
+}
 
 //Exam_18
 //class Point
@@ -676,23 +676,23 @@ using namespace std;
 //}
 
 //Exam_23
-class Point
-{
-	int x;
-	int y;
-public:
-	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
-	void Print() const { cout << x << ',' << y << endl; }
-	operator int() const
-	{
-		return x;
-	}
-};
-void main()
-{
-	int n = 10;
-
-	Point pt(2, 3);
-	n = pt; // pt.operator int() 암시적 호출
-	cout << n << endl;
-}
+//class Point
+//{
+//	int x;
+//	int y;
+//public:
+//	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+//	void Print() const { cout << x << ',' << y << endl; }
+//	operator int() const
+//	{
+//		return x;
+//	}
+//};
+//void main()
+//{
+//	int n = 10;
+//
+//	Point pt(2, 3);
+//	n = pt; // pt.operator int() 암시적 호출
+//	cout << n << endl;
+//}
