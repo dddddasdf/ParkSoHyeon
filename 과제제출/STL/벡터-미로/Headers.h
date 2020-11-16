@@ -7,6 +7,9 @@
 #include <conio.h>
 #include <crtdbg.h>
 
+#define WIDTH 20
+#define HEIGHT 20
+
 
 enum KEYBOARD
 {
@@ -50,8 +53,3 @@ void gotoxy(int x, int y);
 
 //////////////////////////////////////////////////////
 
-enum BLOCK_ATTRIBUTE
-{
-	BLOCK_ATTRIBUTE_WALL,
-	BLOCK_ATTRIBUTE_WEAPON
-};
