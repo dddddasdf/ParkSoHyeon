@@ -14,7 +14,8 @@ enum BLOCK_ATTRIBUTE
 	BLOCK_ATTRIBUTE_START,
 	BLOCK_ATTRIBUTE_END,
 	BLOCK_ATTRIBUTE_USER,
-	BLOCK_ATTRIBUTE_USER_DEAD
+	BLOCK_ATTRIBUTE_USER_DEAD,
+	BLOCK_ATTRIBUTE_NULL
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

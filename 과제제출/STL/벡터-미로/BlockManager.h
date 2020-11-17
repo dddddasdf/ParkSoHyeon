@@ -4,12 +4,14 @@
 class BlockManager
 {
 private:
-	Block* m_BlockWall;
+	/*Block* m_BlockWall;
 	Block* m_BlockObjects;
-	Block* m_BlockPlayer;
+	Block* m_BlockPlayer;*/
+	std::vector <std::vector <int>> m_vBlockVector;
 public:
 	BlockManager();
-	BlockCoordinate SetBlocks();	//벽 좌표를 담을 벡터 생성
+	void SetBlocks();	//벽 좌표를 담을 벡터 생성
+	void PrintBlocks();	//블럭들 출력
 	~BlockManager();
 };
 

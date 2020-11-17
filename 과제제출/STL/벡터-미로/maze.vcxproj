@@ -128,7 +128,6 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Headers.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="소스.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
