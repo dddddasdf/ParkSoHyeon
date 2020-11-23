@@ -352,14 +352,14 @@ using namespace std;
 //{
 //	int n = 30;
 //	logical_and<bool> oAnd;
-//	1. oAnd 객체로 10 < n < 50 인가? true. 암묵적 호출
+//	//1. oAnd 객체로 10 < n < 50 인가? true. 암묵적 호출
 //	cout << oAnd(greater<int>()(n, 10), less<int>()(n, 50)) << endl;
-//	2. oAnd 객체로 10 < n < 50 인가? true.  명시적 호출
+//	//2. oAnd 객체로 10 < n < 50 인가? true.  명시적 호출
 //	cout << oAnd.operator()(greater<int>()(n, 10), less<int>()(n, 50)) << endl;
 //
-//	3. 임시 객체로 10 < n < 50 인가? true. 암묵적 호출(일반적인 사용)
+//	//3. 임시 객체로 10 < n < 50 인가? true. 암묵적 호출(일반적인 사용)
 //	cout << logical_and<bool>()(greater<int>()(n, 10), less<int>()(n, 50)) << endl;
-//	4. 임시 객체로 10 < n < 50 인가? true. 명시적 호출
+//	//4. 임시 객체로 10 < n < 50 인가? true. 명시적 호출
 //	cout << logical_and<bool>().operator()(greater<int>()(n, 10), less<int>()(n, 50)) << endl;
 //}
 
@@ -438,10 +438,9 @@ using namespace std;
 //	for (vector<int>::size_type i = 0; i < v.size(); i++)
 //		cout << v[i] << " ";
 //	cout << endl;
-//
 //	cout << "30이상 40이하의 원소 개수: " << count_if(v.begin(), v.end(), Pred) << endl;
 //	//다음은 에러입니다. not1은 어댑터로 함수 객체에 argument_type, result_type가 정의되어 있어야 함!
-//	cout << "30이상 40이하가 아닌 원소 개수: " << count_if(v.begin(), v.end(), not1(Pred)) << endl;
+//	//cout << "30이상 40이하가 아닌 원소 개수: " << count_if(v.begin(), v.end(), not1(Pred)) << endl;
 //}
 
 //Exam_18
@@ -543,99 +542,99 @@ void main()
 	// 호출 가능
 	for_each(v.begin(), v.end(), mem_fun_ref(&Point::Print));
 }
-
-//Exam_21
-///////////////////////server////////////////////////
-//객체의 멤버 함수를 호출할 수 있는 함수 객체 클래스
-template <typename RType, typename CType>
-class Mem_fun_ref_class : public unary_function<CType, RType>
-{
-	RType(CType::*pf)() const;
-public:
-	Mem_fun_ref_class(RType(CType::*_pf)() const) :pf(_pf) {}
-	RType operator()(const CType& o) const
-	{
-		return (o.*pf)();
-	}
-};
-
-// 어댑터 함수 : 멤버 함수를 주소를 저장하는 함수 객체를 반환
-template <typename RType, typename CType>
-Mem_fun_ref_class<RType, CType> Mem_fun_ref(RType(CType::*pf) () const)
-{
-	return Mem_fun_ref_class<RType, CType>(pf);
-}
-
-////////////////////////client/////////////////////////////
-class Point
-{
-	int x;
-	int y;
-public:
-	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
-	void Print() const { cout << x << ',' << y << endl; }
-	int GetX() const { return x; }
-	int GetY() const { return y; }
-};
-
-void main()
-{
-	vector<Point> v;
-	v.push_back(Point(1, 1));
-	v.push_back(Point(2, 2));
-	v.push_back(Point(3, 3));
-	v.push_back(Point(4, 4));
-	v.push_back(Point(5, 5));
-
-	for_each(v.begin(), v.end(), Mem_fun_ref(&Point::Print));
-}
-
-//Exam_22
-///////////////////////server////////////////////////
-//객체의 멤버 함수를 호출할 수 있는 함수 객체 클래스
-template <typename RType, typename CType>
-class Mem_fun_class : public unary_function<CType, RType>
-{
-	RType(CType::*pf)() const;
-public:
-	Mem_fun_class(RType(CType::*_pf)() const) :pf(_pf) {}
-	RType operator()(const CType* p) const
-	{
-		return (p->*pf)();
-	}
-};
-
-// 어댑터 함수 : 멤버 함수를 주소를 저장하는 함수 객체를 반환
-template <typename RType, typename CType>
-Mem_fun_class<RType, CType> Mem_fun(RType(CType::*pf) () const)
-{
-	return Mem_fun_class<RType, CType>(pf);
-}
-
-////////////////////////client/////////////////////////////
-class Point
-{
-	int x;
-	int y;
-public:
-	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
-	void Print() const { cout << x << ',' << y << endl; }
-	int GetX() const { return x; }
-	int GetY() const { return y; }
-};
-
-void main()
-{
-	vector<Point*> v;
-	v.push_back(new Point(1, 1));
-	v.push_back(new Point(2, 2));
-	v.push_back(new Point(3, 3));
-	v.push_back(new Point(4, 4));
-	v.push_back(new Point(5, 5));
-
-	//STL 버전
-	for_each(v.begin(), v.end(), mem_fun(&Point::Print));
-	//사용자 버전
-	for_each(v.begin(), v.end(), Mem_fun(&Point::Print));
-	// 객체 delete 생략
-}
+//
+////Exam_21
+/////////////////////////server////////////////////////
+////객체의 멤버 함수를 호출할 수 있는 함수 객체 클래스
+//template <typename RType, typename CType>
+//class Mem_fun_ref_class : public unary_function<CType, RType>
+//{
+//	RType(CType::*pf)() const;
+//public:
+//	Mem_fun_ref_class(RType(CType::*_pf)() const) :pf(_pf) {}
+//	RType operator()(const CType& o) const
+//	{
+//		return (o.*pf)();
+//	}
+//};
+//
+//// 어댑터 함수 : 멤버 함수를 주소를 저장하는 함수 객체를 반환
+//template <typename RType, typename CType>
+//Mem_fun_ref_class<RType, CType> Mem_fun_ref(RType(CType::*pf) () const)
+//{
+//	return Mem_fun_ref_class<RType, CType>(pf);
+//}
+//
+//////////////////////////client/////////////////////////////
+//class Point
+//{
+//	int x;
+//	int y;
+//public:
+//	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+//	void Print() const { cout << x << ',' << y << endl; }
+//	int GetX() const { return x; }
+//	int GetY() const { return y; }
+//};
+//
+//void main()
+//{
+//	vector<Point> v;
+//	v.push_back(Point(1, 1));
+//	v.push_back(Point(2, 2));
+//	v.push_back(Point(3, 3));
+//	v.push_back(Point(4, 4));
+//	v.push_back(Point(5, 5));
+//
+//	for_each(v.begin(), v.end(), Mem_fun_ref(&Point::Print));
+//}
+//
+////Exam_22
+/////////////////////////server////////////////////////
+////객체의 멤버 함수를 호출할 수 있는 함수 객체 클래스
+//template <typename RType, typename CType>
+//class Mem_fun_class : public unary_function<CType, RType>
+//{
+//	RType(CType::*pf)() const;
+//public:
+//	Mem_fun_class(RType(CType::*_pf)() const) :pf(_pf) {}
+//	RType operator()(const CType* p) const
+//	{
+//		return (p->*pf)();
+//	}
+//};
+//
+//// 어댑터 함수 : 멤버 함수를 주소를 저장하는 함수 객체를 반환
+//template <typename RType, typename CType>
+//Mem_fun_class<RType, CType> Mem_fun(RType(CType::*pf) () const)
+//{
+//	return Mem_fun_class<RType, CType>(pf);
+//}
+//
+//////////////////////////client/////////////////////////////
+//class Point
+//{
+//	int x;
+//	int y;
+//public:
+//	explicit Point(int _x = 0, int _y = 0) :x(_x), y(_y) { }
+//	void Print() const { cout << x << ',' << y << endl; }
+//	int GetX() const { return x; }
+//	int GetY() const { return y; }
+//};
+//
+//void main()
+//{
+//	vector<Point*> v;
+//	v.push_back(new Point(1, 1));
+//	v.push_back(new Point(2, 2));
+//	v.push_back(new Point(3, 3));
+//	v.push_back(new Point(4, 4));
+//	v.push_back(new Point(5, 5));
+//
+//	//STL 버전
+//	for_each(v.begin(), v.end(), mem_fun(&Point::Print));
+//	//사용자 버전
+//	for_each(v.begin(), v.end(), Mem_fun(&Point::Print));
+//	// 객체 delete 생략
+//}

@@ -61,44 +61,44 @@ using namespace std;
 //}
 
 //Exam_3
-//void main()
-//{
-//	vector<int> v;
-//	list<int> lt;
-//
-//	v.push_back(10);
-//	v.push_back(20);
-//	v.push_back(30);
-//	v.push_back(40);
-//	v.push_back(50);
-//
-//	lt.push_back(10);
-//	lt.push_back(20);
-//	lt.push_back(30);
-//	lt.push_back(40);
-//	lt.push_back(50);
-//
-//	vector<int>::iterator viter = v.begin();
-//	++viter; // 20원소를 가리킴
-//	list<int>::iterator liter = lt.begin();
-//	++liter; // 20원소를 가리킴
-//
-//	viter = v.insert(viter, 600); // v의 두 번째 요소로 삽입
-//	liter = lt.insert(liter, 600); // lt의 두 번째 요소로 삽입
-//
-//	cout << "vector: " << *viter << endl;
-//	cout << "list: " << *liter << endl;
-//
-//	cout << "vector : ";
-//	for (viter = v.begin(); viter != v.end(); ++viter)
-//		cout << *viter << ' ';
-//	cout << endl;
-//
-//	cout << "list : ";
-//	for (liter = lt.begin(); liter != lt.end(); ++liter)
-//		cout << *liter << ' ';
-//	cout << endl;
-//}
+void main()
+{
+	vector<int> v;
+	list<int> lt;
+
+	v.push_back(10);
+	v.push_back(20);
+	v.push_back(30);
+	v.push_back(40);
+	v.push_back(50);
+
+	lt.push_back(10);
+	lt.push_back(20);
+	lt.push_back(30);
+	lt.push_back(40);
+	lt.push_back(50);
+
+	vector<int>::iterator viter = v.begin();
+	++viter; // 20원소를 가리킴
+	list<int>::iterator liter = lt.begin();
+	++liter; // 20원소를 가리킴
+
+	viter = v.insert(viter, 600); // v의 두 번째 요소로 삽입
+	liter = lt.insert(liter, 600); // lt의 두 번째 요소로 삽입
+
+	cout << "vector: " << *viter << endl;
+	cout << "list: " << *liter << endl;
+
+	cout << "vector : ";
+	for (viter = v.begin(); viter != v.end(); ++viter)
+		cout << *viter << ' ';
+	cout << endl;
+
+	cout << "list : ";
+	for (liter = lt.begin(); liter != lt.end(); ++liter)
+		cout << *liter << ' ';
+	cout << endl;
+}
 
 //Exam_4
 //void main()
@@ -377,50 +377,50 @@ using namespace std;
 //}
 
 //Exam_12
-void main()
-{
-	list<int> lt1;
-	list<int> lt2;
-
-	lt1.push_back(50);
-	lt1.push_back(40);
-	lt1.push_back(30);
-	lt1.push_back(20);
-	lt1.push_back(10);
-
-	//lt2.push_back(25); //lt1과 lt2의 정렬 방식이 다르므로 오류
-	//lt2.push_back(35);
-	//lt2.push_back(60);
-
-	// lt1과 lt2는 정렬 방식이 같다.
-	// greater 조건자( > 연산 ) 정렬 기준을 사용함
-	lt2.push_back(60);
-	lt2.push_back(35);
-	lt2.push_back(25);
-
-
-	list<int>::iterator iter;
-	cout << "lt1: ";
-	for (iter = lt1.begin(); iter != lt1.end(); ++iter)
-		cout << *iter << ' ';
-	cout << endl;
-
-	cout << "lt2: ";
-	for (iter = lt2.begin(); iter != lt2.end(); ++iter)
-		cout << *iter << ' ';
-	cout << endl << "===============" << endl;
-
-	// lt2를 lt1으로 합병 정렬합니다. 
-	// 두 list의 정렬 기준이 > 연산인 greater라는 것을 predicate로 지정합니다.
-	lt1.merge(lt2, greater<int>());
-
-	cout << "lt1: ";
-	for (iter = lt1.begin(); iter != lt1.end(); ++iter)
-		cout << *iter << ' ';
-	cout << endl;
-
-	cout << "lt2: ";
-	for (iter = lt2.begin(); iter != lt2.end(); ++iter)
-		cout << *iter << ' ';
-	cout << endl;
-}
+//void main()
+//{
+//	list<int> lt1;
+//	list<int> lt2;
+//
+//	lt1.push_back(50);
+//	lt1.push_back(40);
+//	lt1.push_back(30);
+//	lt1.push_back(20);
+//	lt1.push_back(10);
+//
+//	//lt2.push_back(25); //lt1과 lt2의 정렬 방식이 다르므로 오류
+//	//lt2.push_back(35);
+//	//lt2.push_back(60);
+//
+//	// lt1과 lt2는 정렬 방식이 같다.
+//	// greater 조건자( > 연산 ) 정렬 기준을 사용함
+//	lt2.push_back(60);
+//	lt2.push_back(35);
+//	lt2.push_back(25);
+//
+//
+//	list<int>::iterator iter;
+//	cout << "lt1: ";
+//	for (iter = lt1.begin(); iter != lt1.end(); ++iter)
+//		cout << *iter << ' ';
+//	cout << endl;
+//
+//	cout << "lt2: ";
+//	for (iter = lt2.begin(); iter != lt2.end(); ++iter)
+//		cout << *iter << ' ';
+//	cout << endl << "===============" << endl;
+//
+//	// lt2를 lt1으로 합병 정렬합니다. 
+//	// 두 list의 정렬 기준이 > 연산인 greater라는 것을 predicate로 지정합니다.
+//	lt1.merge(lt2, greater<int>());
+//
+//	cout << "lt1: ";
+//	for (iter = lt1.begin(); iter != lt1.end(); ++iter)
+//		cout << *iter << ' ';
+//	cout << endl;
+//
+//	cout << "lt2: ";
+//	for (iter = lt2.begin(); iter != lt2.end(); ++iter)
+//		cout << *iter << ' ';
+//	cout << endl;
+//}
