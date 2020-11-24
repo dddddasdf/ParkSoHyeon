@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
 
+
+template <typename T>
 class Singletone
 {
 private:
-	static Singletone* m_hThis;
+	static T* m_hThis;
 protected:
 	Singletone()
 	{
@@ -16,10 +18,10 @@ protected:
 
 	}
 public:
-	static Singletone* GetInstance()
+	static T* GetInstance()
 	{
 		if (m_hThis == NULL)
-			m_hThis = new Singletone;
+			m_hThis = new T;
 
 		return m_hThis;
 	}

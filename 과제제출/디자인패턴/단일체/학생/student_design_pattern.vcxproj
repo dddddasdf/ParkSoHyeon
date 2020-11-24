@@ -128,6 +128,7 @@
     <ClCompile Include="Person.cpp" />
     <ClCompile Include="School.cpp" />
     <ClCompile Include="Student.cpp" />
+    <ClCompile Include="StudentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="School.h" />
     <ClInclude Include="Singletone.h" />
     <ClInclude Include="Student.h" />
+    <ClInclude Include="StudentManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
