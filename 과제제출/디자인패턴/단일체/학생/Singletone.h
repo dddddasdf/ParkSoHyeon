@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-
+#include <ostream>
 
 template <typename T>
 class Singletone

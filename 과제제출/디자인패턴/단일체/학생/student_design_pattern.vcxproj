@@ -125,15 +125,11 @@
   <ItemGroup>
     <ClCompile Include="Headers.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Person.cpp" />
-    <ClCompile Include="School.cpp" />
     <ClCompile Include="Student.cpp" />
     <ClCompile Include="StudentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers.h" />
-    <ClInclude Include="Person.h" />
-    <ClInclude Include="School.h" />
     <ClInclude Include="Singletone.h" />
     <ClInclude Include="Student.h" />
     <ClInclude Include="StudentManager.h" />

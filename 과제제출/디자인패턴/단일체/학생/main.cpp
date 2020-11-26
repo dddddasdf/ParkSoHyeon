@@ -26,7 +26,7 @@ int main()
 			break;
 		case 3:
 			StudentManager::DestoryThis();
-			return;
+			break;
 		}
 	}
 
