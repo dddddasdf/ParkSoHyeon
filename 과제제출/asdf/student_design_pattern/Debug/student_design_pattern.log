@@ -1,0 +1,3 @@
+﻿  StudentManager.cpp
+c:\users\a-03\source\repos\dd123\student_design_pattern\studentmanager.cpp(3): warning C4356: 'Singletone<StudentManager>::m_hThis': 정적 데이터 멤버는 파생 클래스를 통해 초기화할 수 없습니다.
+  student_design_pattern.vcxproj -> C:\Users\A-03\source\repos\dd123\Debug\student_design_pattern.exe

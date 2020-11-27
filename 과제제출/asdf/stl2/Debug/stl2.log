@@ -1,0 +1,3 @@
+﻿  소스.cpp
+c:\users\a-03\source\repos\dd123\stl2\소스.cpp(17): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+  stl2.vcxproj -> C:\Users\A-03\source\repos\dd123\Debug\stl2.exe
