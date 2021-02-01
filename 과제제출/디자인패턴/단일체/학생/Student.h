@@ -1,31 +1,33 @@
-#pragma once
-#include "Singletone.h"
-#include <Windows.h>
-#include <vector>
-#include <list>
-
-enum INFOTYPE
-{
-	INFO_GRADE,
-	INFO_NUMBER,
-	INFO_KOREANSCORE,
-	INFO_MATHSCORE,
-	INFO_ENGLISHSCORE
-};
+#include<iostream>
+#include<string>
+#define max_len 100
+using namespace std;
 
 class Student
 {
 private:
-	int m_iGrade;
-	int m_iStudentNumber;
-	std::string m_sStudentName;
-	int m_iKoreanScore;
-	int m_iMathScore;
-	int m_iEnglishScore;
+	string name;
+	int kor, eng, math, sum;
+	float avg;
+	int num;
+	char Class;
 public:
-	Student();
-	int ReturnValue(int StudentInfoType);
-	std::string ReturnName();
-	~Student();
+	Student() { num = 0; }
+	~Student() {}
+
+	void SetStudent(int _num);
+	void showStudent();
+	int getnum()
+	{
+		return num;
+	}
+	string getname()
+	{
+		return name;
+	}
+	char getClass()
+	{
+		return Class;
+	}
 };
 

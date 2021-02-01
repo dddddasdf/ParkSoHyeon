@@ -1,45 +1,39 @@
 #include "Student.h"
-#include <string>
 
-Student::Student()
+void Student::SetStudent(int _num)
 {
-	std::cout << "학생 이름 입력: ";
-	std::cin >> m_sStudentName;
-	std::cout << "학생 학년 입력: ";
-	std::cin >> m_iGrade;
-	std::cout << "학생 번호 입력: ";
-	std::cin >> m_iStudentNumber;
-	std::cout << "국어 성적 입력: ";
-	std::cin >> m_iKoreanScore;
-	std::cout << "수학 성적 입력: ";
-	std::cin >> m_iMathScore;
-	std::cout << "영어 성적 입력: ";
-	std::cin >> m_iEnglishScore;
+	cout << "이름을 입력 하시오 : ";
+	cin >> name;
+	cout << "3과목의 점수를 입력하시오" << endl;
+	cout << "국어 : ";
+	cin >> kor;
+	cout << "영어 : ";
+	cin >> eng;
+	cout << "수학 : ";
+	cin >> math;
+	sum = kor + eng + math;
+	avg = (float)sum / 3;
+	num = _num;
+	if (avg >= 90)
+		Class = 'A';
+	else if (avg >= 80)
+		Class = 'B';
+	else if (avg >= 70)
+		Class = 'C';
+	else if (avg >= 60)
+		Class = 'D';
+	else
+		Class = 'F';
+	return;
 }
 
-int Student::ReturnValue(int StudentInfoType)
+void Student::showStudent()
 {
-	switch (StudentInfoType)
-	{
-	case INFO_GRADE:
-		return m_iGrade;
-	case INFO_NUMBER:
-		return m_iStudentNumber;
-	case INFO_KOREANSCORE:
-		return m_iKoreanScore;
-	case INFO_MATHSCORE:
-		return m_iMathScore;
-	case INFO_ENGLISHSCORE:
-		return m_iEnglishScore;
-	}
-}
-
-std::string Student::ReturnName()
-{
-	return m_sStudentName;
-}
-
-
-Student::~Student()
-{
+	cout << "----------------------" << endl;
+	cout << num << "번 학생" << endl;
+	cout << "이름 : " << name << endl;
+	cout << "국어 점수 : " << kor << endl << "수학 점수 : " << math << endl << "영어 점수 : " << eng << endl;
+	cout << "합계 점수 : " << sum << "\t 평균점수 : " << avg << endl;
+	cout << "등급 : [ " << Class << "]" << endl << endl;
+	return;
 }
