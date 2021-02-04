@@ -1,0 +1,26 @@
+﻿  Game.cpp
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\user.h(62): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\game.h(74): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  MapDraw.cpp
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.cpp(26): warning C4018: '>': signed 또는 unsigned가 일치하지 않습니다.
+  Menu.cpp
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\user.h(62): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\game.h(74): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\menu.h(18): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  User.cpp
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\user.h(62): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  Weapon.cpp
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  메인.cpp
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\user.h(62): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\game.h(74): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\menu.h(18): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\메인.cpp(7): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+  코드를 생성하고 있습니다...
+c:\users\a-12\desktop\임시\임시의임시\rpg_복합체\user.cpp(195): warning C4715: 'User::ReturnUserInt': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  RPG_복합체.vcxproj -> C:\Users\A-12\Desktop\임시\임시의임시\Project1\Debug\RPG_복합체.exe
