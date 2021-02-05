@@ -194,6 +194,20 @@ bool Game::InitWeaponData()
 	}
 }
 
+void InitInventory()
+{
+	/*Inventory *MyInventory = new Bag("가방");
+
+	Inventory *Bag_Sword = new Bag("칼");
+	Inventory *Bag_Dagger = new Bag("단검");
+	Inventory *Bag_Hammer = new Bag("둔기");
+	Inventory *Bag_Bow = new Bag("활");
+	Inventory *Bag_Gun = new Bag("총");
+	Inventory *Bag_Wand = new Bag("원드");*/
+
+	//MyInventory->
+}
+
 //여기까지 디폴트 인포 데이터 불러오기 영역
 
 bool Game::LoadUserData(int DataNumber)
