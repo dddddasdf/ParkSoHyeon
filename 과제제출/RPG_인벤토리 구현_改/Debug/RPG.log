@@ -1,0 +1,25 @@
+﻿  Game.cpp
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\game.h(73): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  MapDraw.cpp
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.cpp(26): warning C4018: '>': signed 또는 unsigned가 일치하지 않습니다.
+  Menu.cpp
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\game.h(73): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\menu.h(18): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  User.cpp
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  Weapon.cpp
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  메인.cpp
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\mapdraw.h(19): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\user.h(69): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\game.h(73): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\menu.h(18): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\a-12\desktop\임시\rpg1\parksohyeon\과제제출\rpg 모음\rpg_인벤토리 구현\메인.cpp(7): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+  코드를 생성하고 있습니다...
+  RPG.vcxproj -> C:\Users\A-12\Desktop\임시\RPG1\ParkSoHyeon\과제제출\RPG 모음\RPG_인벤토리 구현\Debug\RPG.exe
