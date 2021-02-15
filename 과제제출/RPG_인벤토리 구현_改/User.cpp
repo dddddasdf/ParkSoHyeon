@@ -218,20 +218,13 @@ void User::ReturnInventoryArr(int &TmpType, int &TmpIndex, int x)
 	TmpIndex = m_iInventoryArr[1][x];
 }
 
-bool User::EquipWeaopn(int ArrIndex)
+void User::EquipWeapon(int WeaponIndex, int WeaponType)
 {
-	if (m_iInventoryArr[0][ArrIndex - 1] != BLANK)
-	{
-		m_iHaveWeaponType = m_iInventoryArr[0][ArrIndex - 1];
-		m_iHaveWeaponIndex = m_iInventoryArr[1][ArrIndex - 1];
+	m_iHaveWeaponType = WeaponType;
+	m_iHaveWeaponIndex = WeaponIndex;
 
-		if (m_iHaveWeapon == WEAPON_NO)
-			m_iHaveWeapon = WEAPON_OK;	//겸사겸사 무기 소지 여부 변수도 토글되게 변경
-
-		return true;
-	}
-	else
-		return false;
+	if (m_iHaveWeapon == WEAPON_NO)
+		m_iHaveWeapon = WEAPON_OK;	//겸사겸사 무기 소지 여부 변수도 토글되게 변경
 }
 
 int User::ReturnUserInt(int VariableName)

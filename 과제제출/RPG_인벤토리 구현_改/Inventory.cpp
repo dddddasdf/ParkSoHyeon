@@ -23,6 +23,9 @@ Inventory::~Inventory()
 Bag::Bag(string Name) : Inventory(Name), m_iItemCount(0)
 {
 	m_iItemCount = 0;
+	
+	for (int i = 0; i < ITEM_LIMIT; i++)
+		InventoryList[i]->S
 }
 
 
@@ -39,6 +42,13 @@ int Bag::ReturnWeaponIndex(int WeaponNumber)
 	return iTemporary;
 }
 
+string Bag::ReturnItemName(int ItemNumber)
+{
+	string Tmp = InventoryList[(ItemNumber - 1)]->ReturnItemName(ItemNumber);
+
+	return Tmp;
+}
+
 ////////////////////////////////////////////////////////////////////////////////가방
 
 Item::Item(WeaponStruct *BoughtWeapon) : m_iItemIndex(BoughtWeapon->iWeaponIndex), m_sItemName(BoughtWeapon->sWeaponName)
@@ -49,6 +59,11 @@ Item::Item(WeaponStruct *BoughtWeapon) : m_iItemIndex(BoughtWeapon->iWeaponIndex
 int Item::ReturnWeaponIndex(int WeaponNumber)
 {
 	return m_iItemIndex;
+}
+
+string Item::ReturnItemName(int ItemNumber)
+{
+	return m_sItemName;
 }
 
 ////////////////////////////////////////////////////////////////////////////////아이템

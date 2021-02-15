@@ -64,6 +64,9 @@ void Menu::NewGame()
 	if (RolePlaying.InitWeaponData() == false)
 		return;
 
+	RolePlaying.InitInventory();
+	//여기까지 초기화 함수 호출
+
 	RolePlaying.TownMenu();
 }
 

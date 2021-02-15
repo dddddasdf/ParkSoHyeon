@@ -3,6 +3,7 @@
 #include <vector>
 
 #define ITEM_LIMIT 5	//무기는 각 무기 별로 5개까지 소지 제한
+#define NO_ITEM -1
 
 class Inventory
 {
@@ -19,6 +20,7 @@ public:
 	virtual void AddInventory(Inventory *TemporaryInventory) = 0;	//리스트에 추가
 	virtual void DeleteInventory(Inventory *TemporaryInventory) = 0;	//지움
 	virtual int ReturnWeaponIndex(int WeaponNumber) = 0;
+	virtual string ReturnItemName(int ItemNumber) = 0;	//이름 문자열 반환
 
 	~Inventory();
 };
@@ -32,10 +34,12 @@ private:
 public:
 	Bag(string Name);
 
-	void AddInventory(Inventory *TemporaryInventory) override;
-	void DeleteInventory(Inventory *TemporaryInventory) override;	//지움
 	int ReturnItemCount() { return m_iItemCount; }	//해당 탭의 무기 개수 리턴
+
+	void AddInventory(Inventory *TemporaryInventory) override;
+	void DeleteInventory(Inventory *TemporaryInventory) {};	//지움
 	int ReturnWeaponIndex(int WeaponNumber) override;	//무기 인덱스 넘겨주는 함수
+	string ReturnItemName(int ItemNumber) override;
 
 	~Bag();
 };
@@ -48,6 +52,9 @@ private:
 public:
 	Item(WeaponStruct *BoughtWeapon);
 
+	void SetItemIndexDefault() { m_iItemIndex = NO_ITEM; }	//초기화할 때 인덱스 없애버림 쓰레기값 방지
+
+	string ReturnItemName(int ItemNumber) override;
 	void AddInventory(Inventory *TemporaryInventory) { };
 	void DeleteInventory(Inventory *TemporaryInventory) { };
 	int ReturnWeaponIndex(int WeaponNumber) override;
@@ -72,3 +79,5 @@ public:
 
 //다른 함수에서 Item 만들어서 Bag에 제대로ㅓ 들어가는 거 확인함
 //ㄴ이렇게 되면 가방도 game.h에서 하나하나 탭 만들어줄 게 아니라 함수에서 만들고 메인 가방에 때려박으면 되는 거 아닌가?? 아님말고
+
+//2/15 경과 지금 인벤 불러올 때 쓰레기값 때문에 난리났음 첫 생성시 인벤 아이템 인덱스에 쓰레기값 제거 필요

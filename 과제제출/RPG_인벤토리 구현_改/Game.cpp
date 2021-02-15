@@ -753,7 +753,7 @@ void Game::ShowInventory()
 		gotoxy(26, 22);
 		cout << "돌아간다";
 
-		iSelect = GameMap.MenuSelectCursor(6, 2, 7, 10);
+		iSelect = GameMap.MenuSelectCursor(7, 2, 7, 10);
 
 		switch (iSelect)
 		{
@@ -763,15 +763,13 @@ void Game::ShowInventory()
 		case 4:
 		case 5:
 		case 6:
-		{
-			ShowInvenotryTap(iSelect);
-		}
+			ShowInvenotryTap(iSelect - 1);
+			break;
 		break;
 		case 7:
 			return;
 		}
 		
-
 
 		//아래가 기존 함수 파트...	
 		/*int iYPos = 10;
@@ -827,15 +825,20 @@ void Game::ShowInventory()
 void Game::ShowInvenotryTap(int WeaponType)
 {
 	int iSelect;
-	string sTemporaryString;
-	int iWeaponCount;
+	string sTemporaryString;	//무기 이름 받아오는 용도
+	int iTemporaryIndex;	//무기 인덱스 받아오는 용도 선택시 해당 번호로 찾아가서 인덱스를 받아온다
 
+	Inventory* TemporaryInventory = &MainInventory[WeaponType];	//해당 탭 임시로 받아올 인벤토리 생성...
+
+	//생각해보니 해당 배열에 제대로 템이 들어가있는지 아니면 null인지 체크하는 것도 필요한 듯
 
 	while (1)
 	{
 		GameMap.BoxErase(WIDTH, HEIGHT);
 
-		switch (WeaponType)
+		gotoxy(15, 8);
+
+		switch (WeaponType)	//탭 이름 출력
 		{
 		case TYPE_DAGGER:
 			sTemporaryString = "=====소지 중인 단검=====";
@@ -857,12 +860,63 @@ void Game::ShowInvenotryTap(int WeaponType)
 			break;
 		}
 
-		YELLOW
-		gotoxy(WIDTH - (sTemporaryString.length() / 2), 7);
+		gotoxy(WIDTH - (sTemporaryString.length() / 2), 8);
 		cout << sTemporaryString;
-		ORIGINAL
+
+		//아래부터 무기 이름 출력
+
+		for (int i = 1; i <= ITEM_LIMIT; i++)
+		{
+			if (MainInventory[WeaponType].ReturnWeaponIndex(i - 1) != NULL)
+			{
+				sTemporaryString = MainInventory[WeaponType].ReturnItemName(i);
+
+				gotoxy(WIDTH - (sTemporaryString.length() / 2), 8 + (i * 2));
+				cout << sTemporaryString;
+			}
+			else
+			{
+				gotoxy(28, 8 + (i * 2));
+				cout << "없음";
+			}
+		}
+
+		gotoxy(26, 20);
+		cout << "돌아간다";
 		
-		
+		iSelect = GameMap.MenuSelectCursor(6, 2, 10, 10);
+
+		switch (iSelect)
+		{
+		default:
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		{
+			if (MainInventory[WeaponType].ReturnItemName(iSelect - 1) == "")
+			{
+				GameMap.BoxErase(WIDTH, HEIGHT);
+				gotoxy(13, 14);
+				YELLOW
+				cout << "해당 인벤토리 슬롯에 무기가 없습니다.";
+				ORIGINAL
+				system("pause>null");
+				break;
+			}
+			Player.EquipWeapon(MainInventory[WeaponType].ReturnWeaponIndex(iSelect - 1), WeaponType);
+			GameMap.BoxErase(WIDTH, HEIGHT);
+			gotoxy(24, 14);
+			YELLOW
+			cout << "무기 장착 완료";
+			ORIGINAL
+			Sleep(1000);
+		}
+		case 6:
+			return;
+		}
 	}
 }
 

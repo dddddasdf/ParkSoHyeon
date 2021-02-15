@@ -55,7 +55,7 @@ public:
 	void LevelUp(int *IncreaseAttack, int *IncreaseLife);	//·¾¾÷ÇØ¼­ ½ºÅÈ ·£´ý Áõ°¡
 	void ForFeitGold();	//Áö¸é °ñµå »©¾Ñ±è
 	void ReturnInventoryArr(int &TmpType, int &TmpIndex, int x);
-	bool EquipWeaopn(int ArrIndex);
+	void EquipWeapon(int WeaponIndex, int WeaponType);
 	void DeductGold(int WeaponPrice);	//¹«±â ±¸¸ÅÇÏ¸é °ñµå ±î¾ßÁö
 
 	void ReturnUserName()
