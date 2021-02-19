@@ -37,7 +37,7 @@ bool Game::LoadDefaultUserData()
 		GameMap.BoxErase(WIDTH, HEIGHT);
 
 		RED
-			gotoxy(26, 14);
+		gotoxy(26, 14);
 		cout << "에러 발생";
 		gotoxy(6, 16);
 		cout << "플레이어 정보 텍스트 파일을 읽어올 수 없습니다...";
@@ -195,6 +195,25 @@ bool Game::InitWeaponData()
 	}
 }
 
+void Game::InitInventory()
+{
+	MainInventory = new Bag("메인 인벤토리");
+
+	DaggerBag = new Bag("단검 가방");
+	GunBag = new Bag("총 가방");
+	SwordBag = new Bag("칼 가방");
+	WandBag = new Bag("원드 가방");
+	BowBag = new Bag("활 가방");
+	HammerBag = new Bag("둔기 가방");
+
+	MainInventory->AddInventory(DaggerBag);
+	MainInventory->AddInventory(GunBag);
+	MainInventory->AddInventory(SwordBag);
+	MainInventory->AddInventory(WandBag);
+	MainInventory->AddInventory(BowBag);
+	MainInventory->AddInventory(HammerBag);
+}
+
 //여기까지 디폴트 인포 데이터 불러오기 영역
 
 bool Game::LoadUserData(int DataNumber)
@@ -220,25 +239,6 @@ bool Game::LoadUserData(int DataNumber)
 	}
 
 	return bIsOpen;
-}
-
-void Game::InitInventory()
-{
-	MainInventory = new Bag("메인 인벤토리");
-
-	Inventory *DaggerBag = new Bag("단검 가방");
-	Inventory *GunBag = new Bag("총 가방");
-	Inventory *SwordBag = new Bag("칼 가방");
-	Inventory *WandBag = new Bag("원드 가방");
-	Inventory *BowBag = new Bag("활 가방");
-	Inventory *HammerBag = new Bag("둔기 가방");
-
-	MainInventory->AddInventory(DaggerBag);
-	MainInventory->AddInventory(GunBag);
-	MainInventory->AddInventory(SwordBag);
-	MainInventory->AddInventory(WandBag);
-	MainInventory->AddInventory(BowBag);
-	MainInventory->AddInventory(HammerBag);
 }
 
 //아래부터 게임 메뉴 시작
@@ -763,7 +763,7 @@ void Game::ShowInventory()
 		case 4:
 		case 5:
 		case 6:
-			ShowInvenotryTap(iSelect - 1);
+			ShowInvenotryTap(iSelect);
 			break;
 		break;
 		case 7:
@@ -818,9 +818,6 @@ void Game::ShowInventory()
 		}*/
 	}
 }
-//무기별로 탭 분리할 거니까 메인 인벤에서 탭 이름들 보여줘야 함
-//보고 싶은 탭 들어가면 해당 무기들 보여주는 방식
-//탭 들어가서 다른 무기탭 볼때는 어케 하지 상점처럼 하나
 
 void Game::ShowInvenotryTap(int WeaponType)
 {
@@ -828,7 +825,8 @@ void Game::ShowInvenotryTap(int WeaponType)
 	string sTemporaryString;	//무기 이름 받아오는 용도
 	int iTemporaryIndex;	//무기 인덱스 받아오는 용도 선택시 해당 번호로 찾아가서 인덱스를 받아온다
 
-	Inventory* TemporaryInventory = &MainInventory[WeaponType];	//해당 탭 임시로 받아올 인벤토리 생성...
+	Inventory *BagTmp = new Bag;	//임시로 해당 가방 탭으로 연결해줄 놈
+
 
 	//생각해보니 해당 배열에 제대로 템이 들어가있는지 아니면 null인지 체크하는 것도 필요한 듯
 
@@ -842,34 +840,41 @@ void Game::ShowInvenotryTap(int WeaponType)
 		{
 		case TYPE_DAGGER:
 			sTemporaryString = "=====소지 중인 단검=====";
+			BagTmp = DaggerBag;
 			break;
 		case TYPE_GUN:
 			sTemporaryString = "=====소지 중인 총=====";
+			BagTmp = GunBag;
 			break;
 		case TYPE_WAND:
 			sTemporaryString = "=====소지 중인 원드=====";
+			BagTmp = WandBag;
 			break;
 		case TYPE_SWORD:
 			sTemporaryString = "=====소지 중인 칼=====";
+			BagTmp = SwordBag;
 			break;
 		case TYPE_HAMMER:
 			sTemporaryString = "=====소지 중인 둔기=====";
+			BagTmp = HammerBag;
 			break;
 		case TYPE_BOW:
 			sTemporaryString = "=====소지 중인 활=====";
+			BagTmp = BowBag;
 			break;
 		}
 
 		gotoxy(WIDTH - (sTemporaryString.length() / 2), 8);
 		cout << sTemporaryString;
 
+	
 		//아래부터 무기 이름 출력
 
 		for (int i = 1; i <= ITEM_LIMIT; i++)
 		{
-			if (MainInventory[WeaponType].ReturnWeaponIndex(i - 1) != NULL)
+			if (i <= BagTmp->ReturnItemCount())
 			{
-				sTemporaryString = MainInventory[WeaponType].ReturnItemName(i);
+				sTemporaryString = BagTmp->ReturnItemName(i);
 
 				gotoxy(WIDTH - (sTemporaryString.length() / 2), 8 + (i * 2));
 				cout << sTemporaryString;
@@ -896,7 +901,7 @@ void Game::ShowInvenotryTap(int WeaponType)
 		case 4:
 		case 5:
 		{
-			if (MainInventory[WeaponType].ReturnItemName(iSelect - 1) == "")
+			if (iSelect > BagTmp->ReturnItemCount())
 			{
 				GameMap.BoxErase(WIDTH, HEIGHT);
 				gotoxy(13, 14);
@@ -906,7 +911,7 @@ void Game::ShowInvenotryTap(int WeaponType)
 				system("pause>null");
 				break;
 			}
-			Player.EquipWeapon(MainInventory[WeaponType].ReturnWeaponIndex(iSelect - 1), WeaponType);
+			Player.EquipWeapon(BagTmp->ReturnWeaponIndex(iSelect), WeaponType);
 			GameMap.BoxErase(WIDTH, HEIGHT);
 			gotoxy(24, 14);
 			YELLOW
@@ -915,6 +920,7 @@ void Game::ShowInvenotryTap(int WeaponType)
 			Sleep(1000);
 		}
 		case 6:
+	
 			return;
 		}
 	}
@@ -1038,6 +1044,7 @@ void Game::WeaponShop()
 
 		int iGetWeaponIndex = 0;
 		int iGetWeaponType = 0;	//Weapon.cpp에서 무기 인덱스와 타입을 가져올 놈들
+		string sGetWeaponName;
 
 		int iUserGold = Player.ReturnUserInt(VARIABLE_GOLD);	//가독성을 높이기 위해 지역 변수 만들어서 대입
 
@@ -1046,48 +1053,48 @@ void Game::WeaponShop()
 			switch (iSelect)
 			{
 			case 1:
-				iBuyOrNot = DaggerPtr->PrintDaggerList(iUserGold, &iGetWeaponType, &iGetWeaponIndex);
-				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex);
+				iBuyOrNot = DaggerPtr->PrintDaggerList(iUserGold, &iGetWeaponType, &iGetWeaponIndex, &sGetWeaponName);
+				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex, sGetWeaponName);
 				if (iGesture == PAGE_NEXT)
 					iSelect = 2;
 				else if (iGesture == PAGE_PREVIOUS)
 					iSelect = 6;
 				break;
 			case 2:
-				iBuyOrNot = GunPtr->PrintGunList(iUserGold, &iGetWeaponType, &iGetWeaponIndex);
-				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex);
+				iBuyOrNot = GunPtr->PrintGunList(iUserGold, &iGetWeaponType, &iGetWeaponIndex, &sGetWeaponName);
+				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex, sGetWeaponName);
 				if (iGesture == PAGE_NEXT)
 					iSelect = 3;
 				else if (iGesture == PAGE_PREVIOUS)
 					iSelect = 1;
 				break;
 			case 3:
-				iBuyOrNot = SwordPtr->PrintSwordList(iUserGold, &iGetWeaponType, &iGetWeaponIndex);
-				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex);
+				iBuyOrNot = SwordPtr->PrintSwordList(iUserGold, &iGetWeaponType, &iGetWeaponIndex, &sGetWeaponName);
+				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex, sGetWeaponName);
 				if (iGesture == PAGE_NEXT)
 					iSelect = 4;
 				else if (iGesture == PAGE_PREVIOUS)
 					iSelect = 2;
 				break;
 			case 4:
-				iBuyOrNot = WandPtr->PrintWandList(iUserGold, &iGetWeaponType, &iGetWeaponIndex);
-				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex);
+				iBuyOrNot = WandPtr->PrintWandList(iUserGold, &iGetWeaponType, &iGetWeaponIndex, &sGetWeaponName);
+				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex, sGetWeaponName);
 				if (iGesture == PAGE_NEXT)
 					iSelect = 5;
 				else if (iGesture == PAGE_PREVIOUS)
 					iSelect = 3;
 				break;
 			case 5:
-				iBuyOrNot = BowPtr->PrintBowList(iUserGold, &iGetWeaponType, &iGetWeaponIndex);
-				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex);
+				iBuyOrNot = BowPtr->PrintBowList(iUserGold, &iGetWeaponType, &iGetWeaponIndex, &sGetWeaponName);
+				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex, sGetWeaponName);
 				if (iGesture == PAGE_NEXT)
 					iSelect = 6;
 				else if (iGesture == PAGE_PREVIOUS)
 					iSelect = 4;
 				break;
 			case 6:
-				iBuyOrNot = HammerPtr->PrintHammerList(iUserGold, &iGetWeaponType, &iGetWeaponIndex);
-				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex);
+				iBuyOrNot = HammerPtr->PrintHammerList(iUserGold, &iGetWeaponType, &iGetWeaponIndex, &sGetWeaponName);
+				iGesture = BuyScript(iBuyOrNot, iGetWeaponType, iGetWeaponIndex, sGetWeaponName);
 				if (iGesture == PAGE_NEXT)
 					iSelect = 1;
 				else if (iGesture == PAGE_PREVIOUS)
@@ -1100,7 +1107,7 @@ void Game::WeaponShop()
 	}
 }
 
-int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex)
+int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, string WeaponName)
 {
 	//가게에서 물건 살때 동작... 이전 페이지 다음 페이지 구현을 위해 만들었음
 	if (iBuyOrNot == PAGE_NEXT)
@@ -1117,7 +1124,31 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex)
 	else
 	{
 		//여기 바꿔야 됨 이제 인벤이 플레이어한테 있는 게 아니므로
-		if (Player.StockUpWeapon(iGetWeaponType, iGetWeaponIndex) == false)
+		Inventory *BagTmp = new Bag;
+
+		switch (iGetWeaponType)	//탭 이름 출력
+		{
+		case TYPE_DAGGER:
+			BagTmp = DaggerBag;
+			break;
+		case TYPE_GUN:
+			BagTmp = GunBag;
+			break;
+		case TYPE_WAND:
+			BagTmp = WandBag;
+			break;
+		case TYPE_SWORD:
+			BagTmp = SwordBag;
+			break;
+		case TYPE_HAMMER:
+			BagTmp = HammerBag;
+			break;
+		case TYPE_BOW:
+			BagTmp = BowBag;
+			break;
+		}
+
+		if (BagTmp->IsFullInventory() == false)
 		{
 			GameMap.BoxErase(WIDTH, HEIGHT);
 			int iSelect;
@@ -1147,15 +1178,15 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex)
 						cout << "버릴 무기를 선택하십시오.";
 
 						int iTmpType, iTmpIndex;
+						string sTemporaryString;
 
 						int iYPos = 10;
-						for (int i = 0; i <= 4; i++)
+						for (int i = 1; i <= ITEM_LIMIT; i++)
 						{
-							gotoxy(18, iYPos);
-							Player.ReturnInventoryArr(iTmpType, iTmpIndex, i);
-							cout << i + 1 << ". ";
-							GetWeaponName(iTmpType, iTmpIndex);
-							iYPos += 2;
+							sTemporaryString = BagTmp->ReturnItemName(i);
+
+							gotoxy(WIDTH - (sTemporaryString.length() / 2), 8 + (i * 2));
+							cout << sTemporaryString;
 						}
 
 						gotoxy(20, iYPos);
@@ -1167,7 +1198,29 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex)
 							return CLOSE;
 						else
 						{
-							Player.StockUpWeapon(iGetWeaponType, iGetWeaponIndex, iSelect);
+							Inventory *NewItem = new Item(iGetWeaponIndex, WeaponName);
+							
+							switch (iGetWeaponType)	//탭 이름 출력
+							{
+							case TYPE_DAGGER:
+								DaggerBag->AddInventoryWhenItIsFull(NewItem, iSelect);
+								break;
+							case TYPE_GUN:
+								BagTmp = GunBag;
+								break;
+							case TYPE_WAND:
+								BagTmp = WandBag;
+								break;
+							case TYPE_SWORD:
+								BagTmp = SwordBag;
+								break;
+							case TYPE_HAMMER:
+								BagTmp = HammerBag;
+								break;
+							case TYPE_BOW:
+								BagTmp = BowBag;
+								break;
+							}
 							return CLOSE;
 						}
 					}

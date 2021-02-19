@@ -24,8 +24,6 @@ Bag::Bag(string Name) : Inventory(Name), m_iItemCount(0)
 {
 	m_iItemCount = 0;
 	
-	for (int i = 0; i < ITEM_LIMIT; i++)
-		InventoryList[i]->S
 }
 
 
@@ -49,9 +47,17 @@ string Bag::ReturnItemName(int ItemNumber)
 	return Tmp;
 }
 
+bool Bag::IsFullInventory()
+{
+	if (m_iItemCount < ITEM_LIMIT)
+		return true;
+	else
+		return false;
+}
+
 ////////////////////////////////////////////////////////////////////////////////°¡¹æ
 
-Item::Item(WeaponStruct *BoughtWeapon) : m_iItemIndex(BoughtWeapon->iWeaponIndex), m_sItemName(BoughtWeapon->sWeaponName)
+Item::Item(int WeaponIndex, string WeaponName) : m_iItemIndex(WeaponIndex), m_sItemName(WeaponName)
 {
 
 }

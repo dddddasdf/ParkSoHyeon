@@ -30,7 +30,7 @@ public:
 	bool InitWeaponCount();	//무기 리스트 가져옴
 	void InputWeaponData(string WeaponName, int WeaponPrice, int WeaponPower, int WeaponNumber, WeaponStruct *InputWeaponStruct);	//데이터 입력
 	void InitWeaponInt(WeaponStruct *MakeWeaponArr, int WeaponNumber, int WeaponType);
-	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int &ChangeWeaponType, int &ChangeWeaponIndex, WeaponStruct *TypeWeapon);	//무기 리스트 출력
+	int PrintWeaponList(int HaveGold, int WeaponType, int WeaponNumber, int &ChangeWeaponType, int &ChangeWeaponIndex, WeaponStruct *TypeWeapon, string &WeaponName);	//무기 리스트 출력
 	void BuyWeapon(WeaponStruct *ChangeWeapon, WeaponStruct TargetWeapon);	//무기 구매
 	~Weapon();
 };
@@ -44,7 +44,7 @@ public:
 	Sword() { }
 	void CreateSwordArr();
 	void InputSwordData(string WeaponName, int WeaponPrice, int WeaponPower);
-	int PrintSwordList(int HaveGold, int *WeaponType, int *WeaponIndex);
+	int PrintSwordList(int HaveGold, int *WeaponType, int *WeaponIndex, string *WeaponName);
 	string ReturnSwordName(int Index)
 	{
 		return SwordStruct[Index].sWeaponName;
@@ -65,7 +65,7 @@ public:
 	Bow() { }
 	void CreateBowArr();
 	void InputBowData(string WeaponName, int WeaponPrice, int WeaponPower);
-	int PrintBowList(int HaveGold, int *WeaponType, int *WeaponIndex);
+	int PrintBowList(int HaveGold, int *WeaponType, int *WeaponIndex, string *WeaponName);
 	string ReturnBowName(int Index)
 	{
 		return BowStruct[Index].sWeaponName;
@@ -86,7 +86,7 @@ public:
 	Dagger() { }
 	void CreateDaggerArr();
 	void InputDaggerData(string WeaponName, int WeaponPrice, int WeaponPower);
-	int PrintDaggerList(int HaveGold, int *WeaponType, int *WeaponIndex);
+	int PrintDaggerList(int HaveGold, int *WeaponType, int *WeaponIndex, string *WeaponName);
 	string ReturnDaggerName(int Index)
 	{
 		return DaggerStruct[Index].sWeaponName;
@@ -107,7 +107,7 @@ public:
 	Gun() { }
 	void CreateGunArr();
 	void InputGunData(string WeaponName, int WeaponPrice, int WeaponPower);
-	int PrintGunList(int HaveGold, int *WeaponType, int *WeaponIndex);
+	int PrintGunList(int HaveGold, int *WeaponType, int *WeaponIndex, string *WeaponName);
 	string ReturnGunName(int Index)
 	{
 		return GunStruct[Index].sWeaponName;
@@ -128,7 +128,7 @@ public:
 	Wand() { }
 	void CreateWandArr();
 	void InputWandData(string WeaponName, int WeaponPrice, int WeaponPower);
-	int PrintWandList(int HaveGold, int *WeaponType, int *WeaponIndex);
+	int PrintWandList(int HaveGold, int *WeaponType, int *WeaponIndex, string *WeaponName);
 	string ReturnWandName(int Index)
 	{
 		return WandStruct[Index].sWeaponName;
@@ -149,7 +149,7 @@ public:
 	Hammer() { }
 	void CreateHammerArr();
 	void InputHammerData(string WeaponName, int WeaponPrice, int WeaponPower);
-	int PrintHammerList(int HaveGold, int *WeaponType, int *WeaponIndex);
+	int PrintHammerList(int HaveGold, int *WeaponType, int *WeaponIndex, string *WeaponName);
 	string ReturnHammerName(int Index)
 	{
 		return HammerStruct[Index].sWeaponName;

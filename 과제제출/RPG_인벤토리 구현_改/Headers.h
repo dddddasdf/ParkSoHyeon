@@ -47,4 +47,4 @@ enum TYPE
 	TYPE_HAMMER = 6
 };
 
-#define NO_DATA -1	//데이터 없음
+#define THERES_NO_DATA -1	//데이터 없음

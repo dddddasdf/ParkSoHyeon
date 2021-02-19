@@ -55,6 +55,8 @@ bool User::LoadDefaultUserData()
 		m_iUserCurrentLife = m_iUserMaxLife;
 		m_iHaveWeapon = WEAPON_NO;
 
+		m_iUserGold = 5000;	//테스트를 위한 임시 골드 완료 후 삭제 필
+
 		return true;
 	}
 	else	

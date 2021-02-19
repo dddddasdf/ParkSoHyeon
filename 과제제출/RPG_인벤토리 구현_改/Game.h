@@ -46,6 +46,12 @@ private:
 
 	//아래는 인벤 관련
 	Inventory *MainInventory;
+	Inventory *DaggerBag;
+	Inventory *GunBag;
+	Inventory *SwordBag;
+	Inventory *WandBag;
+	Inventory *BowBag;
+	Inventory *HammerBag;
 	
 public:
 	Game();
@@ -71,7 +77,7 @@ public:
 	int GetWeaponPower();	//위 둘은 Weapon 클래스로부터 이름과 공격력을 가져오게 한다
 	void ShowMonsterInfo();
 	void WeaponShop();
-	int BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex);
+	int BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, string WeaponName);
 	void PrintBuyMessage(int YesOrNo);
 	void SaveMenu();
 	void DeleteInfo();
