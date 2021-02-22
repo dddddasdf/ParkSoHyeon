@@ -16,6 +16,8 @@ public:
 	Inventory(string Name);
 
 	void SetParent(Inventory *TemporaryParent);
+	void LoadInventoryData(int DataNumber);
+	void SaveInventoryData(int DataNumber);	//인벤 데이터 로드랑 저장
 
 	virtual void AddInventory(Inventory *TemporaryInventory) = 0;	//리스트에 추가
 	virtual void AddInventoryWhenItIsFull(Inventory *TemporaryInventory, int ArrayIndex) = 0;	//가방 다 찼을 때 어디다 새로 템 넣을 건지를...
@@ -26,7 +28,7 @@ public:
 	virtual string ReturnItemName(int ItemNumber) = 0;	//이름 문자열 반환
 	virtual bool IsFullInventory() = 0;
 
-	~Inventory();
+	~Inventory() { }
 };
 
 class Bag : public Inventory

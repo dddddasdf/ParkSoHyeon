@@ -10,27 +10,27 @@ void Inventory::SetParent(Inventory *TemporaryParent)
 	Parent = TemporaryParent;
 }
 
-
-
-Inventory::~Inventory()
-{
-
-}
-
 ////////////////////////////////////////////////////////////////////////////////메인
 
 
 Bag::Bag(string Name) : Inventory(Name), m_iItemCount(0)
 {
 	m_iItemCount = 0;
-	
 }
-
 
 void Bag::AddInventory(Inventory *TemporaryInventory)
 {
 	TemporaryInventory->SetParent(this);
 	InventoryList.push_back(TemporaryInventory);
+
+	m_iItemCount++;
+}
+
+void Bag::AddInventoryWhenItIsFull(Inventory *TemporaryInventory, int ArrayIndex)
+{
+	InventoryList[ArrayIndex - 1] = TemporaryInventory;
+
+	m_iItemCount++;
 }
 
 int Bag::ReturnWeaponIndex(int WeaponNumber)
@@ -53,6 +53,19 @@ bool Bag::IsFullInventory()
 		return true;
 	else
 		return false;
+}
+
+Bag::~Bag()
+{
+	vector<Inventory*>::iterator iter = InventoryList.begin();
+	vector<Inventory*>::iterator endler = InventoryList.end();
+
+	for (; iter != InventoryList.end(); iter++)
+	{
+		delete (*iter);
+	}
+
+	InventoryList.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////가방

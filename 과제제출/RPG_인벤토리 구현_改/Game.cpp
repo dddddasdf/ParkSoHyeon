@@ -719,7 +719,6 @@ void Game::ShowUserInfo()
 //인벤 보여주는 함수
 void Game::ShowInventory()
 {
-	int iTmpType, iTmpIndex;
 	int iSelect;
 
 	while (1)
@@ -769,53 +768,6 @@ void Game::ShowInventory()
 		case 7:
 			return;
 		}
-		
-
-		//아래가 기존 함수 파트...	
-		/*int iYPos = 10;
-		for (int i = 0; i <= 4; i++)
-		{
-			gotoxy(18, iYPos);
-			Player.ReturnInventoryArr(iTmpType, iTmpIndex, i);
-			cout << i + 1 << ". ";
-			GetWeaponName(iTmpType, iTmpIndex);
-			iYPos += 2;
-		}
-
-		gotoxy(26, iYPos);
-		cout << "돌아간다";
-
-		iSelect = GameMap.MenuSelectCursor(6, 2, 7, 10);
-
-		switch (iSelect)
-		{
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		{
-			if (Player.EquipWeaopn(iSelect) == false)
-			{
-				GameMap.BoxErase(WIDTH, HEIGHT);
-				gotoxy(13, 14);
-				YELLOW
-				cout << "해당 인벤토리 슬롯에 무기가 없습니다.";
-				ORIGINAL
-				system("pause>null");
-				break;
-			}
-			GameMap.BoxErase(WIDTH, HEIGHT);
-			gotoxy(24, 14);
-			YELLOW
-			cout << "무기 장착 완료";
-			ORIGINAL
-			Sleep(1000);
-		}
-			break;
-		case 6:
-			return;
-		}*/
 	}
 }
 
@@ -823,7 +775,6 @@ void Game::ShowInvenotryTap(int WeaponType)
 {
 	int iSelect;
 	string sTemporaryString;	//무기 이름 받아오는 용도
-	int iTemporaryIndex;	//무기 인덱스 받아오는 용도 선택시 해당 번호로 찾아가서 인덱스를 받아온다
 
 	Inventory *BagTmp = new Bag;	//임시로 해당 가방 탭으로 연결해줄 놈
 
@@ -1162,7 +1113,7 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, stri
 				cout << "소지 중인 무기 하나를 버리고 새로 구매하시겠습니까?";
 				ORIGINAL
 
-				gotoxy(29, 16);
+					gotoxy(29, 16);
 				cout << "예";
 				gotoxy(27, 18);
 				cout << "아니오";
@@ -1177,7 +1128,6 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, stri
 						gotoxy(15, 7);
 						cout << "버릴 무기를 선택하십시오.";
 
-						int iTmpType, iTmpIndex;
 						string sTemporaryString;
 
 						int iYPos = 10;
@@ -1185,8 +1135,9 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, stri
 						{
 							sTemporaryString = BagTmp->ReturnItemName(i);
 
-							gotoxy(WIDTH - (sTemporaryString.length() / 2), 8 + (i * 2));
+							gotoxy(WIDTH - (sTemporaryString.length() / 2), iYPos);
 							cout << sTemporaryString;
+							iYPos += 2;
 						}
 
 						gotoxy(20, iYPos);
@@ -1199,26 +1150,26 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, stri
 						else
 						{
 							Inventory *NewItem = new Item(iGetWeaponIndex, WeaponName);
-							
+
 							switch (iGetWeaponType)	//탭 이름 출력
 							{
 							case TYPE_DAGGER:
 								DaggerBag->AddInventoryWhenItIsFull(NewItem, iSelect);
 								break;
 							case TYPE_GUN:
-								BagTmp = GunBag;
+								GunBag->AddInventoryWhenItIsFull(NewItem, iSelect);
 								break;
 							case TYPE_WAND:
-								BagTmp = WandBag;
+								WandBag->AddInventoryWhenItIsFull(NewItem, iSelect);
 								break;
 							case TYPE_SWORD:
-								BagTmp = SwordBag;
+								SwordBag->AddInventoryWhenItIsFull(NewItem, iSelect);
 								break;
 							case TYPE_HAMMER:
-								BagTmp = HammerBag;
+								HammerBag->AddInventoryWhenItIsFull(NewItem, iSelect);
 								break;
 							case TYPE_BOW:
-								BagTmp = BowBag;
+								BowBag->AddInventoryWhenItIsFull(NewItem, iSelect);
 								break;
 							}
 							return CLOSE;
@@ -1228,11 +1179,38 @@ int Game::BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, stri
 				else
 					return CLOSE;
 			}
+
 		}
-		PrintBuyMessage(true);
-		Player.DeductGold(iBuyOrNot);
-		
-		return CLOSE;
+		else
+		{
+			Inventory *NewItem = new Item(iGetWeaponIndex, WeaponName);
+
+			switch (iGetWeaponType)	//탭 이름 출력
+			{
+			case TYPE_DAGGER:
+				DaggerBag->AddInventory(NewItem);
+				break;
+			case TYPE_GUN:
+				GunBag->AddInventory(NewItem);
+				break;
+			case TYPE_WAND:
+				WandBag->AddInventory(NewItem);
+				break;
+			case TYPE_SWORD:
+				SwordBag->AddInventory(NewItem);
+				break;
+			case TYPE_HAMMER:
+				HammerBag->AddInventory(NewItem);
+				break;
+			case TYPE_BOW:
+				BowBag->AddInventory(NewItem);
+				break;
+			}
+			PrintBuyMessage(true);
+			Player.DeductGold(iBuyOrNot);
+
+			return CLOSE;
+		}
 	}
 }
 
@@ -1367,6 +1345,15 @@ void Game::DeleteInfo()
 	delete WandPtr;
 	delete HammerPtr;
 
+	delete DaggerBag;
+	delete GunBag;
+	delete BowBag;
+	delete SwordBag;
+	delete WandBag;
+	delete HammerBag;
+
+	delete MainInventory;
+
 	//동적 할당된 놈들 해제
 	//동적할당 된 클래스를 동적해제 하면 알아서 소멸자가 호출되기 때문에 굳이 소멸자를 사전에 불러줘야 할 필요가 업엇다
 }
@@ -1374,3 +1361,10 @@ void Game::DeleteInfo()
 Game::~Game()
 {
 }
+
+
+//이제 인벤 저장하는 기능만 남았음
+
+//메모리 누수 어케 없앰 delete 했는데도 누수되네
+
+//인벤 상태 어케 저장 시키지 탭 별로 번호 붙이고->아이템 카운트 기록하고->이름이랑 인덱스 저장???

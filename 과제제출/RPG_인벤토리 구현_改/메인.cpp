@@ -3,16 +3,18 @@
 #include <crtdbg.h>
 
 
-void main()
+int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
-	//_CrtSetBreakAlloc(154);
-	//_CrtSetBreakAlloc(155);
-	//_CrtSetBreakAlloc(156);
+	//_CrtSetBreakAlloc(565);
+	//_CrtSetBreakAlloc(657);
+	//_CrtSetBreakAlloc(600);
 	//_CrtSetBreakAlloc(157);
 	system("mode con lines=31 cols=62");
 	srand((unsigned)time(NULL));
 
 	Menu MainMenu;
 	MainMenu.PrintMainMenu();
+
+	return 0;
 }
