@@ -16,11 +16,13 @@ public:
 	Inventory(string Name);
 
 	void SetParent(Inventory *TemporaryParent);
-	void LoadInventoryData(int DataNumber);
-	void SaveInventoryData(int DataNumber);	//인벤 데이터 로드랑 저장
+	virtual bool LoadInventoryData(int DataNumber) = 0;
+	virtual void SaveInventoryData(int DataNumber) = 0;	//인벤 데이터 로드랑 저장
 
+	virtual void SetItemCount(int ItemCount) = 0;
 	virtual void AddInventory(Inventory *TemporaryInventory) = 0;	//리스트에 추가
 	virtual void AddInventoryWhenItIsFull(Inventory *TemporaryInventory, int ArrayIndex) = 0;	//가방 다 찼을 때 어디다 새로 템 넣을 건지를...
+	virtual void AddLoadItem(Inventory *TemporaryItem) = 0;
 	virtual void DeleteInventory(Inventory *TemporaryInventory) = 0;	//지움
 	virtual int ReturnItemCount() = 0;	//해당 탭의 무기 개수 리턴
 	virtual int ReturnWeaponIndex(int BagTap, int WeaponNumber) = 0;
@@ -41,10 +43,16 @@ public:
 	Bag() {  }
 	Bag(string Name);
 
+	void SetWeaponName(int ArrayIndex);
+	void SetItemIndex(int ArrayIndex);
+
 	bool IsFullInventory() override;
-	
+	void SetItemCount(int ItemCount) override;
+	bool LoadInventoryData(int DataNumber) override;
+	void SaveInventoryData(int DataNumber) override;
 	void AddInventory(Inventory *TemporaryInventory) override;
 	void AddInventoryWhenItIsFull(Inventory *TemporaryInventory, int ArrayIndex) override;
+	void AddLoadItem(Inventory *TemporaryItem) override;
 	void DeleteInventory(Inventory *TemporaryInventory) {};	//지움
 	int ReturnWeaponIndex(int BagTap, int WeaponNumber) { return InventoryList[BagTap]->ReturnWeaponIndex(WeaponNumber); }
 	int ReturnItemCount() { return m_iItemCount; }	//해당 탭의 무기 개수 리턴
@@ -63,11 +71,14 @@ public:
 	Item(int WeaponIndex, string WeaponName);
 
 	void SetItemIndexDefault() { m_iItemIndex = NO_ITEM; }	//초기화할 때 인덱스 없애버림 쓰레기값 방지
-
+	void SetItemCount(int ItemCount) { };
+	bool LoadInventoryData(int DataNumber) { return false; }
+	void SaveInventoryData(int DataNumber) { };
 	bool IsFullInventory() { return true; }
 	string ReturnItemName(int ItemNumber) override;
 	void AddInventory(Inventory *TemporaryInventory) { }
 	void AddInventoryWhenItIsFull(Inventory *TemporaryInventory, int ArrayIndex) {  }
+	void AddLoadItem(Inventory *TemporaryItem) { }
 	void DeleteInventory(Inventory *TemporaryInventory) { }
 	int ReturnWeaponIndex(int BagTap, int WeaponNumber) { return NULL; }
 	int ReturnWeaponIndex(int WeaponNumber) override;

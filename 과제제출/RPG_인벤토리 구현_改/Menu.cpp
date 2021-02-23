@@ -134,6 +134,12 @@ void Menu::LoadData()
 				if (RolePlaying.InitWeaponData() == false)
 					return;
 
+				RolePlaying.InitInventory();
+
+				if (RolePlaying.LoadInventoryData(iSelect) == false)
+					return;
+
+
 				gotoxy(17, 15);
 				YELLOW
 				cout << "저장된 데이터 불러오기 성공";

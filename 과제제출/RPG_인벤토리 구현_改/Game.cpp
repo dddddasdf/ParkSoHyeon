@@ -241,6 +241,27 @@ bool Game::LoadUserData(int DataNumber)
 	return bIsOpen;
 }
 
+bool Game::LoadInventoryData(int DataNumber)
+{
+	bool bIsOpen = MainInventory->LoadInventoryData(DataNumber);
+
+	if (bIsOpen == false)
+	{
+		GameMap.BoxErase(WIDTH, HEIGHT);
+
+		RED
+			gotoxy(26, 14);
+		cout << "에러 발생";
+		gotoxy(6, 16);
+		cout << "인벤토리 정보 텍스트 파일을 읽어올 수 없습니다...";
+		ORIGINAL
+
+		system("pause>null");
+	}
+	
+	return bIsOpen;
+}
+
 //아래부터 게임 메뉴 시작
 
 void Game::TownMenu()
@@ -1310,6 +1331,7 @@ void Game::SaveMenu()
 				{
 					DataCheck.close();
 					Player.SaveUserData(iSelect);
+					MainInventory->SaveInventoryData(iSelect);
 				}
 				else
 					break;
@@ -1318,6 +1340,7 @@ void Game::SaveMenu()
 			{
 				DataCheck.close();
 				Player.SaveUserData(iSelect);
+				MainInventory->SaveInventoryData(iSelect);
 			}
 			GameMap.BoxErase(WIDTH, HEIGHT);
 			gotoxy(20, 15);
@@ -1331,6 +1354,12 @@ void Game::SaveMenu()
 			return;
 		}
 	}
+}
+
+void Game::SaveInventory(int DataNumber)
+{
+
+	
 }
 
 void Game::DeleteInfo()

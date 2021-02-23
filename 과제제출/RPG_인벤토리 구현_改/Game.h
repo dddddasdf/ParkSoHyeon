@@ -61,6 +61,7 @@ public:
 	bool InitWeaponData();	//무기 정보 초기화. 저 둘을 베이스로 하지만 조금 다르다
 	void InitInventory();	//인벤 초기화
 	bool LoadUserData(int DataNumber);	//저장된 유저 정보 불러오기
+	bool LoadInventoryData(int DataNumber);	//저장된 인벤 정보 불러오기
 	void TownMenu();	//마을 목록
 	void DungeonList();	//던전 목록
 	void NowBattle(int MonsterNumber);	//전투 화면
@@ -80,6 +81,7 @@ public:
 	int BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, string WeaponName);
 	void PrintBuyMessage(int YesOrNo);
 	void SaveMenu();
+	void SaveInventory(int DataNumber);
 	void DeleteInfo();
 	inline void gotoxy(int x, int y)
 	{
