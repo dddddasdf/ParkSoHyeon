@@ -37,8 +37,6 @@ private:
 	int m_iHaveWeaponIndex;	//갖고 있는 무기의 인덱스 넘버
 	int m_iHaveWeaponType;	//갖고 있는 무기의 종류
 
-	int m_iInventoryArr[2][5];	//인벤토리를 2차원 배열로 구현, 1행에는 타입을, 2행에는 인덱스를 저장
-
 	MapDraw UserMap;
 public:
 	User();
@@ -47,14 +45,11 @@ public:
 	bool LoadDefaultUserData();	//디폴트 유저 파일 읽어오기, 텍스트를 성공적으로 읽어들였을 경우 true를 반환 아닐시 false를 반환하고 새게임이 시작되지 못하게 막음
 	bool LoadUserData(int DataNumber);	//저장된 유저 정보 불러오기
 	void SaveUserData(int DataNumber);
-	bool StockUpWeapon(int WeaponIndex, int iHeaveWeaponType);
-	void StockUpWeapon(int WeaponIndex, int WeaponType, int ArrIndex);
 	void LifeDamaged(int Damage);	//몹한테 대미지 입으면 피통 변경
 	void LifeReset();	//풀피로 회복
 	bool AcquireReward(int GetExp, int GetGold);	//보상 획득, 만약 레벨업시 true 반환 아닐시 false 반환
 	void LevelUp(int *IncreaseAttack, int *IncreaseLife);	//렙업해서 스탯 랜덤 증가
 	void ForFeitGold();	//지면 골드 빼앗김
-	void ReturnInventoryArr(int &TmpType, int &TmpIndex, int x);
 	void EquipWeapon(int WeaponIndex, int WeaponType);
 	void DeductGold(int WeaponPrice);	//무기 구매하면 골드 까야지
 

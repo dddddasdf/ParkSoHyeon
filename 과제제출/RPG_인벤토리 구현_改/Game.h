@@ -81,7 +81,6 @@ public:
 	int BuyScript(int iBuyOrNot, int iGetWeaponType, int iGetWeaponIndex, string WeaponName);
 	void PrintBuyMessage(int YesOrNo);
 	void SaveMenu();
-	void SaveInventory(int DataNumber);
 	void DeleteInfo();
 	inline void gotoxy(int x, int y)
 	{

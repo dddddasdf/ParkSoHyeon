@@ -1356,12 +1356,6 @@ void Game::SaveMenu()
 	}
 }
 
-void Game::SaveInventory(int DataNumber)
-{
-
-	
-}
-
 void Game::DeleteInfo()
 {
 	delete[] MonsterArr;
@@ -1395,5 +1389,3 @@ Game::~Game()
 //이제 인벤 저장하는 기능만 남았음
 
 //메모리 누수 어케 없앰 delete 했는데도 누수되네
-
-//인벤 상태 어케 저장 시키지 탭 별로 번호 붙이고->아이템 카운트 기록하고->이름이랑 인덱스 저장???

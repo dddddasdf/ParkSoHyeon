@@ -24,11 +24,6 @@ void User::InitUserData()
 	m_iHaveWeaponIndex = -1;	//안 갖고 잇으면 -1
 	m_iHaveWeaponType = -1;	//마찬가지
 
-	for (int i = 0; i < 2; i++)
-	{
-		for (int j = 0; j < 5; j++)
-			m_iInventoryArr[i][j] = { BLANK };
-	}
 };
 
 void User::ChangeName(string Name)
@@ -88,11 +83,7 @@ bool User::LoadUserData(int DataNumber)
 			InfoLoad >> m_iHaveWeaponType;
 			InfoLoad >> m_iHaveWeaponIndex;
 		}
-		for (int i = 0; i < 5; i++)
-		{
-			InfoLoad >> m_iInventoryArr[0][i];
-			InfoLoad >> m_iInventoryArr[1][i];
-		}
+
 		InfoLoad.close();
 		return true;
 	}
@@ -112,45 +103,7 @@ void User::SaveUserData(int DataNumber)
 	else if (m_iHaveWeapon == WEAPON_OK)
 		DataSave << m_iHaveWeapon << " " << m_iHaveWeaponType << " " << m_iHaveWeaponIndex << "\n";
 
-	for (int i = 0; i < 5; i++)
-	{
-		DataSave << m_iInventoryArr[0][i] << " " << m_iInventoryArr[1][i];
-
-		if (i == 4)
-			break;
-		DataSave << " ";
-	}
-
 	DataSave.close();
-}
-
-bool User::StockUpWeapon(int WeaponType, int WeaponIndex)
-{
-	//아무튼 무기 카운트 inventory에서 리턴 받고... LIMIT에 도달하면 false 반납하기로
-	//무기 종류 숫자 받음->무기 종류 숫자로 메인 인벤토리에서 가방 벡터의 해당 원소 호출->해당 가방 호출됨->거기서 무기 카운트 반환 함수 사용... 이렇게 하면 될 듯
-	
-
-	//아래가 기존 함수
-	for (int i = 0; i < 5; i++)
-	{
-		if (m_iInventoryArr[0][i] == BLANK)
-		{
-			m_iInventoryArr[0][i] = WeaponType;
-			m_iInventoryArr[1][i] = WeaponIndex;
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void User::StockUpWeapon(int WeaponIndex, int WeaponType, int ArrIndex)
-{
-	//여긴 인벤이 다 차서 물건 버리고 구매하는 걸 선택했을 때 동작하는 무기 재고 채우기 함수
-
-	m_iInventoryArr[0][ArrIndex - 1] = WeaponIndex;
-	m_iInventoryArr[1][ArrIndex - 1] = WeaponType;
 }
 
 void User::LifeDamaged(int Damage)
@@ -212,12 +165,6 @@ void User::ForFeitGold()
 void User::DeductGold(int WeaponPrice)
 {
 	m_iUserGold -= WeaponPrice;
-}
-
-void User::ReturnInventoryArr(int &TmpType, int &TmpIndex, int x)
-{
-	TmpType = m_iInventoryArr[0][x];
-	TmpIndex = m_iInventoryArr[1][x];
 }
 
 void User::EquipWeapon(int WeaponIndex, int WeaponType)

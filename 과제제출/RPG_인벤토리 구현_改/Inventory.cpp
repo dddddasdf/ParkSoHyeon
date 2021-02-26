@@ -10,6 +10,11 @@ void Inventory::SetParent(Inventory *TemporaryParent)
 	Parent = TemporaryParent;
 }
 
+Inventory::~Inventory()
+{
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////메인
 
 
@@ -131,6 +136,7 @@ Bag::~Bag()
 	}
 
 	InventoryList.clear();
+	vector <Inventory*>().swap(InventoryList);
 }
 
 ////////////////////////////////////////////////////////////////////////////////가방

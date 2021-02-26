@@ -30,7 +30,7 @@ public:
 	virtual string ReturnItemName(int ItemNumber) = 0;	//이름 문자열 반환
 	virtual bool IsFullInventory() = 0;
 
-	~Inventory() { }
+	~Inventory();
 };
 
 class Bag : public Inventory
@@ -42,9 +42,6 @@ private:
 public:
 	Bag() {  }
 	Bag(string Name);
-
-	void SetWeaponName(int ArrayIndex);
-	void SetItemIndex(int ArrayIndex);
 
 	bool IsFullInventory() override;
 	void SetItemCount(int ItemCount) override;
