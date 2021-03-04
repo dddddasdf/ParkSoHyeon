@@ -1,0 +1,65 @@
+#include "Block.h"
+
+
+
+Block::Block()
+{
+}
+
+
+void Block::SetBlock(BLOCK_ATTRIBUTE Attribute, Position P)
+{
+	m_eAttribute = Attribute;
+	switch (m_eAttribute)
+	{
+	case BLOCK_ATTRIBUTE_WALL:
+		m_strShape = "¢Ì";
+		break;
+	case BLOCK_ATTRIBUTE_OBS:
+		m_strShape = "¡á";
+		break;
+	case BLOCK_ATTRIBUTE_HEAD:
+		m_strShape = "¡Ü";
+		break;
+	case BLOCK_ATTRIBUTE_TAIL:
+		m_strShape = "¡Û";
+		break;
+	case BLOCK_ATTRIBUTE_FEED:
+		m_strShape = "¡Ù";
+		break;
+	case BLOCK_ATTRIBUTE_NONE:
+		m_strShape = " ";
+		break;
+	}
+	m_MyPosition = P;
+}
+
+void Block::DrawBlock()
+{
+	gotoxy(m_MyPosition.m_ix * 2, m_MyPosition.m_iy);
+	std::cout << m_strShape;
+}
+
+int Block::GetPosition(int Pos)
+{
+	if (Pos == POSITION_X)
+		return m_MyPosition.m_ix;
+	else if (Pos == POSITION_Y)
+		return m_MyPosition.m_iy;
+}
+
+void Block::DeleteBlock(int x, int y)
+{
+	gotoxy(x, y);
+	std::cout << "¡¡";
+}
+
+void Block::DeletePosition()
+{
+	m_MyPosition.m_ix = NULL;
+	m_MyPosition.m_iy = NULL;
+}
+
+Block::~Block()
+{
+}
