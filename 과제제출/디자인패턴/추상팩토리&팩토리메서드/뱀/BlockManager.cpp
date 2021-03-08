@@ -71,7 +71,7 @@ void BlockManager::SetRandObstacle()
 	m_Obstacle = new Block[MAX_OBS];
 	for (int i = 0; i < MAX_OBS; i++)
 	{
-		m_Obstacle[i].SetBlock(BLOCK_ATTRIBUTE_OBS, GetRandomPosition(i));
+		m_Obstacle[i].SetBlock(BLOCK_ATTRIBUTE_OBSTACLE, GetRandomPosition(i));
 		m_Obstacle[i].DrawBlock();
 	}
 }

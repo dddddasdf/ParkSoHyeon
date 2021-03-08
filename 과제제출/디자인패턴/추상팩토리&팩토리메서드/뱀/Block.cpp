@@ -15,7 +15,7 @@ void Block::SetBlock(BLOCK_ATTRIBUTE Attribute, Position P)
 	case BLOCK_ATTRIBUTE_WALL:
 		m_strShape = "▩";
 		break;
-	case BLOCK_ATTRIBUTE_OBS:
+	case BLOCK_ATTRIBUTE_OBSTACLE:
 		m_strShape = "■";
 		break;
 	case BLOCK_ATTRIBUTE_HEAD:
@@ -62,4 +62,30 @@ void Block::DeletePosition()
 
 Block::~Block()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////벽
+
+WallBlock::WallBlock()
+{
+	m_eAttribute = BLOCK_ATTRIBUTE_WALL;
+	m_strShape = "▩";
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////먹이
+
+FeedBlock::FeedBlock()
+{
+	m_eAttribute = BLOCK_ATTRIBUTE_FEED;
+	m_strShape = "☆";
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////방해물
+
+ObstacleBlock::ObstacleBlock()
+{
+	m_eAttribute = BLOCK_ATTRIBUTE_OBSTACLE;
+	m_strShape = "■";
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "headers.h"
 #include "Block.h"
+#include "Headers (2).h"
 
 struct SnakeInfo
 {
@@ -32,11 +33,7 @@ public:
 	void InitSnakePosition();
 	void KillSnake();
 	void KillRecursion(SnakeInfo *TmpBody);	//Àç±Í¿ëÀ¸·Î ¸¸µë,,
-	inline void gotoxy(int x, int y)
-	{
-		COORD Pos = { x, y };
-		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
-	}
+
 	~Snake();
 };
 

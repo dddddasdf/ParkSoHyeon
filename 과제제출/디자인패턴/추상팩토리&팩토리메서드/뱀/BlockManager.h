@@ -1,5 +1,9 @@
 #pragma once
 #include"Block.h"
+#include "Headers (2).h"
+#include "BlockFactory.h"
+
+
 class BlockManager
 {
 private:
