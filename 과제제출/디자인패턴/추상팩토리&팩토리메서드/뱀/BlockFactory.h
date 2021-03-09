@@ -20,6 +20,10 @@
 
 생각해보니까 블록 클래스에서 각 종류별 자식 클래스 만드는 작업부터 해야 함
 포지션세팅은 어캄 팩토리에서 해주나 블록 클래스에서 하나
+블록에서 하는 게 맞는 거 같다
+매니저에 팩토리 넣는 게 맞는 거 갓아요
+
+각 팩토리에서 블락별로 모양 세팅해주면 되나?
 */
 
 class BlockFactory
@@ -33,7 +37,7 @@ protected:
 public:
 	~BlockFactory();
 
-	virtual Block* CreateNewBlock(Position P) = 0;
+	virtual Block* CreateNewBlockClass() = 0;
 
 };
 
@@ -42,7 +46,7 @@ class WallBlockFactory : public BlockFactory
 private:
 	
 public:
-	virtual Block* CreateNewBlockClass(Position P);
+	virtual Block* CreateNewBlockClass();
 };
 
 class FeedBlockFactory : public BlockFactory
@@ -51,7 +55,7 @@ private:
 
 public:
 	
-	virtual Block* CreateNewBlockClass(Position P);
+	virtual Block* CreateNewBlockClass();
 };
 
 class ObstacletBlockFactory : public BlockFactory
@@ -60,5 +64,5 @@ private:
 
 public:
 
-	virtual Block* CreateNewBlockClass(Position P);
+	virtual Block* CreateNewBlockClass();
 };

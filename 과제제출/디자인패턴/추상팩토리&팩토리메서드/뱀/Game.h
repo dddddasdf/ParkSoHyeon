@@ -9,9 +9,6 @@
 class Game
 {
 private:
-	WallBlock WallBlockFactory;
-	FeedBlock FeedBlockFacotory;
-	ObstacletBlock ObstacletBlockFactory;
 	BlockManager m_BlockManager;
 	Snake Player;
 

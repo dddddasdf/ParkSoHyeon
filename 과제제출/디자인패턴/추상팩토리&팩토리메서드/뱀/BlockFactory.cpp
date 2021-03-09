@@ -12,39 +12,21 @@ void BlockFactory::AddBlock(Block *NewBlock)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////벽
 
-Block* WallBlockFactory::CreateNewBlockClass(Position P)
+Block* WallBlockFactory::CreateNewBlockClass()
 {
-	/*Block *NewWallBlock = new Block;
-
-	NewWallBlock->SetBlock(BLOCK_ATTRIBUTE_WALL, P);
-
-	return NewWallBlock;*/
-
 	return new WallBlock;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////먹이
 
-Block* FeedBlockFactory::CreateNewBlockClass(Position P)
+Block* FeedBlockFactory::CreateNewBlockClass()
 {
-	/*Block *NewFeedBlock = new Block;
-
-	NewFeedBlock->SetBlock(BLOCK_ATTRIBUTE_FEED, P);
-
-	return NewFeedBlock;*/
-
 	return new FeedBlock;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////방해물
 
-Block* ObstacletBlockFactory::CreateNewBlockClass(Position P)
+Block* ObstacletBlockFactory::CreateNewBlockClass()
 {
-	/*Block *NewObstacleBlock = new Block;
-
-	NewObstacleBlock->SetBlock(BLOCK_ATTRIBUTE_OBSTACLE, P);
-
-	return NewObstacleBlock;*/
-
 	return new ObstacleBlock;
 }

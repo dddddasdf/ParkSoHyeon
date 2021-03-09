@@ -34,6 +34,11 @@ void Block::SetBlock(BLOCK_ATTRIBUTE Attribute, Position P)
 	m_MyPosition = P;
 }
 
+void Block::SetBlockPosition(Position P)
+{
+	m_MyPosition = P;
+}
+
 void Block::DrawBlock()
 {
 	gotoxy(m_MyPosition.m_ix * 2, m_MyPosition.m_iy);

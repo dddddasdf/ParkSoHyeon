@@ -10,6 +10,15 @@ private:
 	Block* m_BlockWall;
 	Block* m_Obstacle;
 	Block* m_Feed;
+
+	WallBlockFactory *NewWallBlockFactory;
+	FeedBlockFactory *NewFeedBlockFacotory;
+	ObstacletBlockFactory *NewObstacletBlockFactory;
+
+	std::vector <Block*> m_WallBlockVector;
+	std::vector <Block*> m_FeedBlockVector;
+	std::vector <Block*> m_ObstacleBlockVector;
+
 	int m_iWallCount;
 public:
 	Position GetRandomPosition(int i);

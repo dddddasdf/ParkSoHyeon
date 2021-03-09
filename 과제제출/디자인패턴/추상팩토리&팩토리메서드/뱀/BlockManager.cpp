@@ -4,7 +4,12 @@
 
 BlockManager::BlockManager()
 {
-	m_iWallCount = ((MAP_WIDTH * 2) + (MAP_HEIGHT * 2)) - 4;
+	NewWallBlockFactory = new WallBlockFactory();
+	NewFeedBlockFacotory = new FeedBlockFactory();
+	NewObstacletBlockFactory = new ObstacletBlockFactory();
+
+	//벽 생성-기존
+	/*m_iWallCount = ((MAP_WIDTH * 2) + (MAP_HEIGHT * 2)) - 4;
 	m_BlockWall = new Block[m_iWallCount];
 	int Count = 0;
 	for (int i = 0; i < MAP_WIDTH; i++)
@@ -26,17 +31,53 @@ BlockManager::BlockManager()
 	{
 		Position tmp = { MAP_WIDTH - 1 ,i };
 		m_BlockWall[Count++].SetBlock(BLOCK_ATTRIBUTE_WALL, tmp);
-	}
+	}*/
 	m_Obstacle = NULL;
 	m_Feed = NULL;
+
+	//벽 생성-팩토리 적용
+	m_iWallCount = ((MAP_WIDTH * 2) + (MAP_HEIGHT * 2)) - 4;
+	int iCount = 0;
+	for (int i = 0; i < MAP_WIDTH; i++)
+	{
+		Position tmp = { i,0 };
+		Block *NewWallBlock = NewWallBlockFactory->CreateNewBlockClass();
+		NewWallBlock->SetBlockPosition(tmp);
+		m_WallBlockVector.push_back(NewWallBlock);
+	}
+	for (int i = 0; i < MAP_WIDTH; i++)
+	{
+		Position tmp = { i,MAP_HEIGHT - 1 };
+		Block *NewWallBlock = NewWallBlockFactory->CreateNewBlockClass();
+		NewWallBlock->SetBlockPosition(tmp);
+		m_WallBlockVector.push_back(NewWallBlock);
+	}
+	for (int i = 1; i < MAP_HEIGHT - 1; i++)
+	{
+		Position tmp = { 0,i };
+		Block *NewWallBlock = NewWallBlockFactory->CreateNewBlockClass();
+		NewWallBlock->SetBlockPosition(tmp);
+		m_WallBlockVector.push_back(NewWallBlock);
+	}
+	for (int i = 1; i < MAP_HEIGHT - 1; i++)
+	{
+		Position tmp = { MAP_WIDTH - 1 ,i };
+		Block *NewWallBlock = NewWallBlockFactory->CreateNewBlockClass();
+		NewWallBlock->SetBlockPosition(tmp);
+		m_WallBlockVector.push_back(NewWallBlock);
+	}
+	
 }
 
 bool BlockManager::IsOverlap(int iXPos, int iYPos, int i)
 {
 	for (int x = 0; x < i; x++)
 	{
-		if (m_Obstacle[x].GetPosition(POSITION_X) == iXPos && m_Obstacle[x].GetPosition(POSITION_Y) == iYPos)
-			return true;
+		//if (m_Obstacle[x].GetPosition(POSITION_X) == iXPos && m_Obstacle[x].GetPosition(POSITION_Y) == iYPos)
+		//	return true;	//겹치기 테스트 기존
+
+		if (m_ObstacleBlockVector[x]->GetPosition(POSITION_X) == iXPos && m_ObstacleBlockVector[x]->GetPosition(POSITION_Y) == iYPos)
+			return true;	//겹치기 테스트-팩토리 적용
 	}
 
 	return false;
@@ -65,7 +106,8 @@ Position BlockManager::GetRandomPosition(int i)
 
 void BlockManager::SetRandObstacle()
 {
-	if (m_Obstacle != NULL)
+	//방해물 생성-기존
+	/*if (m_Obstacle != NULL)
 		delete[] m_Obstacle;
 		
 	m_Obstacle = new Block[MAX_OBS];
@@ -73,21 +115,43 @@ void BlockManager::SetRandObstacle()
 	{
 		m_Obstacle[i].SetBlock(BLOCK_ATTRIBUTE_OBSTACLE, GetRandomPosition(i));
 		m_Obstacle[i].DrawBlock();
+	}*/
+
+	
+	//방해물 생성-팩토리 적용
+	if (!m_ObstacleBlockVector.empty())
+		m_ObstacleBlockVector.clear();
+
+	for (int i = 0; i < MAX_OBS; i++)
+	{
+		Block *NewObstacleBlock = NewObstacletBlockFactory->CreateNewBlockClass();
+		NewObstacleBlock->SetBlockPosition(GetRandomPosition(i));
+		m_ObstacleBlockVector.push_back(NewObstacleBlock);
+		NewObstacleBlock->DrawBlock();
 	}
 }
 
 
 void BlockManager::InitFeed()
 {
-	if (m_Feed != NULL)
-		delete[] m_Feed;
+	//먹이 초기화-기존
+	//if (m_Feed != NULL)
+	//	delete[] m_Feed;
 
-	m_Feed = new Block[MAX_FEED];
+	//m_Feed = new Block[MAX_FEED];
+
+
+	//먹이 초기화-팩토리 적용
+	if (!m_FeedBlockVector.empty())
+		m_FeedBlockVector.clear();
+
 }
 
 
 void BlockManager::SetRandFeed(int i)
 {
+	//먹이 생성-기존
+	
 	int j = 0;
 	for (; j < MAX_FEED; j++)
 	{
@@ -97,6 +161,19 @@ void BlockManager::SetRandFeed(int i)
 	
 	m_Feed[j].SetBlock(BLOCK_ATTRIBUTE_FEED, GetRandomPositionFeed());
 	m_Feed[j].DrawBlock();
+
+
+	//먹이 생성-팩토리 적용
+
+	int x = 0;
+	for (; x < MAX_FEED; x++)
+	{
+		if (m_Feed[x].GetPosition(POSITION_X) <= 0)
+			break;
+	}
+
+	m_Feed[x].SetBlock(BLOCK_ATTRIBUTE_FEED, GetRandomPositionFeed());
+	m_Feed[x].DrawBlock();
 }
 
 
@@ -142,7 +219,8 @@ void BlockManager::DrawWallBlock()
 {
 	for (int i = 0; i < m_iWallCount; i++)
 	{
-		m_BlockWall[i].DrawBlock();
+		//m_BlockWall[i].DrawBlock(); //벽그리기 기존
+		m_WallBlockVector[i]->DrawBlock();
 	}
 }
 
@@ -185,3 +263,6 @@ BlockManager::~BlockManager()
 	delete[] m_Feed;
 	delete[] m_Obstacle;
 }
+
+
+//3월 9일 먹이 생성 팩토리 전용으로 고치고 있었음
