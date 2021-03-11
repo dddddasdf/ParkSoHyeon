@@ -44,9 +44,9 @@ public:
 class FeedBlock : public Block
 {
 private:
-	BLOCK_ATTRIBUTE m_eAttribute;
+	/*BLOCK_ATTRIBUTE m_eAttribute;
 	std::string m_strShape;
-	Position m_MyPosition;
+	Position m_MyPosition;*/
 public:
 	FeedBlock();
 
@@ -55,9 +55,9 @@ public:
 class ObstacleBlock : public Block
 {
 private:
-	BLOCK_ATTRIBUTE m_eAttribute;
+	/*BLOCK_ATTRIBUTE m_eAttribute;
 	std::string m_strShape;
-	Position m_MyPosition;
+	Position m_MyPosition;*/
 public:
 	ObstacleBlock();
 

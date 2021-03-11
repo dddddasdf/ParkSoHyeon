@@ -58,7 +58,7 @@ public:
 	virtual Block* CreateNewBlockClass();
 };
 
-class ObstacletBlockFactory : public BlockFactory
+class ObstacleBlockFactory : public BlockFactory
 {
 private:
 

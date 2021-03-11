@@ -12,14 +12,18 @@ private:
 	Block* m_Feed;
 
 	WallBlockFactory *NewWallBlockFactory;
-	FeedBlockFactory *NewFeedBlockFacotory;
-	ObstacletBlockFactory *NewObstacletBlockFactory;
+	FeedBlockFactory *NewFeedBlockFactory;
+	ObstacleBlockFactory *NewObstacleBlockFactory;
 
 	std::vector <Block*> m_WallBlockVector;
 	std::vector <Block*> m_FeedBlockVector;
 	std::vector <Block*> m_ObstacleBlockVector;
 
 	int m_iWallCount;
+
+	int m_iCurrentFeedCount;
+	bool m_bIsCountedMaxFeed;	//먹이 주는데 사용
+
 public:
 	Position GetRandomPosition(int i);
 	void SetRandObstacle();	//방해물 랜덤 생성
@@ -35,3 +39,5 @@ public:
 	~BlockManager();
 };
 
+//매니저에 추상팩토리 적용하는 건 했음
+//근데 팩토리메소드는 어디다 써먹지

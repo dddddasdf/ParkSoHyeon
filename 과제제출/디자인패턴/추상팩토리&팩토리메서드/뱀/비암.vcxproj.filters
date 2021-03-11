@@ -36,6 +36,9 @@
     <ClInclude Include="Headers (2).h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp">
@@ -57,6 +60,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Headers (2).cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="View.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

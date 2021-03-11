@@ -150,6 +150,7 @@
     <ClInclude Include="Headers (2).h" />
     <ClInclude Include="headers.h" />
     <ClInclude Include="Snake.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="Headers (2).cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="View.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

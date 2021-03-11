@@ -26,7 +26,7 @@ Block* FeedBlockFactory::CreateNewBlockClass()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////πÊ«ÿπ∞
 
-Block* ObstacletBlockFactory::CreateNewBlockClass()
+Block* ObstacleBlockFactory::CreateNewBlockClass()
 {
 	return new ObstacleBlock;
 }
