@@ -35,6 +35,8 @@ public:
 	bool IsOverlapFeed(int iXPos, int iYPos);	//중복 확인 먹이 배치용
 	int IsCollisionObject(int iSnakeX, int iSnakeY);	//충돌 체크
 	void DeleteFeed(Block *DeleteFeed);	//먹은 먹이 없애기
+	void DeleteBlocks();	//블럭들 동적 할당 해제
+	void DeleteWallBlocks();	//벽 블럭들 동적 할당 해제 
 	BlockManager();
 	~BlockManager();
 };

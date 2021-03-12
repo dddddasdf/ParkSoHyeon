@@ -328,6 +328,38 @@ void BlockManager::DeleteFeed(Block *DeleteFeed)
 	delete DeleteFeed;
 }
 
+void BlockManager::DeleteBlocks()
+{
+	int x = 0;
+
+	for (std::vector <Block*>::iterator iter = m_FeedBlockVector.begin(); iter != m_FeedBlockVector.end(); ++iter)
+	{
+		delete m_FeedBlockVector[x];
+
+		x++;
+	}
+
+	x = 0;
+
+	for (std::vector <Block*>::iterator iter = m_ObstacleBlockVector.begin(); iter != m_ObstacleBlockVector.end(); ++iter)
+	{
+		delete m_ObstacleBlockVector[x];
+
+		x++;
+	}
+}
+
+void BlockManager::DeleteWallBlocks()
+{
+	int x = 0;
+
+	for (std::vector <Block*>::iterator iter = m_WallBlockVector.begin(); iter != m_WallBlockVector.end(); ++iter)
+	{
+		delete m_WallBlockVector[x];
+
+		x++;
+	}
+}
 
 BlockManager::~BlockManager()
 {
@@ -338,6 +370,7 @@ BlockManager::~BlockManager()
 	delete NewWallBlockFactory;
 	delete NewFeedBlockFactory;
 	delete NewObstacleBlockFactory;
+
 }
 
 

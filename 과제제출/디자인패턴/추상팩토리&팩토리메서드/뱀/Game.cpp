@@ -136,6 +136,8 @@ void Game::Menu()
 			PrintScore();
 			break;
 		case 2:
+			m_BlockManager.DeleteBlocks();
+			m_BlockManager.DeleteWallBlocks();
 			return;
 		default:
 			gotoxy(30, 18);
