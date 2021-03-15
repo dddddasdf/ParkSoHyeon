@@ -1,2 +1,11 @@
-﻿  DataTable.cpp
-  ObserverEx.vcxproj -> F:\강의자료\자료구조와알고리즘\강의용코드\Chapter24\Debug\ObserverEx.exe
+﻿  Data.cpp
+c:\users\a-12\documents\github\parksohyeon\참고코드\디자인패턴\옵저버패턴\observerex\data.h(18): error C4596: 'setData': 멤버 선언의 정규화된 이름이 잘못되었습니다.
+  DataGraph.cpp
+c:\users\a-12\documents\github\parksohyeon\참고코드\디자인패턴\옵저버패턴\observerex\datagraph.cpp(20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  DataTable.cpp
+  main.cpp
+c:\users\a-12\documents\github\parksohyeon\참고코드\디자인패턴\옵저버패턴\observerex\data.h(18): error C4596: 'setData': 멤버 선언의 정규화된 이름이 잘못되었습니다.
+c:\users\a-12\documents\github\parksohyeon\참고코드\디자인패턴\옵저버패턴\observerex\main.cpp(6): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+  Observer.cpp
+  Subject.cpp
+  코드를 생성하고 있습니다...

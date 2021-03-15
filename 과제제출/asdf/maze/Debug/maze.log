@@ -1,2 +1,8 @@
-﻿  BlockManager.cpp
-  maze.vcxproj -> C:\Users\A-03\source\repos\dd123\Debug\maze.exe
+﻿  Block.cpp
+  BlockManager.cpp
+  Game.cpp
+  Headers.cpp
+c:\users\a-12\documents\github\parksohyeon\과제제출\asdf\maze\headers.cpp(10): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+  main.cpp
+  코드를 생성하고 있습니다...
+  maze.vcxproj -> C:\Users\A-12\Documents\GitHub\ParkSoHyeon\과제제출\asdf\maze\Debug\maze.exe
