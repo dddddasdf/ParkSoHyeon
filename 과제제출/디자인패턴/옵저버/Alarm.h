@@ -1,12 +1,18 @@
 #pragma once
 #include "Headers.h"
 
+enum APPEAR
+{
+	APPEAR_COME,
+	APPEAR_AWAY
+};
+
 class Observer
 {
 private:
 
 public:
-	virtual void Notify(std::string name) = 0;
+	virtual void Notify(std::string name, int appear) = 0;
 };
 
 //보스 목록
@@ -68,9 +74,19 @@ public:
 class Player : public Observer
 {
 private:
-
+	std::string m_sPlayerName;
+	BossAlarm* SubscribeBossAlarm;
+	bool m_bAlarmState;
 public:
-	void Notify(std::string name) override;
+	Player(std::string name) : m_sPlayerName(name) {  }
+
+	void Notify(std::string name, int appear) override;
+	
+	void SetBossAlarm(BossAlarm* NewAlarm);
+	void GetBossState();
+	void TurnOnBossState();
+	void TurnOffBossState();
+	bool ReturnAlarmState();
 };
 
 //class Alarm
@@ -78,3 +94,6 @@ public:
 //{
 //};
 
+/*
+보스가 사라질때 어케 알림을 하지
+*/

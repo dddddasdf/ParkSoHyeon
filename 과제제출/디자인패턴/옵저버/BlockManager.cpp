@@ -123,6 +123,23 @@ void BlockManager::PrintBlocks()
 	}
 }
 
+void BlockManager::PrintUser()
+{
+	gotoxy(2, 1);
+	std::cout << "¢À";
+}
+
+void BlockManager::PrintBoss()
+{
+	gotoxy(20, 15);
+	std::cout << "@";
+}
+
+void BlockManager::EraseBoss()
+{
+	gotoxy(20, 15);
+	std::cout << "  ";
+}
 
 BlockManager::~BlockManager()
 {

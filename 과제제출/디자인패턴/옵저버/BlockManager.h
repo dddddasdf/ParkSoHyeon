@@ -13,6 +13,10 @@ public:
 	BlockManager();
 	void SetBlocks();	//벽 좌표를 담을 벡터 생성
 	void PrintBlocks();	//블럭들 출력
+
+	void PrintUser();
+	void PrintBoss();
+	void EraseBoss();
 	~BlockManager();
 };
 

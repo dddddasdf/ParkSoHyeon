@@ -5,12 +5,15 @@
 class Game
 {
 private:
-	BlockManager m_BlockManager;
-
+	BlockManager *m_BlockManager;
+	Player *User;
+	ClearDragon *Dragon;
 public:
 	Game();
 	void Init();	//최초 시작시 초기화
+	void NowPlaying();
 	void ShowGuide();	//하단부에 가이드 출력
+	void AlarmState();
 
 	~Game();
 };
