@@ -22,13 +22,13 @@ void BossAlarm::Notification()
 
 	if (m_bIsAppear)
 	{
-		for (; Iter == IterEnd; Iter++)
-			(*Iter)->Notify(m_sName, APPEAR_COME);
+		for (; Iter < IterEnd; Iter++)
+			(*Iter)->Notify(m_sName, m_bIsAppear);
 	}
 	else
 	{
-		for (; Iter == IterEnd; Iter++)
-			(*Iter)->Notify(m_sName, APPEAR_AWAY);
+		for (; Iter < IterEnd; Iter++)
+			(*Iter)->Notify(m_sName, m_bIsAppear);
 	}
 }
 
@@ -59,13 +59,13 @@ void ClearDragon::DisappearBoss()
 
 
 //모루카
-void Morucar::SpawnBoss()
+void Molucar::SpawnBoss()
 {
 	m_bIsAppear = true;
 	Notification();
 }
 
-void Morucar::DisappearBoss()
+void Molucar::DisappearBoss()
 {
 	m_bIsAppear = false;
 	Notification();
@@ -89,8 +89,15 @@ void Anton::DisappearBoss()
 //
 void Player::Notify(std::string name, int appear)
 {
+	gotoxy(0, 23);
 	if (m_bAlarmState)
-		std::cout << name << " 출현 중\n";
+	{
+		if (appear == true)
+			std::cout << name << " 출현 중\n";
+		else
+			std::cout << name << " 퇴근 중\n";
+	}
+	
 }
 
 void Player::SetBossAlarm(BossAlarm* NewAlarm)

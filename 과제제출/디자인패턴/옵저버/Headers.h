@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <Windows.h>
+#include <ctime>
 #include <conio.h>
 #include <crtdbg.h>
 
