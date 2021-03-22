@@ -34,6 +34,8 @@ public:
 
 	void Notification();
 	void Notification(Observer* Player);
+
+	bool ReturnBossState() { return m_bIsAppear; }
 };
 
 class ClearDragon : public BossAlarm
@@ -47,12 +49,12 @@ public:
 	void DisappearBoss();
 };
 
-class Morucar : public BossAlarm
+class Molucar : public BossAlarm
 {
 private:
 
 public:
-	Morucar() : BossAlarm("모루카") { m_bIsAppear = false; }
+	Molucar() : BossAlarm("모루카") { m_bIsAppear = false; }
 
 	void SpawnBoss();
 	void DisappearBoss();

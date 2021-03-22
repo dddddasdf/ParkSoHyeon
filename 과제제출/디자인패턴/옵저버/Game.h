@@ -8,6 +8,8 @@ private:
 	BlockManager *m_BlockManager;
 	Player *User;
 	ClearDragon *Dragon;
+
+	int m_iDragonSpawnTime;
 public:
 	Game();
 	void Init();	//최초 시작시 초기화
