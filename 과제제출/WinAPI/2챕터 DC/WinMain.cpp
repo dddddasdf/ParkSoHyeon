@@ -23,7 +23,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	RegisterClass(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, (HMENU)NULL, hInstance, NULL);
+	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, 50, 20, 1800, 1000, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 
 	while (GetMessage(&Message, NULL, 0, 0))
@@ -101,6 +101,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			SetPixel(hdc, XCentre + X, YCentre + Y, RGB(0, 0, 0));
 		}
 
+		MoveToEx(hdc, 0, 700, NULL);
+		LineTo(hdc, 300, 700);	//X축
+		
+		MoveToEx(hdc, 150, 550, NULL);
+		LineTo(hdc, 150, 850);	//Y축
+
+		XCentre = 150;	//중심 X좌표
+		YCentre = 700;	//중심 Y좌표
+
+		SetPixel(hdc, XCentre, YCentre, RGB(0, 0, 0));
+
+		//↓삼각함수 버전-파란색
+		for (double i = Radius; i >= 0; i -= 0.5)
+		{
+			for (int Angle = 0; Angle <= 360; Angle++)
+			{
+				X = cos(Angle) * i;
+				Y = (sin(Angle) * i);
+
+				SetPixel(hdc, XCentre + X, YCentre + Y, RGB(0, 0, 255));
+			}
+		}
+
+		Radius = 30;	//↓원의 방정식 버전-흰색
+
+		for (double i = Radius; i >= 0; i -= 0.02)
+		{
+			for (Y = 35; Y >= -35; Y -= 1)
+			{
+				X = sqrt(pow(i, 2) - pow(Y, 2));
+
+				SetPixel(hdc, XCentre + X, YCentre + Y, RGB(255, 255, 255));
+				SetPixel(hdc, XCentre - X, YCentre + Y, RGB(255, 255, 255));
+			}
+		}
 	}
 		EndPaint(hWnd, &ps);
 		return 0;
@@ -116,3 +151,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
+
+/*
+원의 넓이 구해서 어케 하는 거지,,,
+일단 원의 넓이 공식
+S = R ^ 2 * (대충 파이라는 기호)
+파이는 3.14로 뭉뚱그리자
+원의 정의 이용하랫는데
+원의 정의: 중심에서 거리가 같은 무수한 점들의 집합
+(덤)타원의 정의: 두 정점에서 거리가 같은 무수한 점들의 집합
+
+좌표평면 위에서 두 점간의 거리 공식,,, (a, b), (c, d)라고 쳤을 떄
+(a-c)^2 + (b-d)^2 = i^2
+(a, b)가 원점잉라면?? c^2 + d^2 = i^2
+c^2 = i^2 - d^2
+c = sqrt(i^2 - d^2)
+
+근데 이거랑 원의 넓이랑 무슨 상관이 잇음
+*/
