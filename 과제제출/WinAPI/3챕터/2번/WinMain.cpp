@@ -33,57 +33,27 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	return (int)Message.wParam;
 }
 
-TCHAR str[256];
-
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
-	int len;
 
 	static int x = 100;
 	static int y = 100;
 
 	switch (iMessage)
 	{
-		/*case WM_CHAR:
-			len = lstrlen(str);
-			str[len] = (TCHAR)wParam;
-			str[len + 1] = 0;
-			InvalidateRect(hWnd, NULL, TRUE);
-			return 0;*/
-
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		//TextOut(hdc, 100, 100, str, lstrlen(str));
 
 		Ellipse(hdc, x - 30, y - 30, x + 30, y + 30);
 		EndPaint(hWnd, &ps);
 		return 0;
-
-
-	case WM_KEYDOWN:
-
-		switch (wParam)
-		{
-		case VK_LEFT:
-			x -= 10;
-			break;
-		case VK_RIGHT:
-			x += 10;
-			break;
-		case VK_UP:
-			y -= 10;
-			break;
-		case VK_DOWN:
-			y += 10;
-			break;
-		}
-
-		InvalidateRect(hWnd, NULL, FALSE);
+	case WM_LBUTTONDOWN:
+		x = LOWORD(lParam);
+		y = HIWORD(lParam);
+		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
-
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
