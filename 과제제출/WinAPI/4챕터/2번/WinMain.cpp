@@ -1,8 +1,11 @@
 #include<windows.h>
 #include <iostream>
+#include <cmath>
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = TEXT("C4No2");
+
+#define CLOCK_RADIUS 150
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -42,8 +45,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	static TCHAR WhatTime[128];
 
-	static int x = 320;
-	static int y = 320;
+	static int XCentre = 320;	//중심
+	static int YCentre = 250;	//중심
+
+	double X, Y;
+	static TCHAR ClockHour[3];
+
+	//int ClockNumberX, ClockNumberY;
+	double SecondX, SecondY;
+	double MinuteX, MinuteY;
+	double HourX, HourY;
 
 	switch (iMessage)
 	{
@@ -54,20 +65,60 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		{
-			MoveToEx(hdc, x, y, NULL);
-			LineTo(hdc, x - 100, y - 100);
-			EndPaint(hWnd, &ps);
+			//시계틀 그리기
+			Ellipse(hdc, XCentre - (CLOCK_RADIUS + 10), YCentre - (CLOCK_RADIUS + 10), XCentre + (CLOCK_RADIUS + 10), YCentre + (CLOCK_RADIUS + 10));
+			
+			for (int Hour = 1; Hour <= 12; Hour++)
+			{
+				X = sin((Hour * 30 * 3.1416) / 180) * CLOCK_RADIUS;
+				Y = cos((Hour * 30 * 3.1416) / 180) * CLOCK_RADIUS;
+
+				wsprintf(ClockHour, TEXT("%d"), Hour);
+				TextOut(hdc, (XCentre - 4) + X, (YCentre - 7) - Y, ClockHour, lstrlen(ClockHour));
+			}
+		}
+		{
+			//분시초침 그리기
+			GetLocalTime(&st);
+
+			X = sin((st.wSecond * 6 * 3.1416) / 180);
+			Y = cos((st.wSecond * 6 * 3.1416) / 180);
+
+			SecondX = sin((st.wSecond * 6 * 3.1416) / 180) * 130;
+			SecondY = cos((st.wSecond * 6 * 3.1416) / 180) * 130;
+
+			MinuteX = sin(((st.wMinute + (double)st.wSecond / 60) * 6 * 3.1416) / 180) * 115;
+			MinuteY = cos(((st.wMinute + (double)st.wSecond / 60) * 6 * 3.1416) / 180) * 115;
+
+			HourX = sin(((st.wHour % 12 + (double)st.wMinute / 60) * 30 * 3.1416) / 180) * 90;	//왜 증가를 안 해->double로 형변환 강제로 해저ㅜ야 먹히더라 안 해주면 걍 0 나옴
+			HourY = cos(((st.wHour % 12 + (double)st.wMinute / 60) * 30 * 3.1416) / 180) * 90;
+		
+			MoveToEx(hdc, XCentre, YCentre, NULL);
+			LineTo(hdc, XCentre + SecondX, YCentre - SecondY);
+			
+			MoveToEx(hdc, XCentre, YCentre, NULL);
+			LineTo(hdc, XCentre + MinuteX, YCentre - MinuteY);
+
+			MoveToEx(hdc, XCentre, YCentre, NULL);
+			LineTo(hdc, XCentre + HourX, YCentre - HourY);
 		}
 		
 
 		{
-			//TextOut(hdc, 165, 125, TEXT("지금 시간은: "), sizeof("지금 시간은: ") - 1);
+			//현재 시각은
+			TextOut(hdc, 265, 450, WhatTime, lstrlen(WhatTime));
 		}
+		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_TIMER:
 	{
 		GetLocalTime(&st);
-		wsprintf(WhatTime, TEXT("현재 시각: "), st.wHour);
+		if (st.wHour == 12)
+			wsprintf(WhatTime, TEXT("오후  %d : %d : %d"), st.wHour, st.wMinute, st.wSecond);
+		else if (st.wHour > 12)
+			wsprintf(WhatTime, TEXT("오후  %d : %d : %d"), st.wHour - 12, st.wMinute, st.wSecond);
+		else
+			wsprintf(WhatTime, TEXT("오전  %d : %d : %d"), st.wHour, st.wMinute, st.wSecond);
 	}
 	InvalidateRect(hWnd, NULL, TRUE);
 	return 0;
@@ -82,7 +133,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 /*
 저번에 삼각함수로 좌표 그린 거 이용하면 될 거 같은데
 
-분침 길이: 100
-시침 길이: 70
-초침 길이: 100
+분침 길이: 90
+시침 길이: 60
+초침 길이: 120
+
+시계 반지름: 150
 */
