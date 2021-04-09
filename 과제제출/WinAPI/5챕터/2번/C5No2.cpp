@@ -17,7 +17,9 @@ enum PICTURE_COORDINATE
 	PICTURE_APPLE_X = 500,
 	PICTURE_APPLE_Y = 350,
 	PICTURE_TREE_X = 900,
-	PICTURE_TREE_Y = 50
+	PICTURE_TREE_Y = 50,
+	PICTURE_DEFAULT_X = 100,
+	PICUTRE_DEFAULT_Y = 100
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -56,15 +58,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	static HDC hdc, MemDC;
 	static PAINTSTRUCT ps;
-
-	BitBitMap NewBit;
+	BitBitMap Dog(IDB_BITMAP3);
+	BitBitMap Mola(IDB_BITMAP4);
+	BitBitMap Mola2(IDB_BITMAP5);
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
 		return 0;
 	case WM_PAINT:
-		NewBit.PaintPicture(hWnd, ps, g_hInst, hdc);
+		hdc = BeginPaint(hWnd, &ps);
+
+		Dog.Draw(g_hInst, hdc);
+		Mola.Draw(g_hInst, hdc, PICTURE_DEFAULT_X + 100, PICUTRE_DEFAULT_Y + 100);
+		Mola2.Draw(g_hInst, hdc, 600, 300, PICTURE_DEFAULT_X + 200, PICUTRE_DEFAULT_Y + 200);
+		Dog.Draw(g_hInst, hdc, 700, 800, PICTURE_DEFAULT_X + 350, PICUTRE_DEFAULT_Y + 350);
+
+		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_LBUTTONDOWN:
 

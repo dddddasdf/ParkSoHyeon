@@ -39,5 +39,41 @@
     <Image Include="apple.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="bitmap2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="grape.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="00.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="05.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="06.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="07.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="08.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="09.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -162,7 +162,19 @@
     <ResourceCompile Include="C5No2.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="00.bmp" />
+    <Image Include="01.bmp" />
+    <Image Include="02.bmp" />
+    <Image Include="03.bmp" />
+    <Image Include="04.bmp" />
+    <Image Include="05.bmp" />
+    <Image Include="06.bmp" />
+    <Image Include="07.bmp" />
+    <Image Include="08.bmp" />
+    <Image Include="09.bmp" />
     <Image Include="apple.bmp" />
+    <Image Include="bitmap2.bmp" />
+    <Image Include="grape.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
