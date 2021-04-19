@@ -5,10 +5,13 @@
 class BitMap
 {
 private:
-	int m_PictureID;
+	HBITMAP m_BitMap;
 
 public:
-	bool IDCheck();
+	BitMap(std::string FileName);
+	bool DataNullCheck();	//이미지가 제대로 로드 된 것인가 확인
+
+	HBITMAP ReturnBitMap();	//매니저로 비트맵 정보 넘김
 };
 
 //단순히 생성자에서 불러올 것이 아니라...
