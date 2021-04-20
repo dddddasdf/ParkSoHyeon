@@ -9,17 +9,7 @@ LPCTSTR lpszClass = TEXT("C6No1");
 
 /////////////////////////////////////////////////////////////////////
 
-enum PICTURE_COORDINATE
-{
-	PICTURE_GRAPE_X = 100,
-	PICTURE_GRAPE_Y = 150,
-	PICTURE_APPLE_X = 500,
-	PICTURE_APPLE_Y = 350,
-	PICTURE_TREE_X = 900,
-	PICTURE_TREE_Y = 50,
-	PICTURE_DEFAULT_X = 100,
-	PICUTRE_DEFAULT_Y = 100
-};
+void RandomCardOrder(std::vector <int> CardVector);
 
 /////////////////////////////////////////////////////////////////////
 
@@ -58,17 +48,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static HDC hdc, MemDC;
 	static PAINTSTRUCT ps;
 	static BitMapManager NewBitMapManager(hdc, g_hInst);
+	static std::vector <int> CardVector;
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
+		//최초 시작시 필요한 이미지를 전부 로드해둠
+		NewBitMapManager.LoadNewImage("Blank");	//카드 뒷면임
 		NewBitMapManager.LoadNewImage("00");
-
+		NewBitMapManager.LoadNewImage("01");
+		NewBitMapManager.LoadNewImage("02");
+		NewBitMapManager.LoadNewImage("03");
+		NewBitMapManager.LoadNewImage("04");
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		NewBitMapManager.PrintBitMap(0, 100, 100);
-
+		NewBitMapManager.PrintBitMap(hdc, 0, CARD_LOCATION_FIRST_X, CARD_LOCATION_FIRST_Y);
+		NewBitMapManager.PrintBitMap(hdc, 4, CARD_LOCATION_SIXTH_X, CARD_LOCATION_SIXTH_Y);
 
 		EndPaint(hWnd, &ps);
 		return 0;
@@ -82,6 +78,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
 
+void RandomCardOrder(std::vector <int> CardVector)
+{
+	//여기서 카드 인자를 2번씩 랜덤으로 벡터에 넣는 함수를 짜야 한다....
+}
 
 /*
 생각해보니까 같은 그림인지 어케 판별함
