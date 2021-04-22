@@ -31,11 +31,11 @@ void BitMapManager::PrintBitMap(HDC hdc, int BitMapNumber, int xLocation, int yL
 	BitMapTmp = m_BitMapVector[BitMapNumber]->ReturnBitMap();
 	OldBitMap = (HBITMAP)SelectObject(MemDC, BitMapTmp);
 
-	//사진 크기 구하는 파트
-	/*GetObject(BitMapTmp, sizeof(BITMAP), &BitMapSize);
-	PictureSizeX = BitMapSize.bmWidth;
-	PictureSizeY = BitMapSize.bmHeight;*/
-	//사진 크기 구하는 파트 종료-이번 건 안 씀 너무 복잡해질 거 같아서...
+	DWORD LastError;
+	if (OldBitMap == NULL)
+	{
+		LastError = GetLastError();	//작업을 완료했습니다라고 하는데 뭐가 문제야 ㅅㅂ
+	}
 
 	BitBlt(hdc, xLocation, yLocation, IMAGESIZE_X, IMAGESIZE_Y, MemDC, 0, 0, SRCCOPY);
 
