@@ -9,6 +9,9 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = TEXT("C6No1");
 
+#define NO_INDEX -5
+#define NUMBER_OF_PAIR 5
+
 /////////////////////////////////////////////////////////////////////
 
 struct CardInformation
@@ -24,6 +27,8 @@ struct CardInformation
 
 void InitCardOrder(std::vector<CardInformation> *CardVector);
 void PrintCards(HDC* hdc, BitMapManager NewBitMapManager, std::vector<CardInformation> CardVector);
+int CheckOverlap(std::vector<CardInformation>* CardVector, int MouseX, int MouseY);
+bool IsCorrect(std::vector<CardInformation>* CardVector, int IndexFirst, int IndexSecond);
 
 /////////////////////////////////////////////////////////////////////
 
@@ -66,53 +71,56 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BitMapManager NewBitMapManager(hdc, g_hInst);
 	static std::vector <CardInformation> CardVector = std::vector <CardInformation> ();
 	static int NumberOfRevealed = 0;
+	static int IndexFirst = NO_INDEX, IndexSecond = NO_INDEX;	//뒤집었을 때 인덱스 받아오는 용도
+	static int NumberOfCorrect = 0;	//맞춘 개수
+	int MouseX, MouseY;
+
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
-		//최초 시작시 필요한 이미지를 전부 로드해둠
-		NewBitMapManager.LoadNewImage("Blank");	//카드 뒷면임
-		NewBitMapManager.LoadNewImage("00");
-		NewBitMapManager.LoadNewImage("01");
-		NewBitMapManager.LoadNewImage("02");
-		NewBitMapManager.LoadNewImage("03");
-		NewBitMapManager.LoadNewImage("04");
-
 		InitCardOrder(&CardVector);	//카드 정보를 저장할 벡터 초기화
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		NewBitMapManager.PrintBitMap(hdc, 0, CARD_LOCATION_FIRST_X, CARD_LOCATION_FIRST_Y);
-		NewBitMapManager.PrintBitMap(hdc, 1, CARD_LOCATION_SIXTH_X, CARD_LOCATION_SIXTH_Y);
-
-		NewBitMapManager.PrintBitMap(hdc, 2, 50, 450);
-		NewBitMapManager.PrintBitMap(hdc, 3, 350, 450);
-		NewBitMapManager.PrintBitMap(hdc, 4, 450, 450);
-		NewBitMapManager.PrintBitMap(hdc, 5, 550, 450);
-
-		NewBitMapManager.PrintBitMap(hdc, CardVector[1].CardNumbering, CardVector[1].XLocation, CardVector[1].YLocation);
-		NewBitMapManager.PrintBitMap(hdc, CardVector[2].CardNumbering, CardVector[2].XLocation, CardVector[2].YLocation);
-		NewBitMapManager.PrintBitMap(hdc, CardVector[3].CardNumbering, CardVector[3].XLocation, CardVector[3].YLocation);
-		NewBitMapManager.PrintBitMap(hdc, CardVector[4].CardNumbering, CardVector[4].XLocation, CardVector[4].YLocation);
 		
-		{
-			for (int i = 0; i < 10; i++)
-			{
-				if (CardVector[i].IsRevealed == false)
-				{
-					NewBitMapManager.PrintBitMap(hdc, 0, CardVector[i].XLocation, CardVector[i].YLocation);
-				}
-				else
-				{
-					NewBitMapManager.PrintBitMap(hdc, CardVector[i].CardNumbering, CardVector[i].XLocation, CardVector[i].YLocation);
-				}
-			}
-		}
+		PrintCards(&hdc, NewBitMapManager, CardVector);
 
 		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_LBUTTONDOWN:
+		MouseX = LOWORD(lParam);
+		MouseY = HIWORD(lParam);
 
+		{
+			int i = CheckOverlap(&CardVector, MouseX, MouseY);
+
+			if (i != NO_INDEX)
+			{
+				if (NumberOfRevealed == 0)
+					IndexFirst = i;
+				else
+					IndexSecond = i;
+
+				NumberOfRevealed++;
+			}
+		}
+		
+		{
+			//뒤집힌 카드의 개수가 2개가 되었다면 일치하는지 체크함
+			if (NumberOfRevealed == 2)
+			{
+				if (IsCorrect(&CardVector, IndexFirst, IndexSecond))
+				{
+					NumberOfCorrect++;
+				}
+				NumberOfRevealed = 0;
+				IndexFirst = NO_INDEX;
+				IndexSecond = NO_INDEX;
+			}
+		}
+
+		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -123,9 +131,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 void InitCardOrder(std::vector<CardInformation> *CardVector)
 {
-	//여기서 카드 인자를 2번씩 랜덤으로 벡터에 넣는 함수를 짜야 한다....
+	//여기서 카드 인자를 2번씩 랜덤으로 벡터에 넣는 함수를 짜야 한다
 	//카드 그림 넘버링을 짤 뿐만이 아니라 IsRevealed도 false로 초기화
-	//숫자를 랜덤으로 넣는 걸 감지하는 것은 어떻게 로직을 짤 것인가
+	//숫자를 랜덤으로 넣는 걸 감지하는 것은 어떻게 로직을 짤 것인가->무식하지만 가장 간단한 방법으로 하기로 함
 
 	int NumberingOne = 0, NumberingTwo = 0, NumberingThree = 0, NumberingFour = 0, NumberingFive = 0;
 
@@ -144,7 +152,7 @@ void InitCardOrder(std::vector<CardInformation> *CardVector)
 			{
 				if (NumberingOne != 2)
 				{
-					NewCardInformation.CardNumbering = RandomNumber + 1;
+					NewCardInformation.CardNumbering = CARD_PICTURE_FIRST;
 					NumberingOne++;
 
 					break;
@@ -154,17 +162,17 @@ void InitCardOrder(std::vector<CardInformation> *CardVector)
 			{
 				if (NumberingTwo != 2)
 				{
-					NewCardInformation.CardNumbering = RandomNumber + 1;
+					NewCardInformation.CardNumbering = CARD_PICTURE_SECOND;
 					NumberingTwo++;
 
 					break;
 				}
-			}
+			} 
 			else if (RandomNumber == 2)
 			{
 				if (NumberingThree != 2)
 				{
-					NewCardInformation.CardNumbering = RandomNumber + 1;
+					NewCardInformation.CardNumbering = CARD_PICTURE_THIRD;
 					NumberingThree++;
 
 					break;
@@ -174,7 +182,7 @@ void InitCardOrder(std::vector<CardInformation> *CardVector)
 			{
 				if (NumberingFour != 2)
 				{
-					NewCardInformation.CardNumbering = RandomNumber + 1;
+					NewCardInformation.CardNumbering = CARD_PICTURE_FOURTH;
 					NumberingFour++;
 
 					break;
@@ -184,7 +192,7 @@ void InitCardOrder(std::vector<CardInformation> *CardVector)
 			{
 				if (NumberingFive != 2)
 				{
-					NewCardInformation.CardNumbering = RandomNumber + 1;
+					NewCardInformation.CardNumbering = CARD_PICTURE_FIFTH;
 					NumberingFive++;
 
 					break;
@@ -246,12 +254,49 @@ void PrintCards(HDC* hdc, BitMapManager NewBitMapManager, std::vector<CardInform
 	{
 		if (CardVector[i].IsRevealed == false)
 		{
-			NewBitMapManager.PrintBitMap(*hdc, 0, CardVector[i].XLocation, CardVector[i].YLocation);
+			NewBitMapManager.PrintBitMap(*hdc, CARD_PICTURE_BLANK, CardVector[i].XLocation, CardVector[i].YLocation);
+			//카드가 뒷면을 보여주고 있는 상태일 경우 공백을 넣음
 		}
 		else
 		{
 			NewBitMapManager.PrintBitMap(*hdc, CardVector[i].CardNumbering, CardVector[i].XLocation, CardVector[i].YLocation);
 		}
+	}
+}
+
+int CheckOverlap(std::vector<CardInformation>* CardVector, int MouseX, int MouseY)
+{
+	//마우스의 좌표가 카드가 있는 위치일 경우 뒤집고 해당 카드의 인덱스를 반환하는 함수
+	
+	int i = 0;
+
+	while (i < 10)
+	{
+		if ((MouseX >= CardVector->at(i).XLocation && MouseX <= (CardVector->at(i).XLocation + IMAGESIZE_X))
+			&& (MouseY >= CardVector->at(i).YLocation && MouseY <= (CardVector->at(i).YLocation + IMAGESIZE_Y)))
+		{
+			CardVector->at(i).IsRevealed = true;
+			return i;
+		}
+		i++;
+	}
+
+	return NO_INDEX;
+}
+
+bool IsCorrect(std::vector<CardInformation>* CardVector, int IndexFirst, int IndexSecond)
+{
+	//뒤집어진 카드가 2개 존재할 경우 그림이 일치하는가 확인하는 함수
+	if (CardVector->at(IndexFirst).CardNumbering == CardVector->at(IndexSecond).CardNumbering)
+	{
+		return true;
+	}
+	else
+	{
+		CardVector->at(IndexFirst).IsRevealed = false;
+		CardVector->at(IndexSecond).IsRevealed = false;
+		
+		return false;
 	}
 }
 
@@ -285,4 +330,29 @@ IsRealved를 잠시 true로 바꾸어서 그림을 활성화 시킨다
 /*
 배운 점: static 벡터를 동일 소스의 함수의 매개변수로 써서 값을 보존하고 싶으면 포인터로 넘겨라
 벡터만 그런 게 아니라 다 그렇더라...
+*/
+
+
+/*
+해결점을 알아냈다
+한 번 호출한 오브젝트는 다시 쓸 수 없다->무조건 새로 불러와야 함
+즉 비트맵 벡터에 넣어둔 다음 두고두고 쓸 수는 없다는 얘기
+더 나은 방법이 있겠지만 현재 내가 가능한 방법은 이미지를 출력할 때마다 새로이 가져오는 것 외에는 방법이 없음
+
+
+NewBitMapManager.LoadNewImage("Blank");	<-잘 기억해둘 것
+
+드디어 출력이 된다
+*/
+
+/*
+Overlap 함수 내에서 벡터 멤버의 구조체의 멤버 변수에 접근하려면 왜 기존에 하듯이 벡터명[]이 안 되고 .at()만 되는지 모르겠음
+*/
+
+/*
+이제 해야 하는 것
+타이머 기능 들여와서 현재 흐른 시간 보여줌
+짝을 잘못 찾은 거라면 2초간 뒤집을 수 없고 뭘 뒤집었는지 보여줌
+다 하면 메시지창 뜨면서 다시 할 거냐고 물음
+
 */

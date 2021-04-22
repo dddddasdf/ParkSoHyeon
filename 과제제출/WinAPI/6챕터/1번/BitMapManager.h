@@ -29,15 +29,26 @@ enum CARD_LOCATION
 	CARD_LOCATION_TENTH_Y = 350
 };
 
+enum CARD_PICTURE
+{
+	CARD_PICTURE_BLANK = 0,
+	CARD_PICTURE_FIRST = 1,
+	CARD_PICTURE_SECOND = 2,
+	CARD_PICTURE_THIRD = 3,
+	CARD_PICTURE_FOURTH = 4,
+	CARD_PICTURE_FIFTH = 5
+};
+
 class BitMapManager
 {
 private:
-	std::vector <BitMap*> m_BitMapVector;	//비트맵들 넣는다
+	std::vector <BitMap*> m_BitMapVector;	//비트맵들 넣는다<-쓸 일이 없어졌다
 	HINSTANCE m_hInst;
 
 public:
 	BitMapManager(HDC hdc, HINSTANCE g_hInst);
-	bool LoadNewImage(std::string FileName);
+	//bool LoadNewImage, (std::string FileName);	//기존에 쓰던 함수. 지금은 안 쓰고 아랫걸로 대체
+	HBITMAP LoadNewImage(std::string FileName);
 	void PrintBitMap(HDC hdc, int BitMapNumber, int xLocation, int yLocation);
 
 //	void IsMemDCEmpty();	//MemDC 지우기
