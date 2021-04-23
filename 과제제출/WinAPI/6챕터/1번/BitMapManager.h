@@ -42,17 +42,12 @@ enum CARD_PICTURE
 class BitMapManager
 {
 private:
-	std::vector <BitMap*> m_BitMapVector;	//비트맵들 넣는다<-쓸 일이 없어졌다
 	HINSTANCE m_hInst;
 
 public:
 	BitMapManager(HDC hdc, HINSTANCE g_hInst);
-	//bool LoadNewImage, (std::string FileName);	//기존에 쓰던 함수. 지금은 안 쓰고 아랫걸로 대체
 	HBITMAP LoadNewImage(std::string FileName);
 	void PrintBitMap(HDC hdc, int BitMapNumber, int xLocation, int yLocation);
-
-//	void IsMemDCEmpty();	//MemDC 지우기
-	void DeleteBitMapVector();	//동적할당 해제
 };
 
 /*

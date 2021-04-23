@@ -9,7 +9,6 @@ private:
 
 public:
 	BitMap(std::string FileName);
-	bool DataNullCheck();	//이미지가 제대로 로드 된 것인가 확인
 
 	HBITMAP ReturnBitMap();	//매니저로 비트맵 정보 넘김
 };

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stdlib.h>
 #include <ctime>
+#include <string>
 #include "BitMapManager.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -11,6 +12,7 @@ LPCTSTR lpszClass = TEXT("C6No1");
 
 #define NO_INDEX -5
 #define NUMBER_OF_PAIR 5
+#define INCORRECT_TIME 3
 
 /////////////////////////////////////////////////////////////////////
 
@@ -28,7 +30,8 @@ struct CardInformation
 void InitCardOrder(std::vector<CardInformation> *CardVector);
 void PrintCards(HDC* hdc, BitMapManager NewBitMapManager, std::vector<CardInformation> CardVector);
 int CheckOverlap(std::vector<CardInformation>* CardVector, int MouseX, int MouseY);
-bool IsCorrect(std::vector<CardInformation>* CardVector, int IndexFirst, int IndexSecond);
+bool IsCorrect(std::vector<CardInformation> CardVector, int IndexFirst, int IndexSecond);
+void CardReset(std::vector<CardInformation>* CardVector, int IndexFirst, int IndexSecond);
 
 /////////////////////////////////////////////////////////////////////
 
@@ -73,6 +76,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int NumberOfRevealed = 0;
 	static int IndexFirst = NO_INDEX, IndexSecond = NO_INDEX;	//뒤집었을 때 인덱스 받아오는 용도
 	static int NumberOfCorrect = 0;	//맞춘 개수
+	static int Time = 0;	//시간 얼마나 흘렀나
+	static bool IsIncorrect = false;	//만약 잘못된 짝을 찾았을 경우 홀드용
+	static int IncorrectTime = 0;
+	static char WhatTime[128];
 	int MouseX, MouseY;
 
 
@@ -80,50 +87,99 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		InitCardOrder(&CardVector);	//카드 정보를 저장할 벡터 초기화
+		SetTimer(hWnd, 1, 1000, NULL);
+		SendMessage(hWnd, WM_TIMER, 1, 0);
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
+
+		TextOut(hdc, 400, 20, WhatTime, lstrlen(WhatTime));
 		
 		PrintCards(&hdc, NewBitMapManager, CardVector);
 
 		EndPaint(hWnd, &ps);
-		return 0;
-	case WM_LBUTTONDOWN:
-		MouseX = LOWORD(lParam);
-		MouseY = HIWORD(lParam);
 
 		{
-			int i = CheckOverlap(&CardVector, MouseX, MouseY);
-
-			if (i != NO_INDEX)
+			if (NumberOfCorrect == NUMBER_OF_PAIR)
 			{
-				if (NumberOfRevealed == 0)
-					IndexFirst = i;
-				else
-					IndexSecond = i;
-
-				NumberOfRevealed++;
+				SendMessage(hWnd, WM_DESTROY, 1, 0);
+				SendMessage(hWnd, WM_DESTROY, 1, 0);
 			}
 		}
-		
+		return 0;
+	case WM_LBUTTONDOWN:
+	{
+		if (!IsIncorrect)
 		{
-			//뒤집힌 카드의 개수가 2개가 되었다면 일치하는지 체크함
-			if (NumberOfRevealed == 2)
+			//틀린 상태라서 벌칙 시간 중이면 마우스 감지 자체를 안 받는다
+
+			MouseX = LOWORD(lParam);
+			MouseY = HIWORD(lParam);
+
 			{
-				if (IsCorrect(&CardVector, IndexFirst, IndexSecond))
+				int i = CheckOverlap(&CardVector, MouseX, MouseY);
+
+				if (i != NO_INDEX)
 				{
-					NumberOfCorrect++;
+					if (NumberOfRevealed == 0)
+						IndexFirst = i;
+					else
+						IndexSecond = i;
+
+					NumberOfRevealed++;
 				}
+			}
+
+			{
+				//뒤집힌 카드의 개수가 2개가 되었다면 일치하는지 체크함
+				if (NumberOfRevealed == 2)
+				{
+					if (IsCorrect(CardVector, IndexFirst, IndexSecond))
+					{
+						//일치시 맞힌 개수를 늘리고 뒤집기 관련 변수 초기화
+						NumberOfCorrect++;
+						NumberOfRevealed = 0;
+						IndexFirst = NO_INDEX;
+						IndexSecond = NO_INDEX;
+					}
+					else
+					{
+						IsIncorrect = true;	//틀렸다면 bool 변수를 true로 활성화 시키고 타이머 작동
+					}
+				}
+			}
+			InvalidateRect(hWnd, NULL, TRUE);
+		}
+	}
+		return 0;
+	case WM_TIMER:
+	{
+		Time++;
+		wsprintf(WhatTime, TEXT("%d초"), Time);
+		if (IsIncorrect)
+		{
+			IncorrectTime++;
+
+			if (IncorrectTime == INCORRECT_TIME)
+			{
+				//벌칙 시간이 다 되면 원상복귀
+				CardReset(&CardVector, IndexFirst, IndexSecond);
+				IsIncorrect = false;
+				IncorrectTime = 0;
 				NumberOfRevealed = 0;
 				IndexFirst = NO_INDEX;
 				IndexSecond = NO_INDEX;
 			}
 		}
-
-		InvalidateRect(hWnd, NULL, TRUE);
+	}
+	InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		KillTimer(hWnd, 1);
+		std::string Tmp = "클리어 시간" + std::to_string(Time) + "초";
+
+		if (MessageBox(hWnd, TEXT("클리어"), Tmp.c_str(), MB_OK))
+			PostQuitMessage(0);
 		return 0;
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
@@ -284,20 +340,24 @@ int CheckOverlap(std::vector<CardInformation>* CardVector, int MouseX, int Mouse
 	return NO_INDEX;
 }
 
-bool IsCorrect(std::vector<CardInformation>* CardVector, int IndexFirst, int IndexSecond)
+bool IsCorrect(std::vector<CardInformation> CardVector, int IndexFirst, int IndexSecond)
 {
 	//뒤집어진 카드가 2개 존재할 경우 그림이 일치하는가 확인하는 함수
-	if (CardVector->at(IndexFirst).CardNumbering == CardVector->at(IndexSecond).CardNumbering)
+	if (CardVector[IndexFirst].CardNumbering == CardVector[IndexSecond].CardNumbering)
 	{
 		return true;
 	}
 	else
 	{
-		CardVector->at(IndexFirst).IsRevealed = false;
-		CardVector->at(IndexSecond).IsRevealed = false;
-		
 		return false;
 	}
+}
+
+void CardReset(std::vector<CardInformation>* CardVector, int IndexFirst, int IndexSecond)
+{
+	//벌칙 시간 3초가 지나면 카드를 다시 뒤집는 함수
+	CardVector->at(IndexFirst).IsRevealed = false;
+	CardVector->at(IndexSecond).IsRevealed = false;
 }
 
 /*
@@ -346,7 +406,7 @@ NewBitMapManager.LoadNewImage("Blank");	<-잘 기억해둘 것
 */
 
 /*
-Overlap 함수 내에서 벡터 멤버의 구조체의 멤버 변수에 접근하려면 왜 기존에 하듯이 벡터명[]이 안 되고 .at()만 되는지 모르겠음
+CardReset 함수 내에서 벡터 멤버의 구조체의 멤버 변수에 접근하려면 왜 기존에 하듯이 벡터명[]이 안 되고 .at()만 되는지 모르겠음
 */
 
 /*
@@ -355,4 +415,13 @@ Overlap 함수 내에서 벡터 멤버의 구조체의 멤버 변수에 접근하려면 왜 기존에 하듯이
 짝을 잘못 찾은 거라면 2초간 뒤집을 수 없고 뭘 뒤집었는지 보여줌
 다 하면 메시지창 뜨면서 다시 할 거냐고 물음
 
+*/
+
+/*
+구현이 거의 다 되었다....
+남은 건 틀린 답을 찾았을 때 카드가 아예 종범해버리는 걸 고치는 것과
+다 하면 메시지창 뜨면서 다시 할 거냐고 묻는 것
+
+
+이제 동적할당 해제만 하면 된다
 */

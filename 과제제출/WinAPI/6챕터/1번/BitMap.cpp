@@ -17,14 +17,6 @@ BitMap::BitMap(std::string FileName)
 	}
 }
 
-bool BitMap::DataNullCheck()
-{
-	if (m_BitMap == NULL)
-		return false;
-	else
-		return true;
-}
-
 HBITMAP BitMap::ReturnBitMap()
 {
 	return m_BitMap;
