@@ -7,6 +7,8 @@
 #define NUMBER_OF_PAIR 5
 #define INCORRECT_TIME 3
 
+#define CARD_MAX 10
+
 enum CARD_LOCATION
 {
 	CARD_LOCATION_FIRST_X = 20,

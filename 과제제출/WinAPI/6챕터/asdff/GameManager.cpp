@@ -12,7 +12,7 @@ void GameManager::InitMemberVariable()
 }
 
 
-void GameManager::MouseLeftButtonAction(int MouseX, int MouseY)
+void GameManager::MouseLeftButtonAction(const int& MouseX, const int& MouseY)
 {
 	int i = CardMgr->CheckOverlap(MouseX, MouseY);
 

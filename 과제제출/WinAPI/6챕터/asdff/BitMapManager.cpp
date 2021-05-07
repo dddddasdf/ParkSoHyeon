@@ -1,6 +1,6 @@
 #include "BitMapManager.h"
 
-BitMapManager::BitMapManager(HINSTANCE hInst) : m_hInst(hInst)
+BitMapManager::BitMapManager()
 {
 
 }

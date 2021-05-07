@@ -11,7 +11,7 @@ void CardOrdering::InitCard()
 
 	m_CardVector.clear();	//벡터 비우기
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < CARD_MAX; i++)
 	{
 		CardInformation NewCardInformation;
 		NewCardInformation.IsRevealed = false;
@@ -29,93 +29,42 @@ void CardOrdering::InitCard()
 				{
 					NewCardInformation.CardNumbering = CARD_PICTURE_FIRST;
 					NumberingOne++;
+					WhileLoop = false;
 				}
-				WhileLoop = false;
 				break;
 			case 1:
 				if (NumberingTwo != 2)
 				{
 					NewCardInformation.CardNumbering = CARD_PICTURE_SECOND;
 					NumberingTwo++;
+					WhileLoop = false;
 				}
-				WhileLoop = false;
 				break;
 			case 2:
 				if (NumberingThree != 2)
 				{
 					NewCardInformation.CardNumbering = CARD_PICTURE_THIRD;
 					NumberingThree++;
+					WhileLoop = false;
 				}
-				WhileLoop = false;
 				break;
 			case 3:
 				if (NumberingFour != 2)
 				{
 					NewCardInformation.CardNumbering = CARD_PICTURE_FOURTH;
 					NumberingFour++;
+					WhileLoop = false;
 				}
-				WhileLoop = false;
 				break;
 			case 4:
 				if (NumberingFive != 2)
 				{
 					NewCardInformation.CardNumbering = CARD_PICTURE_FIFTH;
 					NumberingFive++;
+					WhileLoop = false;
 				}
-				WhileLoop = false;
 				break;
 			}
-
-			/*if (RandomNumber == 0)
-			{
-				if (NumberingOne != 2)
-				{
-					NewCardInformation.CardNumbering = CARD_PICTURE_FIRST;
-					NumberingOne++;
-
-					break;
-				}
-			}
-			else if (RandomNumber == 1)
-			{
-				if (NumberingTwo != 2)
-				{
-					NewCardInformation.CardNumbering = CARD_PICTURE_SECOND;
-					NumberingTwo++;
-
-					break;
-				}
-			}
-			else if (RandomNumber == 2)
-			{
-				if (NumberingThree != 2)
-				{
-					NewCardInformation.CardNumbering = CARD_PICTURE_THIRD;
-					NumberingThree++;
-
-					break;
-				}
-			}
-			else if (RandomNumber == 3)
-			{
-				if (NumberingFour != 2)
-				{
-					NewCardInformation.CardNumbering = CARD_PICTURE_FOURTH;
-					NumberingFour++;
-
-					break;
-				}
-			}
-			else if (RandomNumber == 4)
-			{
-				if (NumberingFive != 2)
-				{
-					NewCardInformation.CardNumbering = CARD_PICTURE_FIFTH;
-					NumberingFive++;
-
-					break;
-				}
-			}*/
 		}
 
 		switch (i)
@@ -166,18 +115,22 @@ void CardOrdering::InitCard()
 	}
 }
 
-void CardOrdering::PrintCards(HDC* hdc, BitMapManager NewBitMapManager)
+void CardOrdering::PrintCards(HDC* hdc)
 {
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < CARD_MAX; i++)
 	{
 		if (m_CardVector[i].IsRevealed == false)
 		{
-			NewBitMapManager.PrintBitMap(*hdc, CARD_PICTURE_BLANK, m_CardVector[i].XLocation, m_CardVector[i].YLocation);
+			BitMapMgr->PrintBitMap(*hdc, CARD_PICTURE_BLANK, m_CardVector[i].XLocation, m_CardVector[i].YLocation);
+			
+			//NewBitMapManager.PrintBitMap(*hdc, CARD_PICTURE_BLANK, m_CardVector[i].XLocation, m_CardVector[i].YLocation);
 			//카드가 뒷면을 보여주고 있는 상태일 경우 공백을 넣음
 		}
 		else
 		{
-			NewBitMapManager.PrintBitMap(*hdc, m_CardVector[i].CardNumbering, m_CardVector[i].XLocation, m_CardVector[i].YLocation);
+			BitMapMgr->PrintBitMap(*hdc, m_CardVector[i].CardNumbering, m_CardVector[i].XLocation, m_CardVector[i].YLocation);
+
+			//NewBitMapManager.PrintBitMap(*hdc, m_CardVector[i].CardNumbering, m_CardVector[i].XLocation, m_CardVector[i].YLocation);
 		}
 	}
 }
@@ -188,7 +141,7 @@ int CardOrdering::CheckOverlap(const int& MouseX, const int& MouseY)
 
 	//int i = 0;
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < CARD_MAX; i++)
 	{
 		if ((MouseX >= m_CardVector.at(i).XLocation && MouseX <= (m_CardVector.at(i).XLocation + IMAGESIZE_X))
 			&& (MouseY >= m_CardVector.at(i).YLocation && MouseY <= (m_CardVector.at(i).YLocation + IMAGESIZE_Y)))
@@ -200,20 +153,6 @@ int CardOrdering::CheckOverlap(const int& MouseX, const int& MouseY)
 			}
 		}
 	}
-
-	/*while (i < 10)
-	{
-		if ((MouseX >= m_CardVector.at(i).XLocation && MouseX <= (m_CardVector.at(i).XLocation + IMAGESIZE_X))
-			&& (MouseY >= m_CardVector.at(i).YLocation && MouseY <= (m_CardVector.at(i).YLocation + IMAGESIZE_Y)))
-		{
-			if (false == m_CardVector.at(i).IsRevealed)
-			{
-				m_CardVector.at(i).IsRevealed = true;
-				return i;
-			}
-		}
-		i++;
-	}*/
 
 	return NO_INDEX;
 }

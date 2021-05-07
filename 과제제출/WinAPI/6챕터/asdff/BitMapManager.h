@@ -5,16 +5,17 @@
 #include "Enums.h"
 
 
-class BitMapManager
+class BitMapManager : public Singleton <BitMapManager>
 {
 private:
-	HINSTANCE m_hInst;
 
 public:
-	BitMapManager(HINSTANCE hInst);
+	BitMapManager();
 	HBITMAP LoadNewImage(std::string FileName);
 	void PrintBitMap(HDC hdc, const int& BitMapNumber, const int& xLocation, const int& yLocation);
 };
+
+#define BitMapMgr BitMapManager::GetInstance()
 
 /*
 만들어야 하는 함수

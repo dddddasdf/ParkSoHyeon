@@ -19,7 +19,7 @@ private:
 
 public:
 	void InitCard();
-	void PrintCards(HDC* hdc, BitMapManager NewBitMapManager);
+	void PrintCards(HDC* hdc);
 	int CheckOverlap(const int& MouseX, const int& MouseY);
 	bool IsCorrect(const int& IndexFirst, const int& IndexSecond);
 	void CardReset(const int& IndexFirst, const int& IndexSecond);

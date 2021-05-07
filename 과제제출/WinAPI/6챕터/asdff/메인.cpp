@@ -56,7 +56,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	static HDC hdc, MemDC;
 	static PAINTSTRUCT ps;
-	static BitMapManager NewBitMapManager(g_hInst);
+	//static BitMapManager NewBitMapManager;
 	static int Time = 0;	//시간 얼마나 흘렀나
 	static char WhatTime[128];
 	int MouseX, MouseY;
@@ -65,7 +65,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage)
 	{
 	case WM_CREATE:
-		CardMgr->InitCard();	//<-define 오류 왜 자꾸 나는 거임 뭐냐 이거 //왜 오류가 있었다가 없었다가 함 무궁화 꽃이 피었습니다라도 하냐
+		CardMgr->InitCard();	
 		GameMgr->InitMemberVariable();
 		SetTimer(hWnd, 1, 1000, NULL);
 		SendMessage(hWnd, WM_TIMER, 1, 0);
@@ -75,21 +75,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		TextOut(hdc, 400, 20, WhatTime, lstrlen(WhatTime));
 
-		CardMgr->PrintCards(&hdc, NewBitMapManager);
+		CardMgr->PrintCards(&hdc);
 
 		EndPaint(hWnd, &ps);
 
 		{
 			if (GameMgr->IsAllCorrect())
 			{
-				SendMessage(hWnd, WM_DESTROY, 1, 0);
-				SendMessage(hWnd, WM_DESTROY, 1, 0);
-
-				KillTimer(hWnd, 1);
 				std::string Tmp = "클리어 시간" + std::to_string(Time) + "초";
-
-				if (MessageBox(hWnd, Tmp.c_str(), TEXT("클리어"), MB_OK))
-					PostQuitMessage(0);
+				KillTimer(hWnd, 1);
+				MessageBox(hWnd, Tmp.c_str(), TEXT("클리어"), MB_OK);
+				SendMessage(hWnd, WM_DESTROY, 1, 0);
 			}
 		}
 		return 0;
@@ -108,7 +104,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
 	}
-	return 0;
+		return 0;
 	case WM_TIMER:
 	{
 		Time++;
@@ -120,9 +116,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	InvalidateRect(hWnd, NULL, TRUE);
-	return 0;
+		return 0;
 	case WM_DESTROY:
-		PostQuitMessage(0); break;
+		KillTimer(hWnd, 1);
+		PostQuitMessage(0); 
+		return 0;
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }

@@ -17,7 +17,7 @@ public:
 	void InitMemberVariable();	//멤버변수 초기화
 
 	bool ReturnIsPenalty() { return m_IsPenalty; }	//패넕티 상태임을 리턴
-	void MouseLeftButtonAction(int MouseX, int MouseY);	//마우스 왼쪽 버튼 눌렀을 때 동작할 함수
+	void MouseLeftButtonAction(const int& MouseX, const int& MouseY);	//마우스 왼쪽 버튼 눌렀을 때 동작할 함수
 	void PenaltyTimeAction();	//패널티 시간 중일 때 상태
 	bool IsAllCorrect();	//전부 짝을 맞췄는가 확인
 };
