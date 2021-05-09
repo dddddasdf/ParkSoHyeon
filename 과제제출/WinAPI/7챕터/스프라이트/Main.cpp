@@ -6,6 +6,7 @@
 #include <string>
 
 #include "BitMapManager.h"
+#include "Character.h"
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -56,19 +57,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static PAINTSTRUCT ps;
 	static int Time = 0;	//시간 얼마나 흘렀나
 	static char WhatTime[128];
-	int MouseX, MouseY;
 
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
-		
+		SetTimer(hWnd, 1, 1000, NULL);
 		SendMessage(hWnd, WM_TIMER, 1, 0);
+		Chara->Init();
+		return 0;
+	case WM_TIMER:
+		Chara->ChangeNeutral();
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 
-		TextOut(hdc, 400, 20, WhatTime, lstrlen(WhatTime));
+		Chara->Standing(hdc);
 
 
 		EndPaint(hWnd, &ps);
@@ -79,6 +83,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_KEYDOWN:
 	{
+		Chara->Moving(hdc, wParam);
+		
 		switch (wParam)
 		{
 		case VK_LEFT:
@@ -107,5 +113,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 각 방향 키보드 눌렀을 경우 그 방향으로 이동
 키보드를 뗐을 때 가장 마지막으로 누른 방향을 향해 바라보고 서있는 스프라이트로
 키입력 한 번마다 발 내딛고-서고 순차적으로 나와야 됨
+bool 또는 int형으로 왼발 오른발을 저장할 변수 필요... 번갈아 가면서 발을 딛어야 하니까
+
+움직일 때 값을 먼저 증가시키고 출력 함수를 호출한다
+
+문제 발생함... 이미지를 읽어는 왔는데 출력 자체를 못하고 있음
 
 */

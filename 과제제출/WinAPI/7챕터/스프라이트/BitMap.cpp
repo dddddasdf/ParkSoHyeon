@@ -4,7 +4,7 @@
 BitMap::BitMap()
 {
 	
-	std::string FileNametmp = "image";
+	std::string FileNametmp = "image.bmp";
 	const char* FileNameTmp = FileNametmp.c_str();
 
 
