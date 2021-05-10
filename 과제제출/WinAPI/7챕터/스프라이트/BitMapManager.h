@@ -23,8 +23,8 @@ private:
 public:
 	BitMapManager();
 	HBITMAP LoadNewImage();
-	void PrintBitMap(HDC hdc, const int& BitMapNumber, const int& xLocation, const int& yLocation);
-	void PrintCharacter(HDC hdc, const int& CharacterSight, const int& xLocation, const int& yLocation);
+	//void PrintBitMap(HDC hdc, const int& BitMapNumber, const int& xLocation, const int& yLocation);
+	void PrintBitMap(HDC hdc, const int& CharacterSight, const int& CharacterGesture, const int& xLocation, const int& yLocation);
 };
 
 #define BitMapMgr BitMapManager::GetInstance()

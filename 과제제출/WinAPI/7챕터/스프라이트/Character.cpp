@@ -5,61 +5,39 @@ void Character::Init()
 	m_IsLeftLeg = true;
 	m_IsNeutralFirst = true;
 	m_CharacterLocationX = 600;
-	m_CharacterLocationX = 300;
-	m_CharacterDirection = DIRECTION_UP;
+	m_CharacterLocationY = 300;
+	m_CharacterDirection = DIRECTION_DOWN;
+	m_CharacterGesture = GESTURE_FRONT_NEUTRAL1;
 }
 
 
-void Character::Standing(HDC hdc)
-{
-	if (m_IsNeutralFirst)
-	{
-		switch (m_CharacterDirection)
-		{
-		case DIRECTION_LEFT:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_LEFT_NEUTRAL1, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		case DIRECTION_RIGHT:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_RIGHT_NEUTRAL1, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		case DIRECTION_UP:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_RIGHT_NEUTRAL1, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		case DIRECTION_DOWN:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_RIGHT_NEUTRAL1, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		}
-	}
-	else
-	{
-		switch (m_CharacterDirection)
-		{
-		case DIRECTION_LEFT:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_LEFT_NEUTRAL2, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		case DIRECTION_RIGHT:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_RIGHT_NEUTRAL2, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		case DIRECTION_UP:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_RIGHT_NEUTRAL2, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		case DIRECTION_DOWN:
-			BitMapMgr->PrintCharacter(hdc, GESTURE_RIGHT_NEUTRAL2, m_CharacterLocationX, m_CharacterLocationY);
-			break;
-		}
-	}
-}
 
-void Character::ChangeNeutral()
-{
-	m_IsNeutralFirst = !(m_IsNeutralFirst);
-}
-
-void Character::Moving(HDC hdc, int Direction)
+void Character::Moving(int Direction)
 {	
-	m_CharacterDirection = Direction;
-	
 	switch (Direction)
+	{
+	case VK_LEFT:
+		m_CharacterDirection = DIRECTION_LEFT;
+		m_CharacterLocationX -= MOVING_PIXEL;
+		break;
+	case VK_RIGHT:
+		m_CharacterDirection = DIRECTION_RIGHT;
+		m_CharacterLocationX += MOVING_PIXEL;
+		break;
+	case VK_UP:
+		m_CharacterDirection = DIRECTION_UP;
+		m_CharacterLocationY -= MOVING_PIXEL;
+		break;
+	case VK_DOWN:
+		m_CharacterDirection = DIRECTION_DOWN;
+		m_CharacterLocationY += MOVING_PIXEL;
+		break;
+	}
+	
+	//m_CharacterDirection = Direction;
+	m_CharacterGesture = (m_CharacterGesture + 1) % CHARACTER_MAX_GESTURE;
+
+	/*switch (Direction)
 	{
 	case DIRECTION_LEFT:
 		m_CharacterLocationX -= MOVING_PIXEL;
@@ -73,16 +51,23 @@ void Character::Moving(HDC hdc, int Direction)
 	case DIRECTION_DOWN:
 		m_CharacterLocationY += MOVING_PIXEL;
 		break;
-	}
-	
-	
-	switch (m_IsLeftLeg)
-	{
-	case true:
-		m_IsLeftLeg = false;
-		break;
-	case false:
-		m_IsLeftLeg = true;
-		break;
-	}
+	}*/
+
+	//PrintCharacter(hdc);
+	//m_CharacterGesture = (m_CharacterGesture + 1) % CHARACTER_MAX_GESTURE;
+	//PrintCharacter(hdc);
 }
+
+void Character::PrintCharacter(HDC *hdc)
+{
+	BitMapMgr->PrintBitMap(*hdc, m_CharacterDirection, m_CharacterGesture, m_CharacterLocationX, m_CharacterLocationY);
+}
+
+
+/*
+서있는 거 전부 같은 도트더라
+숨쉬기 작업할 필요 없었다고
+
+
+
+*/

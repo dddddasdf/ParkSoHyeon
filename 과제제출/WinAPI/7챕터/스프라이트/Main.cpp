@@ -57,49 +57,64 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static PAINTSTRUCT ps;
 	static int Time = 0;	//시간 얼마나 흘렀나
 	static char WhatTime[128];
+	static bool IsMoving = false;
+	static int DirectionTmp;	//캐릭터 이동 애니메이션 구현을 위한 임시 변수...
 
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
-		SetTimer(hWnd, 1, 1000, NULL);
+		SetTimer(hWnd, 1, 500, NULL);
 		SendMessage(hWnd, WM_TIMER, 1, 0);
 		Chara->Init();
 		return 0;
 	case WM_TIMER:
-		Chara->ChangeNeutral();
+		if (IsMoving)
+		{
+			Chara->Moving(wParam);
+			IsMoving = false;
+			InvalidateRect(hWnd, NULL, TRUE);
+		}
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 
-		Chara->Standing(hdc);
-
+		Chara->PrintCharacter(&hdc);
 
 		EndPaint(hWnd, &ps);
 
-		{
-
-		}
 		return 0;
 	case WM_KEYDOWN:
 	{
-		Chara->Moving(hdc, wParam);
-		
-		switch (wParam)
+		Chara->Moving(wParam);
+		Chara->PrintCharacter(&hdc);
+		IsMoving = true;
+		DirectionTmp = wParam;
+
+		/*switch (wParam)
 		{
 		case VK_LEFT:
-
+			Chara->Moving(DIRECTION_LEFT);
+			Chara->Moving(DIRECTION_LEFT);
 			break;
 		case VK_RIGHT:
+			Chara->Moving(DIRECTION_RIGHT);
+			Chara->Moving(DIRECTION_RIGHT);
 			break;
 		case VK_UP:
+			Chara->Moving(DIRECTION_UP);
+			Chara->Moving(DIRECTION_UP);
 			break;
 		case VK_DOWN:
+			Chara->Moving(DIRECTION_DOWN);
+			Chara->Moving(DIRECTION_DOWN);
 			break;
-		}
+		}*/
+		InvalidateRect(hWnd, NULL, TRUE);
 	}
 		return 0;
 	case WM_DESTROY:
+		KillTimer(hWnd, 1);
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -118,5 +133,9 @@ bool 또는 int형으로 왼발 오른발을 저장할 변수 필요... 번갈아 가면서 발을 딛어야 
 움직일 때 값을 먼저 증가시키고 출력 함수를 호출한다
 
 문제 발생함... 이미지를 읽어는 왔는데 출력 자체를 못하고 있음
+메인에서 프린트시키니 잘 나오는데요
+아
+
+방법 알았음 hdc를 주소 참조로 넘겨야 됨 엌ㅋㅋㅋㅋㅋ
 
 */
