@@ -11,7 +11,7 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;
-LPCTSTR lpszClass = TEXT("C6No1");
+LPCTSTR lpszClass = TEXT("C7No1");
 
 #define MOVE_PIXEL 3	//한 번 이동할 때 얼마만큼 위치를 이동시킬 것인가
 
@@ -51,29 +51,40 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	return (int)Message.wParam;
 }
 
+ULONGLONG frameTime, limitFrameTime = 0;
+
+bool IsMoving = false;
+int count = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	static HDC hdc, MemDC;
 	static PAINTSTRUCT ps;
-	static int Time = 0;	//시간 얼마나 흘렀나
-	static char WhatTime[128];
-	static bool IsMoving = false;
-	static int DirectionTmp;	//캐릭터 이동 애니메이션 구현을 위한 임시 변수...
 
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
 		SetTimer(hWnd, 1, 500, NULL);
-		SendMessage(hWnd, WM_TIMER, 1, 0);
+		//SendMessage(hWnd, WM_TIMER, 1, 0);
 		Chara->Init();
 		return 0;
 	case WM_TIMER:
-		if (IsMoving)
+		frameTime = GetTickCount64();
+		if (!(limitFrameTime > frameTime))
 		{
-			Chara->Moving(wParam);
-			IsMoving = false;
-			InvalidateRect(hWnd, NULL, TRUE);
+			if (IsMoving)
+			{
+				Chara->ChangeLocation();
+				Chara->ChangeGesture();
+				if (0 < count)
+				{
+					IsMoving = false;
+					count = 0;
+				}
+				count++;			
+			}
+			InvalidateRect(hWnd, NULL, TRUE);		
+			limitFrameTime = frameTime + 500;
 		}
 		return 0;
 	case WM_PAINT:
@@ -86,10 +97,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_KEYDOWN:
 	{
-		Chara->Moving(wParam);
-		Chara->PrintCharacter(&hdc);
+		if(!IsMoving)
+		{
+		//Chara->Moving(wParam);
+		Chara->ChangeDirection(wParam);
+		Chara->ChangeLocation();
+		//Chara->ChangeGesture();
+		//Chara->PrintCharacter(&hdc);
 		IsMoving = true;
-		DirectionTmp = wParam;
+		//count = 0;
+		//InvalidateRect(hWnd, NULL, TRUE);
+		}
 
 		/*switch (wParam)
 		{
@@ -110,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			Chara->Moving(DIRECTION_DOWN);
 			break;
 		}*/
-		InvalidateRect(hWnd, NULL, TRUE);
+		
 	}
 		return 0;
 	case WM_DESTROY:
@@ -137,5 +155,9 @@ bool 또는 int형으로 왼발 오른발을 저장할 변수 필요... 번갈아 가면서 발을 딛어야 
 아
 
 방법 알았음 hdc를 주소 참조로 넘겨야 됨 엌ㅋㅋㅋㅋㅋ
+
+프레임 제어 어케 하지
+clock() 함수? 타이머?
+일단 타이머로 해봄
 
 */

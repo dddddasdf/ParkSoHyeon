@@ -3,7 +3,7 @@
 #define IMAGE_SIZE_X 240
 #define IMAGE_SIZE_Y 400
 
-#define MOVING_PIXEL 15
+#define MOVING_PIXEL 25
 
 #define CHARACTER_MAX_GESTURE 4
 
