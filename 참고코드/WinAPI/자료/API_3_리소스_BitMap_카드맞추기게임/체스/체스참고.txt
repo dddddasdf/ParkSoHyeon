@@ -1,0 +1,5 @@
+msimg32.lib;
+속성 -> 링커 -> 입력 -> 추가종속성 -> msimg32.lib; 추가
+
+투명화 bmp출력 함수
+TransparentBlt(hdc, x, y, m_size.cx, m_size.cy, MemDC, 0, 0, 125,125, RGB(255, 0, 255));
