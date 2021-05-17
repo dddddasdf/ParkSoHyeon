@@ -17,19 +17,19 @@ void Character::Moving(int Direction)
 	{
 	case VK_LEFT:
 		m_CharacterDirection = DIRECTION_LEFT;
-		m_CharacterLocationX -= MOVING_PIXEL;
+		m_CharacterLocationX -= MOVING_PIXEL_WALKING;
 		break;
 	case VK_RIGHT:
 		m_CharacterDirection = DIRECTION_RIGHT;
-		m_CharacterLocationX += MOVING_PIXEL;
+		m_CharacterLocationX += MOVING_PIXEL_WALKING;
 		break;
 	case VK_UP:
 		m_CharacterDirection = DIRECTION_UP;
-		m_CharacterLocationY -= MOVING_PIXEL;
+		m_CharacterLocationY -= MOVING_PIXEL_WALKING;
 		break;
 	case VK_DOWN:
 		m_CharacterDirection = DIRECTION_DOWN;
-		m_CharacterLocationY += MOVING_PIXEL;
+		m_CharacterLocationY += MOVING_PIXEL_WALKING;
 		break;
 	}
 	
@@ -55,6 +55,7 @@ void Character::Moving(int Direction)
 	//PrintCharacter(hdc);
 	//m_CharacterGesture = (m_CharacterGesture + 1) % CHARACTER_MAX_GESTURE;
 	//PrintCharacter(hdc);
+
 }
 
 void Character::ChangeDirection(int Direction)
@@ -76,21 +77,28 @@ void Character::ChangeDirection(int Direction)
 	}
 }
 
-void Character::ChangeLocation()
+void Character::ChangeLocation(bool IsRunning)
 {
+	int MovingPixel;
+
+	if (true == IsRunning)
+		MovingPixel = MOVING_PIXEL_RUNNING;
+	else
+		MovingPixel = MOVING_PIXEL_WALKING;
+	
 	switch (m_CharacterDirection)
 	{
 	case DIRECTION_LEFT:
-		m_CharacterLocationX -= MOVING_PIXEL;
+		m_CharacterLocationX -= MovingPixel;
 		break;
 	case DIRECTION_RIGHT:
-		m_CharacterLocationX += MOVING_PIXEL;
+		m_CharacterLocationX += MovingPixel;
 		break;
 	case DIRECTION_UP:
-		m_CharacterLocationY -= MOVING_PIXEL;
+		m_CharacterLocationY -= MovingPixel;
 		break;
 	case DIRECTION_DOWN:
-		m_CharacterLocationY += MOVING_PIXEL;
+		m_CharacterLocationY += MovingPixel;
 		break;
 	}
 }

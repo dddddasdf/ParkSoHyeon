@@ -82,24 +82,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (GetKeyState(VK_LEFT) & 0x8000)
 					{
 						Chara->ChangeDirection(VK_LEFT);
-						Chara->ChangeLocation();
+						Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					}
 					if (GetKeyState(VK_RIGHT) & 0x8000)
 					{
 						Chara->ChangeDirection(VK_RIGHT);
-						Chara->ChangeLocation();
+						Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					}
 					if (GetKeyState(VK_UP) & 0x8000)
 					{
 						Chara->ChangeDirection(VK_UP);
-						Chara->ChangeLocation();
+						Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					}
 					if (GetKeyState(VK_DOWN) & 0x8000)
 					{
 						Chara->ChangeDirection(VK_DOWN);
-						Chara->ChangeLocation();
+						Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					}
-					Chara->ChangeLocation();
+					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					Chara->ChangeGesture();
 					if (0 < count)
 					{
@@ -119,25 +119,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (GetKeyState(VK_LEFT) & 0x8000)
 				{
 					Chara->ChangeDirection(VK_LEFT);
-					Chara->ChangeLocation();
+					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					IsMoving = true;
 				}
 				if (GetKeyState(VK_RIGHT) & 0x8000)
 				{
 					Chara->ChangeDirection(VK_RIGHT);
-					Chara->ChangeLocation();
+					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					IsMoving = true;
 				}
 				if (GetKeyState(VK_UP) & 0x8000)
 				{
 					Chara->ChangeDirection(VK_UP);
-					Chara->ChangeLocation();
+					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					IsMoving = true;
 				}
 				if (GetKeyState(VK_DOWN) & 0x8000)
 				{
 					Chara->ChangeDirection(VK_DOWN);
-					Chara->ChangeLocation();
+					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
 					IsMoving = true;
 				}
 

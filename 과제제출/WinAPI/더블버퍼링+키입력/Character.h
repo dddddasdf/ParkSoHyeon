@@ -22,7 +22,7 @@ public:
 
 	void Moving(int Direction);	//캐릭터 이동을 위해 캐릭터가 가지고 있는 멤버변수들 변경시키는 함수 키입력이 감지되면 메인함수에서 호출한다
 	void ChangeDirection(int Direction);	//캐릭터 방향 변경
-	void ChangeLocation();	//캐릭터 좌표 변경
+	void ChangeLocation(bool IsRunning);	//캐릭터 좌표 변경
 	void ChangeGesture();	//캐릭터 동작 변경
 	void PrintCharacter(HDC *hdc);	//캐릭터 스프라이트 출력
 };
