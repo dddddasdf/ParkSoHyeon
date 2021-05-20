@@ -22,7 +22,6 @@ BitMap::BitMap(std::string FileName)
 	std::string FileNametmp = "./ImageResource/" + FileName + ".bmp";
 	const char* FileNameTmp = FileNametmp.c_str();
 
-
 	m_BitMap = (HBITMAP)LoadImage(NULL, FileNameTmp, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE);
 
 	DWORD LastError;

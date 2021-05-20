@@ -6,7 +6,7 @@
 #include <string>
 
 #include "BitMapManager.h"
-#include "Character.h"
+#include "GameManager.h"
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -48,8 +48,26 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		TranslateMessage(&Message);
 		DispatchMessage(&Message);
 	}
+
+	while (true)
+	{
+		if (PeekMessage(&Message, NULL, 0U, 0U, PM_REMOVE))
+		{
+			if (WM_QUIT == Message.message)
+				break;
+
+			TranslateMessage(&Message);
+			DispatchMessage(&Message);
+		}
+		else
+		{
+			//그리기랑 이벤트 처리하래,,,
+
+		}
+	}
 	return (int)Message.wParam;
 }
+
 
 ULONGLONG frameTime, limitFrameTime = 0;
 
@@ -66,7 +84,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		SetTimer(hWnd, 1, 150, NULL);	//캐릭터 프레임 조절용
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
-		SetTimer(hWnd, 2, 30, NULL);	//키입력 감지용
+		SetTimer(hWnd, 2, 0, NULL);	//키입력 감지용
 
 		return 0;
 	case WM_TIMER:
@@ -74,73 +92,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case 1:
-			frameTime = GetTickCount64();
-			if (!(limitFrameTime > frameTime))
-			{
-				if (IsMoving)
-				{
-					if (GetKeyState(VK_LEFT) & 0x8000)
-					{
-						
-					}
-					if (GetKeyState(VK_RIGHT) & 0x8000)
-					{
-
-					}
-					if (GetKeyState(VK_UP) & 0x8000)
-					{
-
-					}
-					if (GetKeyState(VK_DOWN) & 0x8000)
-					{
-
-					}
-
-					if (0 < count)
-					{
-						IsMoving = false;
-						count = 0;
-					}
-					count++;
-				}
-				InvalidateRect(hWnd, NULL, TRUE);
-				limitFrameTime = frameTime + 150;
-			}
 			break;
 		case 2:
 		{
-			if (!IsMoving)
+			if(IsMoving)
 			{
-				if (GetKeyState(VK_LEFT) & 0x8000)
+				if (GetAsyncKeyState(VK_LEFT))
 				{
-					Chara->ChangeDirection(VK_LEFT);
-					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
-					IsMoving = true;
+
 				}
-				if (GetKeyState(VK_RIGHT) & 0x8000)
+				if (GetAsyncKeyState(VK_RIGHT))
 				{
-					Chara->ChangeDirection(VK_RIGHT);
-					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
-					IsMoving = true;
+
 				}
-				if (GetKeyState(VK_UP) & 0x8000)
+				if (GetAsyncKeyState(VK_SPACE))
 				{
-					Chara->ChangeDirection(VK_UP);
-					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
-					IsMoving = true;
-				}
-				if (GetKeyState(VK_DOWN) & 0x8000)
-				{
-					Chara->ChangeDirection(VK_DOWN);
-					Chara->ChangeLocation(GetKeyState(VK_SHIFT) & 0x8000);
-					IsMoving = true;
+
 				}
 
-				//Chara->ChangeLocation();
-				count = 0;
 			}
-
-			//InvalidateRect(hWnd, NULL, TRUE);
 		}
 			break;
 		}
@@ -149,7 +119,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 
-		Chara->PrintCharacter(&hdc);
+
 
 		EndPaint(hWnd, &ps);
 

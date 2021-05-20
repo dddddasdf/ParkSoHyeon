@@ -92,57 +92,7 @@ void BitMapManager::PrintBitMap(HDC hdc, const int& CharacterSight, const int& C
 
 	BitBlt(hdc, 0, 0, 1024, 768, MemDC, 0, 0, SRCCOPY);
 
-	/*switch (CharacterSight)
-	{
-	case GESTURE_FRONT_NEUTRAL1:
-		
-		break;
-	case GESTURE_FRONT_LEFT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 1, 0, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_FRONT_NEUTRAL2:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 2, 0, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_FRONT_RIGHT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 3, 0, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_BACK_NEUTRAL1:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, 0, (IMAGE_SIZE_Y / 4) * 1, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_BACK_LEFT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 1, (IMAGE_SIZE_Y / 4) * 1, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_BACK_NEUTRAL2:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 2, (IMAGE_SIZE_Y / 4) * 1, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_BACK_RIGHT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 3, (IMAGE_SIZE_Y / 4) * 1, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_LEFT_NEUTRAL1:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, 0, (IMAGE_SIZE_Y / 4) * 2, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_LEFT_LEFT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 1, (IMAGE_SIZE_Y / 4) * 2, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_LEFT_NEUTRAL2:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 2, (IMAGE_SIZE_Y / 4) * 2, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_LEFT_RIGHT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 3, (IMAGE_SIZE_Y / 4) * 2, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_RIGHT_NEUTRAL1:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, 0, (IMAGE_SIZE_Y / 4) * 3, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_RIGHT_LEFT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 1, (IMAGE_SIZE_Y / 4) * 3, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_RIGHT_NEUTRAL2:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 2, (IMAGE_SIZE_Y / 4) * 3, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	case GESTURE_RIGHT_RIGHT:
-		TransparentBlt(hdc, xLocation, yLocation, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), MemDC, (IMAGE_SIZE_X / 4) * 3, (IMAGE_SIZE_Y / 4) * 3, (IMAGE_SIZE_X / 4), (IMAGE_SIZE_Y / 4), RGB(255, 0, 255));
-		break;
-	}*/
+
 	
 	SelectObject(MemDC, OldBitMap);
 

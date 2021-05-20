@@ -1,6 +1,15 @@
 #pragma once
-class GameManager
+#include "ResourceManager.h"
+#include "TemplateSingleton.h"
+#include "DrawManager.h"
+
+class GameManager : public Singleton <GameManager>
 {
+private:
+
+public:
+	void WholeInit();	//전체 초기화 총괄
+	void MovingCharacter();	//
 };
 
 
@@ -11,4 +20,15 @@ class GameManager
 변경하는 게 더 재밌을 거 같은데
 
 
+캐릭터 X 좌표는 고정
+Y좌표만 점프시에 바뀜
+
+캐릭터 이동 매커니즘
+방향키 한 번 누르면 움직이고 다시 스탠딩으로 돌아오는 총 2프레임이 진행
+
+
+점프시...
+점프하면 점프 상태 동안 점프 모션임
+스페이스바 누르면 점프 시간으로 정해진 시간 동안 키입력 안 받도록 처리를
+해야할 것 같음
 */

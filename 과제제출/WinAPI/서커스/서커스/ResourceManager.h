@@ -1,6 +1,7 @@
 #pragma once
 #include "TemplateSingleton.h"
 #include "Defines.h"
+#include "BitMap.h"
 
 class ResourceManager : public Singleton <ResourceManager>
 {
@@ -11,6 +12,7 @@ private:
 
 public:
 	void InitImages();
+	HBITMAP ReturnCharacterImage(int MotionNumber);
 };
 
 #define ResourceMgr ResourceManager::GetInstance()
