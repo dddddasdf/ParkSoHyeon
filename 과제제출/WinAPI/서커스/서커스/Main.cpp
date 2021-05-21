@@ -17,7 +17,11 @@ LPCTSTR lpszClass = TEXT("C7No1");
 
 /////////////////////////////////////////////////////////////////////
 
-
+	/*while (GetMessage(&Message, NULL, 0, 0))
+	{
+		TranslateMessage(&Message);
+		DispatchMessage(&Message);
+	}*/
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -25,6 +29,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	MSG Message;
 	WNDCLASS WndClass;
 	g_hInst = hInstance;
+
+	HDC hdc;
+	PAINTSTRUCT ps;
 
 	srand(unsigned(time(NULL)));
 
@@ -43,11 +50,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 
-	while (GetMessage(&Message, NULL, 0, 0))
-	{
-		TranslateMessage(&Message);
-		DispatchMessage(&Message);
-	}
+
 
 	while (true)
 	{
@@ -62,6 +65,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		else
 		{
 			//그리기랑 이벤트 처리하래,,,
+			/*hdc = BeginPaint(hWnd, &ps);
+
+			GameMgr->DrawCharacterOrder(&hdc);
+
+			EndPaint(hWnd, &ps);*/
 
 		}
 	}
@@ -85,7 +93,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 1, 150, NULL);	//캐릭터 프레임 조절용
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
 		SetTimer(hWnd, 2, 0, NULL);	//키입력 감지용
-
+		SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
+		GameMgr->WholeInit();	//전체 초기화
 		return 0;
 	case WM_TIMER:
 	{
@@ -119,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 
-
+		GameMgr->DrawCharacterOrder(&hdc);
 
 		EndPaint(hWnd, &ps);
 

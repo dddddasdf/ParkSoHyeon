@@ -2,16 +2,21 @@
 #include "ResourceManager.h"
 #include "TemplateSingleton.h"
 #include "DrawManager.h"
+#include "Player.h"
 
 class GameManager : public Singleton <GameManager>
 {
 private:
-
+	Player *m_PlayerData;
 public:
 	void WholeInit();	//전체 초기화 총괄
-	void MovingCharacter();	//
+	void MovingCharacter(int Key);	//캐릭터 이동 시키기
+	void JumpingCharacter();	//캐릭터 점프 시키기
+
+	void DrawCharacterOrder(HDC *hdc);
 };
 
+#define GameMgr GameManager::GetInstance()
 
 
 /*

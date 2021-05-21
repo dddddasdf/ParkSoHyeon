@@ -1,7 +1,6 @@
 #pragma once
 #pragma comment (lib, "Msimg32.lib")
 #include "BitMap.h"
-#include "Definition.h"
 #include <vector>
 #include <windows.h>
 #include "TemplateSingleton.h"

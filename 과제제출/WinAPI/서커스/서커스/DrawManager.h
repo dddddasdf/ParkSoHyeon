@@ -1,4 +1,5 @@
 #pragma once
+#pragma comment (lib, "Msimg32.lib")
 #include "Defines.h"
 #include "ResourceManager.h"
 

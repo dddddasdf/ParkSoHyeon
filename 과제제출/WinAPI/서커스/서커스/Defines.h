@@ -26,7 +26,7 @@ enum GESTURE
 enum MOTION
 {
 	MOTION_STAND = 1,
-	MOTION_MOVING = 2,
+	MOTION_RUNNING = 2,
 	MOTION_JUMPING = 3
 
 	//캐릭터의 모션을 관리하기 위한 번호
