@@ -8,12 +8,16 @@ class GameManager : public Singleton <GameManager>
 {
 private:
 	Player *m_PlayerData;
+
+	bool m_IsMoving;
 public:
 	void WholeInit();	//전체 초기화 총괄
-	void MovingCharacter(int Key);	//캐릭터 이동 시키기
+	void MovingCharacter(const int& Key);	//캐릭터 이동 시키기
 	void JumpingCharacter();	//캐릭터 점프 시키기
+	void StandingCharacter();	//캐릭터 다시 세우기
+	bool ReturnIsMoving() { return m_IsMoving; }
 
-	void DrawCharacterOrder(HDC *hdc);
+	void DrawCharacterOrder(HDC *hdc, HWND hWnd);
 };
 
 #define GameMgr GameManager::GetInstance()

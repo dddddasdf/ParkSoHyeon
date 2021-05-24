@@ -12,7 +12,7 @@ private:
 
 public:
 	void InitImages();
-	HBITMAP ReturnCharacterImage(int MotionNumber);
+	HBITMAP ReturnCharacterImage(const int& MotionNumber);
 };
 
 #define ResourceMgr ResourceManager::GetInstance()

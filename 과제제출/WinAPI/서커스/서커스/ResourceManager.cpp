@@ -16,7 +16,7 @@ void ResourceManager::InitImages()
 }
 
 
-HBITMAP ResourceManager::ReturnCharacterImage(int MotionNumber)
+HBITMAP ResourceManager::ReturnCharacterImage(const int& MotionNumber)
 {
 	return m_CharacterImageVector[MotionNumber];
 }

@@ -31,7 +31,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	g_hInst = hInstance;
 
 	HDC hdc;
-	PAINTSTRUCT ps;
 
 	srand(unsigned(time(NULL)));
 
@@ -64,12 +63,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		}
 		else
 		{
-			//그리기랑 이벤트 처리하래,,,
-			/*hdc = BeginPaint(hWnd, &ps);
-
-			GameMgr->DrawCharacterOrder(&hdc);
-
-			EndPaint(hWnd, &ps);*/
+			{
+				//그리기 파트
+				hdc = GetDC(hWnd);
+				GameMgr->DrawCharacterOrder(&hdc, hWnd);
+				ReleaseDC(hWnd, hdc);
+			}
+			
 
 		}
 	}
@@ -85,14 +85,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	static HDC hdc;
 	static PAINTSTRUCT ps;
-
+	static bool IsMoving = false;
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
-		SetTimer(hWnd, 1, 150, NULL);	//캐릭터 프레임 조절용
+		SetTimer(hWnd, 1, 300, NULL);	//캐릭터 프레임 조절용
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
-		SetTimer(hWnd, 2, 0, NULL);	//키입력 감지용
+		SetTimer(hWnd, 2, 30, NULL);	//키입력 감지용
 		SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
 		GameMgr->WholeInit();	//전체 초기화
 		return 0;
@@ -101,18 +101,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case 1:
+			if (GameMgr->ReturnIsMoving())
+			{
+				GameMgr->StandingCharacter();
+			}
 			break;
 		case 2:
 		{
-			if(IsMoving)
+			if (!GameMgr->ReturnIsMoving())
 			{
-				if (GetAsyncKeyState(VK_LEFT))
+				if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 				{
-
+					GameMgr->MovingCharacter(VK_LEFT);
 				}
-				if (GetAsyncKeyState(VK_RIGHT))
+				if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 				{
-
+					GameMgr->MovingCharacter(VK_RIGHT);
 				}
 				if (GetAsyncKeyState(VK_SPACE))
 				{
@@ -125,14 +129,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 	}
 		return 0;
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
+	//case WM_PAINT:
+	//	hdc = BeginPaint(hWnd, &ps);
 
-		GameMgr->DrawCharacterOrder(&hdc);
+	//	GameMgr->DrawCharacterOrder(&hdc, hWnd);
 
-		EndPaint(hWnd, &ps);
+	//	EndPaint(hWnd, &ps);
 
-		return 0;
+	//	return 0;
 	case WM_KEYDOWN:
 	{
 		//if(!IsMoving)

@@ -9,7 +9,8 @@ class DrawManager : public Singleton <DrawManager>
 private:
 
 public:
-	void DrawImages(HDC hdc, int MotionNumber, int YLocation);
+	void DrawImages(HDC hdc, HWND hWnd, const int& MotionNumber, const int& YLocation);
+	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 };
 #define DrawMgr DrawManager::GetInstance()
 

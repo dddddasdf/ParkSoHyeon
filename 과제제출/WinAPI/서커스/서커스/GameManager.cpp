@@ -4,9 +4,10 @@ void GameManager::WholeInit()
 {
 	ResourceMgr->InitImages();
 	m_PlayerData = new Player;
+	m_IsMoving = false;
 }
 
-void GameManager::MovingCharacter(int Key)
+void GameManager::MovingCharacter(const int& Key)
 {
 	switch (Key)
 	{
@@ -18,7 +19,7 @@ void GameManager::MovingCharacter(int Key)
 		break;
 	}
 
-
+	m_IsMoving = true;
 }
 
 void GameManager::JumpingCharacter()
@@ -26,7 +27,14 @@ void GameManager::JumpingCharacter()
 	m_PlayerData->ChangeMotion(MOTION_JUMPING);
 }
 
-void GameManager::DrawCharacterOrder(HDC *hdc)
+void GameManager::StandingCharacter()
 {
-	DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
+	m_PlayerData->ChangeMotion(MOTION_STAND);
+
+	m_IsMoving = false;
+}
+
+void GameManager::DrawCharacterOrder(HDC *hdc, HWND hWnd)
+{
+	DrawMgr->DrawImages(*hdc, hWnd, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
 }

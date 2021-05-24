@@ -9,11 +9,12 @@ private:
 	int m_PlayerScore;
 	int m_PlayerMotion;
 	int m_PlayerYLocation;
+
 public:
 	Player() { InitPlayer(); }
 
 	void InitPlayer();
-	void ChangeMotion(int State);
+	void ChangeMotion(const int& State);
 
 	int ReturnMotion() { return m_PlayerMotion; }
 	int ReturnCharacterYLocation() { return m_PlayerYLocation; }

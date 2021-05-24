@@ -10,7 +10,7 @@ void Player::InitPlayer()
 }
 
 
-void Player::ChangeMotion(int State)
+void Player::ChangeMotion(const int& State)
 {
 	m_PlayerMotion = State;
 }
