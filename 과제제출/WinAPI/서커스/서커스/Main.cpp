@@ -31,6 +31,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	g_hInst = hInstance;
 
 	HDC hdc;
+	ULONGLONG frameTime, limitFrameTime = 0;
+	ULONGLONG CharacterFrame = 0;
 
 	srand(unsigned(time(NULL)));
 
@@ -50,7 +52,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	ShowWindow(hWnd, nCmdShow);
 
 
-
+	hdc = GetDC(hWnd);
 	while (true)
 	{
 		if (PeekMessage(&Message, NULL, 0U, 0U, PM_REMOVE))
@@ -63,37 +65,53 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		}
 		else
 		{
+
 			{
 				//그리기 파트
-				hdc = GetDC(hWnd);
+				
 				GameMgr->DrawCharacterOrder(&hdc, hWnd);
-				ReleaseDC(hWnd, hdc);
+				
+				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
+				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
+				{
+					ULONGLONG elapsed = frameTime - limitFrameTime; //유저의 시스템 환경에 따라 발생하는 시간차이.
+					limitFrameTime = frameTime + 30;//30 => 0.03초.
+
+					CharacterFrame += elapsed;
+					if (300 <= CharacterFrame)
+					{
+						if (GameMgr->ReturnIsMoving())
+						{
+							GameMgr->StandingCharacter();
+						}
+						CharacterFrame = 0;
+					}
+				}
 			}
 			
 
 		}
 	}
+	ReleaseDC(hWnd, hdc);
 	return (int)Message.wParam;
 }
 
-
 ULONGLONG frameTime, limitFrameTime = 0;
 
-bool IsMoving = false;
 int count = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	static HDC hdc;
 	static PAINTSTRUCT ps;
-	static bool IsMoving = false;
+
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
-		SetTimer(hWnd, 1, 300, NULL);	//캐릭터 프레임 조절용
+		SetTimer(hWnd, 1, 60, NULL);	//캐릭터 프레임 조절용
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
-		SetTimer(hWnd, 2, 30, NULL);	//키입력 감지용
-		SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
+		SetTimer(hWnd, 2, 60, NULL);	//키입력 감지용
+		//SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
 		GameMgr->WholeInit();	//전체 초기화
 		return 0;
 	case WM_TIMER:
@@ -101,12 +119,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case 1:
-			if (GameMgr->ReturnIsMoving())
-			{
-				GameMgr->StandingCharacter();
-			}
-			break;
-		case 2:
 		{
 			if (!GameMgr->ReturnIsMoving())
 			{
@@ -137,44 +149,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	//	EndPaint(hWnd, &ps);
 
 	//	return 0;
-	case WM_KEYDOWN:
-	{
-		//if(!IsMoving)
-		//{
-		////Chara->Moving(wParam);
-		//Chara->ChangeDirection(wParam);
-		//Chara->ChangeLocation();
-		////Chara->ChangeGesture();
-		////Chara->PrintCharacter(&hdc);
-		//IsMoving = true;
-		//count = 0;
-		////InvalidateRect(hWnd, NULL, TRUE);
-		//}
+	//case WM_KEYDOWN:
+	//{
+	//	//if(!IsMoving)
+	//	//{
+	//	////Chara->Moving(wParam);
+	//	//Chara->ChangeDirection(wParam);
+	//	//Chara->ChangeLocation();
+	//	////Chara->ChangeGesture();
+	//	////Chara->PrintCharacter(&hdc);
+	//	//IsMoving = true;
+	//	//count = 0;
+	//	////InvalidateRect(hWnd, NULL, TRUE);
+	//	//}
 
-		/*switch (wParam)
-		{
-		case VK_LEFT:
-			Chara->Moving(DIRECTION_LEFT);
-			Chara->Moving(DIRECTION_LEFT);
-			break;
-		case VK_RIGHT:
-			Chara->Moving(DIRECTION_RIGHT);
-			Chara->Moving(DIRECTION_RIGHT);
-			break;
-		case VK_UP:
-			Chara->Moving(DIRECTION_UP);
-			Chara->Moving(DIRECTION_UP);
-			break;
-		case VK_DOWN:
-			Chara->Moving(DIRECTION_DOWN);
-			Chara->Moving(DIRECTION_DOWN);
-			break;
-		}*/
-		
-	}
-		return 0;
+	//	/*switch (wParam)
+	//	{
+	//	case VK_LEFT:
+	//		Chara->Moving(DIRECTION_LEFT);
+	//		Chara->Moving(DIRECTION_LEFT);
+	//		break;
+	//	case VK_RIGHT:
+	//		Chara->Moving(DIRECTION_RIGHT);
+	//		Chara->Moving(DIRECTION_RIGHT);
+	//		break;
+	//	case VK_UP:
+	//		Chara->Moving(DIRECTION_UP);
+	//		Chara->Moving(DIRECTION_UP);
+	//		break;
+	//	case VK_DOWN:
+	//		Chara->Moving(DIRECTION_DOWN);
+	//		Chara->Moving(DIRECTION_DOWN);
+	//		break;
+	//	}*/
+	//	
+	//}
+	//	return 0;
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
+		KillTimer(hWnd, 2);
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -184,22 +197,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 /*
-최초 로딩시 정면을 바라보고 있는 스프라이트
-각 방향 키보드 눌렀을 경우 그 방향으로 이동
-키보드를 뗐을 때 가장 마지막으로 누른 방향을 향해 바라보고 서있는 스프라이트로
-키입력 한 번마다 발 내딛고-서고 순차적으로 나와야 됨
-bool 또는 int형으로 왼발 오른발을 저장할 변수 필요... 번갈아 가면서 발을 딛어야 하니까
+시작하고 1~2초 지나면 키입력해도 안 됨
+뭐가 문젠지 모르겠다...
 
-움직일 때 값을 먼저 증가시키고 출력 함수를 호출한다
-
-문제 발생함... 이미지를 읽어는 왔는데 출력 자체를 못하고 있음
-메인에서 프린트시키니 잘 나오는데요
-아
-
-방법 알았음 hdc를 주소 참조로 넘겨야 됨 엌ㅋㅋㅋㅋㅋ
-
-프레임 제어 어케 하지
-clock() 함수? 타이머?
-일단 타이머로 해봄
 
 */

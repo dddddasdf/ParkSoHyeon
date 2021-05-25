@@ -12,14 +12,11 @@ void GameManager::MovingCharacter(const int& Key)
 	switch (Key)
 	{
 	case VK_LEFT:
-		m_PlayerData->ChangeMotion(MOTION_RUNNING);
-		break;
 	case VK_RIGHT:
 		m_PlayerData->ChangeMotion(MOTION_RUNNING);
+		m_IsMoving = true;
 		break;
 	}
-
-	m_IsMoving = true;
 }
 
 void GameManager::JumpingCharacter()

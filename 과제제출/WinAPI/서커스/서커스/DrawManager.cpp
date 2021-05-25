@@ -41,10 +41,10 @@ void DrawManager::DrawImages(HDC hdc, HWND hWnd, const int& MotionNumber, const 
 	SelectObject(MemDCBack, OldBitMapBack);
 
 
-	//DeleteObject(BitMapFront);
-	DeleteDC(MemDCBack);
-	//DeleteDC(MemDCBackground);
 	DeleteDC(MemDCCharacter);
+	DeleteDC(MemDCBack);
+	DeleteObject(BitMapBack);
+	//DeleteDC(MemDCBackground);
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//HBITMAP OldBitMap;
