@@ -6,6 +6,10 @@
 
 #define CHARACTER_LOCATION_X 50
 #define JUMP_TIME 1000
+#define HORIZON_HEIGHT 400
+#define JUMP_HEIGHT 300
+#define JUMP_LENGTH 10
+#define PLAYER_LIFE 5
 
 enum DIRECTION
 {
@@ -30,4 +34,14 @@ enum MOTION
 	MOTION_JUMPING = 3
 
 	//캐릭터의 모션을 관리하기 위한 번호
+};
+
+enum BACKGROUND
+{
+	BACKGROUND_FLOOR = 1,
+	BACKGROUND_ELEPHANT = 2,
+	BACKGROUND_CROWD_FIRST = 3,
+	BACKGROUND_CROWD_SECOND = 4
+
+	//백그라운드 타일을 관리하기 위한 번호
 };

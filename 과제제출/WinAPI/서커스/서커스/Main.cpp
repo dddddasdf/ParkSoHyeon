@@ -32,7 +32,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 
 	HDC hdc;
 	ULONGLONG frameTime, limitFrameTime = 0;
-	ULONGLONG CharacterFrame = 0;
+	ULONGLONG CharacterFrame = 0;	//캐릭터 프레임 제어용
+	ULONGLONG JumpCounter = 0;	//점프 프레임 제어용
 
 	srand(unsigned(time(NULL)));
 
@@ -78,9 +79,22 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 					limitFrameTime = frameTime + 30;//30 => 0.03초.
 
 					CharacterFrame += elapsed;
-					if (300 <= CharacterFrame)
+					JumpCounter += elapsed;
+
+					if (2 <= JumpCounter)
 					{
-						if (GameMgr->ReturnIsMoving())
+						//점프하는 부분
+						if (GameMgr->ReturnIsJumping())
+						{
+							GameMgr->ChangeCharacterYLocation();
+						}
+						JumpCounter = 0;
+					}
+
+					if (5 <= CharacterFrame)
+					{
+						//캐릭터 움직이는 부분
+						if (GameMgr->ReturnIsMoving() && (!GameMgr->ReturnIsJumping()))
 						{
 							GameMgr->StandingCharacter();
 						}
@@ -112,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
 		SetTimer(hWnd, 2, 60, NULL);	//키입력 감지용
 		//SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
-		GameMgr->WholeInit();	//전체 초기화
+		GameMgr->WholeInit(hWnd);	//전체 초기화
 		return 0;
 	case WM_TIMER:
 	{
@@ -120,21 +134,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 1:
 		{
-			if (!GameMgr->ReturnIsMoving())
+			//캐릭터가 움직이고 있는 중이거나 점프 중일 때는 방향키값 체크 X
+			//점프는 점프 중인지만 확인한다
 			{
-				if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-				{
-					GameMgr->MovingCharacter(VK_LEFT);
-				}
-				if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-				{
-					GameMgr->MovingCharacter(VK_RIGHT);
-				}
 				if (GetAsyncKeyState(VK_SPACE))
 				{
-
+					if (!GameMgr->ReturnIsJumping())
+					{
+						GameMgr->JumpingCharacter();
+					}
 				}
-
+				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()))
+				{
+					if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+					{
+						GameMgr->MovingCharacter(VK_LEFT);
+					}
+					if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+					{
+						GameMgr->MovingCharacter(VK_RIGHT);
+					}
+				}
 			}
 		}
 			break;
@@ -200,5 +220,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 시작하고 1~2초 지나면 키입력해도 안 됨
 뭐가 문젠지 모르겠다...
 
+현재까지 구현 완료한 것
+캐릭터 움직이는 모션 구현
+캐릭터 점프하는 모션 구현
 
+
+이제 고민해야 하는 부분
+백그라운드를 어떻게 출력시킬 것인지
+이차원벡터 같은 것으로 구현하여 미리 맵그림을 다 짜놓고 이동한만큼 움직이도록 해야 할 듯...
+
+
+맵 이동까지 구현하고 나면 이제 장애물 배치와 충돌체크를 확인하도록 하자...
 */

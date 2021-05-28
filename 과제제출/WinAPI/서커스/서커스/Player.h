@@ -15,6 +15,7 @@ public:
 
 	void InitPlayer();
 	void ChangeMotion(const int& State);
+	void ChangeYLocation(bool IsUp);
 
 	int ReturnMotion() { return m_PlayerMotion; }
 	int ReturnCharacterYLocation() { return m_PlayerYLocation; }

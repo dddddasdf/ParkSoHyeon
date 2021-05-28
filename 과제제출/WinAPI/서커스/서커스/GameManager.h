@@ -9,13 +9,17 @@ class GameManager : public Singleton <GameManager>
 private:
 	Player *m_PlayerData;
 
-	bool m_IsMoving;
+	bool m_IsMoving;	//움직이는 중인지 체크하는 용도
+	bool m_IsJumping;	//점프하는 중인지 체크하는 용도
+	bool m_IsHighest;	//점프할 때 Y축 조절을 위하여 최고 고도에 도달했는지 아닌지 확인하기
 public:
-	void WholeInit();	//전체 초기화 총괄
+	void WholeInit(HWND hWnd);	//전체 초기화 총괄
 	void MovingCharacter(const int& Key);	//캐릭터 이동 시키기
 	void JumpingCharacter();	//캐릭터 점프 시키기
+	void ChangeCharacterYLocation();	//캐릭터 Y축 변경시키기
 	void StandingCharacter();	//캐릭터 다시 세우기
 	bool ReturnIsMoving() { return m_IsMoving; }
+	bool ReturnIsJumping() { return m_IsJumping; }
 
 	void DrawCharacterOrder(HDC *hdc, HWND hWnd);
 };

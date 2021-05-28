@@ -10,9 +10,12 @@ private:
 	std::vector <HBITMAP> m_ObstacleImageVector;
 	std::vector <HBITMAP> m_CharacterImageVector;
 
+	
 public:
 	void InitImages();
 	HBITMAP ReturnCharacterImage(const int& MotionNumber);
+	HBITMAP ReturnBackgroundImage(const int& BackgroundNumber);
+
 };
 
 #define ResourceMgr ResourceManager::GetInstance()

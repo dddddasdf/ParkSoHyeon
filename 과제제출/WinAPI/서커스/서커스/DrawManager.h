@@ -7,9 +7,13 @@
 class DrawManager : public Singleton <DrawManager>
 {
 private:
+	int m_WindowWidth;
+	int m_WindowHeight;
 
+	std::vector <int> m_BackgroundTileVector;	//배경 타일을 벡터로 저장하기
 public:
-	void DrawImages(HDC hdc, HWND hWnd, const int& MotionNumber, const int& YLocation);
+	void Init(HWND hWnd);
+	void DrawImages(HDC hdc, const int& MotionNumber, const int& YLocation);
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 };
 #define DrawMgr DrawManager::GetInstance()
