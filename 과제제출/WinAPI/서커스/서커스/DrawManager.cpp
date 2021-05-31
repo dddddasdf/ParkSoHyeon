@@ -15,16 +15,33 @@ void DrawManager::Init(HWND hWnd)
 		m_BackgroundTileVector.clear();
 
 	m_BackgroundTileVector.push_back(BACKGROUND_ELEPHANT);
-	for (int i = 1; i <= 6; i++)
+	for (int i = 1; i <= CROWD_PATTERN; i++)
 	{
-		if (1 == i % 2)
-			m_BackgroundTileVector.push_back(BACKGROUND_CROWD_FIRST);
-		else
-			m_BackgroundTileVector.push_back(BACKGROUND_CROWD_SECOND);
+		m_BackgroundTileVector.push_back(BACKGROUND_CROWD_FIRST);
 	}
+
+	//각 이미지 사이즈 미리 구해놓기
+	HBITMAP HBitmapTmp;
+	BITMAP BitmapTmp;
+
+	HBitmapTmp = ResourceMgr->ReturnBackgroundImage(BACKGROUND_FLOOR);
+	GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
+
+	m_FloorImageSizeWidth = BitmapTmp.bmWidth;
+	m_FloorImageSizeHeight = BitmapTmp.bmHeight;	//바닥 사이즈
+
+	HBitmapTmp = ResourceMgr->ReturnBackgroundImage(BACKGROUND_CROWD_FIRST);
+	GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
+
+	m_CrowdImageSizeWidth = BitmapTmp.bmWidth;
+	m_CrowdImageSizeHeight = BitmapTmp.bmHeight;	//군중 사이즈
+
+	//Y좌표 시작 부분
+	m_FloorYStart = HORIZON_HEIGHT - m_FloorImageSizeHeight;
+	m_CrowdYStart = HORIZON_HEIGHT - m_FloorImageSizeHeight - m_CrowdImageSizeHeight;
 }
 
-void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& YLocation)
+void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& XLocation, const int& YLocation)
 {	
 	//본 화면
 	HDC MemDCBack = CreateCompatibleDC(hdc);
@@ -41,20 +58,38 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& YLocat
 	HBITMAP BitMapBackground = NULL;
 
 
-	//배경 그리는 파트
+	//배경 그리는 파트 - 바닥
 	BitMapBackground = ResourceMgr->ReturnBackgroundImage(BACKGROUND_FLOOR);
-	GetObject(BitMapBackground, sizeof(BITMAP), &BitMapImageSize);
-	int ImageSizeX = BitMapImageSize.bmWidth;
-	int ImageSizeY = BitMapImageSize.bmHeight;
-
 	OlbBitMapBackground = (HBITMAP)SelectObject(MemDCBackground, BitMapBackground);
 
-	for (int i = 0; i < (m_WindowWidth / ImageSizeX + 1); i++)
+	for (int i = 0; i < (m_WindowWidth / m_FloorImageSizeWidth + 1); i++)
 	{
-		TransparentBlt(MemDCBack, 0 + ImageSizeX * i, HORIZON_HEIGHT - ImageSizeY, ImageSizeX, ImageSizeY, MemDCBackground, 0, 0, ImageSizeX, ImageSizeY, RGB(255, 0, 255));
-		SelectObject(MemDCBackground, OlbBitMapBackground);
+		TransparentBlt(MemDCBack, m_FloorImageSizeWidth * i, m_FloorYStart, m_FloorImageSizeWidth, m_FloorImageSizeHeight, 
+			MemDCBackground, 0, 0, m_FloorImageSizeWidth, m_FloorImageSizeHeight, RGB(255, 0, 255));
 	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	//배경 그리는 파트 - 군중
+	int StartBlock = XLocation / m_CrowdImageSizeWidth;	//플레이어 위치에 따라 시작할 블럭을 정해야 함
+	int CutWidth = XLocation - (m_CrowdImageSizeWidth * StartBlock);	//플레이어의 맵 X 좌표에 따라 잘리는 칸의 길이 계산
+	for (int i = StartBlock, j = 0; i < (m_WindowWidth / m_CrowdImageSizeWidth + (StartBlock +1)); i++, j++)
+	{
+		BitMapBackground = ResourceMgr->ReturnBackgroundImage((m_BackgroundTileVector.at(i % CROWD_PATTERN)));
+		OlbBitMapBackground = (HBITMAP)SelectObject(MemDCBackground, BitMapBackground);
+		TransparentBlt(MemDCBack, (0 - CutWidth) + m_CrowdImageSizeWidth * j, m_CrowdYStart, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight,
+			MemDCBackground, 0, 0, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight, RGB(255, 0, 255));
+	}
+	/*
+	CutWidth로 우선 첫번째 타일의 잘리는 길이를 구한다
+	그리기 시작좌표를 x = 0에서 잘리는 길이만큼 앞으로 둬서 시작하게 한다
+	이후의 타일들은 타일이 놓여진 개수(j)에 타일의 길이를 곱해서 그려지는 x좌표를 구한다
+	*/
+
+	SelectObject(MemDCBackground, OlbBitMapBackground);
+
+	//배경 그리는 파트 끝
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//캐릭터 담당
 	HDC MemDCCharacter = CreateCompatibleDC(hdc);
@@ -62,14 +97,13 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& YLocat
 	HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
 	
 
-
 	//캐릭터 그리는 파트
 	GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
 	int CharacterSizeX = BitMapImageSize.bmWidth;
 	int CharacterSizeY = BitMapImageSize.bmHeight;
 
 	OlbBitMapCharacter = (HBITMAP)SelectObject(MemDCCharacter, BitMapCharacter);
-	TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, YLocation, ImageSizeX, ImageSizeY, MemDCCharacter, 0, 0, ImageSizeX, ImageSizeY, RGB(255, 0, 255));
+	TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, YLocation - CharacterSizeY, CharacterSizeX, CharacterSizeY, MemDCCharacter, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
 	SelectObject(MemDCCharacter, OlbBitMapCharacter);
 	//캐릭터 그리는 파트 끝
 

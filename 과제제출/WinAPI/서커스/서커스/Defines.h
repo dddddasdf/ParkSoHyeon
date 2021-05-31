@@ -4,12 +4,15 @@
 #include <vector>
 #include <iostream>
 
-#define CHARACTER_LOCATION_X 50
+#define CHARACTER_LOCATION_X 40
 #define JUMP_TIME 1000
 #define HORIZON_HEIGHT 400
-#define JUMP_HEIGHT 300
-#define JUMP_LENGTH 10
+#define HORIZON_CHARACTER 395
+#define JUMP_HEIGHT 305
+#define JUMP_LENGTH 15
 #define PLAYER_LIFE 5
+#define CROWD_PATTERN 7	//군중 패턴
+#define MOVE_PIXEL 25	//플레이어가 한 번 움직일 때 얼마나 이동하는가
 
 enum DIRECTION
 {

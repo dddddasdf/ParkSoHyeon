@@ -25,7 +25,7 @@ void ResourceManager::InitImages()
 
 	for (int i = 1; i <= 4; i++)
 	{
-		//캐릭터 비트맵 불러와서 벡터에 저장하기
+		//배경 비트맵 불러와서 벡터에 저장하기
 		std::string FileNameTmp = "back_" + std::to_string(i);
 		BitMap NewBitMapTmp(FileNameTmp);
 		m_BackgroundImageVector.push_back(NewBitMapTmp.ReturnBitMap());
@@ -42,7 +42,7 @@ HBITMAP ResourceManager::ReturnCharacterImage(const int& MotionNumber)
 
 HBITMAP ResourceManager::ReturnBackgroundImage(const int& BackgroundNumber)
 {
-	return m_CharacterImageVector[BackgroundNumber];
+	return m_BackgroundImageVector[BackgroundNumber];
 }
 
 /*

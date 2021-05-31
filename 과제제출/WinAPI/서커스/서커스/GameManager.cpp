@@ -16,6 +16,7 @@ void GameManager::MovingCharacter(const int& Key)
 	case VK_LEFT:
 	case VK_RIGHT:
 		m_PlayerData->ChangeMotion(MOTION_RUNNING);
+		m_PlayerData->ChangeXLocation(Key);
 		m_IsMoving = true;
 		break;
 	}
@@ -48,7 +49,7 @@ void GameManager::ChangeCharacterYLocation()
 	case true:
 	{
 		m_PlayerData->ChangeYLocation(false);
-		if (HORIZON_HEIGHT == m_PlayerData->ReturnCharacterYLocation())
+		if (HORIZON_CHARACTER == m_PlayerData->ReturnCharacterYLocation())
 		{
 			m_IsHighest = false;
 			m_IsJumping = false;
@@ -68,5 +69,5 @@ void GameManager::StandingCharacter()
 
 void GameManager::DrawCharacterOrder(HDC *hdc, HWND hWnd)
 {
-	DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
+	DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation());
 }

@@ -13,8 +13,6 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = TEXT("C7No1");
 
-#define MOVE_PIXEL 3	//한 번 이동할 때 얼마만큼 위치를 이동시킬 것인가
-
 /////////////////////////////////////////////////////////////////////
 
 	/*while (GetMessage(&Message, NULL, 0, 0))
@@ -31,9 +29,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	g_hInst = hInstance;
 
 	HDC hdc;
-	ULONGLONG frameTime, limitFrameTime = 0;
-	ULONGLONG CharacterFrame = 0;	//캐릭터 프레임 제어용
-	ULONGLONG JumpCounter = 0;	//점프 프레임 제어용
+	ULONGLONG frameTime, limitFrameTime = GetTickCount64();
+	float CharacterFrame = 0;	//캐릭터 프레임 제어용
+	float JumpCounter = 0;	//점프 프레임 제어용
 
 	srand(unsigned(time(NULL)));
 
@@ -78,10 +76,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 					ULONGLONG elapsed = frameTime - limitFrameTime; //유저의 시스템 환경에 따라 발생하는 시간차이.
 					limitFrameTime = frameTime + 30;//30 => 0.03초.
 
-					CharacterFrame += elapsed;
-					JumpCounter += elapsed;
+					CharacterFrame += elapsed * 0.01f;
+					JumpCounter += elapsed * 0.01f;
 
-					if (2 <= JumpCounter)
+					if (0.02f <= JumpCounter)
 					{
 						//점프하는 부분
 						if (GameMgr->ReturnIsJumping())
@@ -91,7 +89,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						JumpCounter = 0;
 					}
 
-					if (5 <= CharacterFrame)
+					if (0.05f <= CharacterFrame)
 					{
 						//캐릭터 움직이는 부분
 						if (GameMgr->ReturnIsMoving() && (!GameMgr->ReturnIsJumping()))
@@ -102,8 +100,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 					}
 				}
 			}
-			
-
 		}
 	}
 	ReleaseDC(hWnd, hdc);
@@ -227,8 +223,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 이제 고민해야 하는 부분
 백그라운드를 어떻게 출력시킬 것인지
-이차원벡터 같은 것으로 구현하여 미리 맵그림을 다 짜놓고 이동한만큼 움직이도록 해야 할 듯...
 
 
 맵 이동까지 구현하고 나면 이제 장애물 배치와 충돌체크를 확인하도록 하자...
+
+맵그리기까지 다했음
+이제 스크롤 기능 구현할 차례임
+
+스크롤 기능 반쯤 구현함...
+현재 해야 하는 거
+1. 이동 중에 점프하면 X좌표 지속적으로 움직여주기
+2. 속도감 문제
 */
