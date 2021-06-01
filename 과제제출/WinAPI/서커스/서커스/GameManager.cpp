@@ -42,14 +42,17 @@ void GameManager::ChangeCharacterYLocation()
 	case false:
 	{
 		m_PlayerData->ChangeYLocation(true);
-		if (JUMP_HEIGHT == m_PlayerData->ReturnCharacterYLocation())
+		if (JUMP_HEIGHT >= m_PlayerData->ReturnCharacterYLocation())
+		{
 			m_IsHighest = true;
+		}
+			
 	}
 		break;
 	case true:
 	{
 		m_PlayerData->ChangeYLocation(false);
-		if (HORIZON_CHARACTER == m_PlayerData->ReturnCharacterYLocation())
+		if (HORIZON_CHARACTER <= m_PlayerData->ReturnCharacterYLocation())
 		{
 			m_IsHighest = false;
 			m_IsJumping = false;
@@ -63,6 +66,13 @@ void GameManager::ChangeCharacterYLocation()
 void GameManager::StandingCharacter()
 {
 	m_PlayerData->ChangeMotion(MOTION_STAND);
+
+	m_IsMoving = false;
+}
+
+void GameManager::ChangeAnotherMotion()
+{
+	m_PlayerData->ChangeMotion(MOTION_JUMPING);
 
 	m_IsMoving = false;
 }

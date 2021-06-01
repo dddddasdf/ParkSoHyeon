@@ -65,19 +65,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		else
 		{
 
-			{
-				//그리기 파트
-				
-				GameMgr->DrawCharacterOrder(&hdc, hWnd);
+			{				
+				GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
+
+				//여기서부터 프레임 제어 파트
 				
 				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
 				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
 				{
-					ULONGLONG elapsed = frameTime - limitFrameTime; //유저의 시스템 환경에 따라 발생하는 시간차이.
+					float elapsed = (frameTime - limitFrameTime) * 0.01f; //유저의 시스템 환경에 따라 발생하는 시간차이.
 					limitFrameTime = frameTime + 30;//30 => 0.03초.
 
-					CharacterFrame += elapsed * 0.01f;
-					JumpCounter += elapsed * 0.01f;
+					CharacterFrame += elapsed;
+					JumpCounter += elapsed;
 
 					if (0.02f <= JumpCounter)
 					{
@@ -89,7 +89,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						JumpCounter = 0;
 					}
 
-					if (0.05f <= CharacterFrame)
+					if (0.02f <= CharacterFrame)
 					{
 						//캐릭터 움직이는 부분
 						if (GameMgr->ReturnIsMoving() && (!GameMgr->ReturnIsJumping()))
@@ -120,7 +120,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		SetTimer(hWnd, 1, 60, NULL);	//캐릭터 프레임 조절용
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
-		SetTimer(hWnd, 2, 60, NULL);	//키입력 감지용
 		//SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
 		GameMgr->WholeInit(hWnd);	//전체 초기화
 		return 0;
@@ -130,16 +129,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 1:
 		{
-			//캐릭터가 움직이고 있는 중이거나 점프 중일 때는 방향키값 체크 X
-			//점프는 점프 중인지만 확인한다
 			{
-				if (GetAsyncKeyState(VK_SPACE))
-				{
-					if (!GameMgr->ReturnIsJumping())
-					{
-						GameMgr->JumpingCharacter();
-					}
-				}
+				//캐릭터가 움직이고 있는 중이거나 점프 중일 때는 방향키값 체크 X
+					//점프는 점프 중인지만 확인한다
 				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()))
 				{
 					if (GetAsyncKeyState(VK_LEFT) & 0x8000)
@@ -149,6 +141,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 					{
 						GameMgr->MovingCharacter(VK_RIGHT);
+					}
+				}
+				if (GetAsyncKeyState(VK_SPACE))
+				{
+					if (!GameMgr->ReturnIsJumping())
+					{
+						GameMgr->JumpingCharacter();
 					}
 				}
 			}
@@ -203,7 +202,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	//	return 0;
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
-		KillTimer(hWnd, 2);
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -234,4 +232,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 현재 해야 하는 거
 1. 이동 중에 점프하면 X좌표 지속적으로 움직여주기
 2. 속도감 문제
+
+elapsed를 곱하라는데 사실 이거 뭔 말인지 모르겠음
 */

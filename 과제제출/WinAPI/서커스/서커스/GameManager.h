@@ -18,6 +18,7 @@ public:
 	void JumpingCharacter();	//캐릭터 점프 시키기
 	void ChangeCharacterYLocation();	//캐릭터 Y축 변경시키기
 	void StandingCharacter();	//캐릭터 다시 세우기
+	void ChangeAnotherMotion();	//임시
 	bool ReturnIsMoving() { return m_IsMoving; }
 	bool ReturnIsJumping() { return m_IsJumping; }
 
