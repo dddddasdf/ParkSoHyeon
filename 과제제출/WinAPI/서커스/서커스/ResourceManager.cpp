@@ -32,6 +32,45 @@ void ResourceManager::InitImages()
 	}
 
 	
+	//장애물 이미지 파일 불러오기
+	if (!m_ObstacleImageVector.empty())
+		m_ObstacleImageVector.clear();
+
+	m_ObstacleImageVector.push_back(NULL);	//번호 관리를 수월하게 하기 위해서 0번째 인덱스는 공백으로 채운다. 안 쓰는 번호임.
+
+	//장애물-화로
+	for (int i = OBSTACLE_FIRE_1; i <= OBSTACLE_FIRE_2; i++)
+	{
+		//고리 비트맵 불러와서 벡터에 저장하기
+		std::string FileNameTmp = "fire_" + std::to_string(i);
+		BitMap NewBitMapTmp(FileNameTmp);
+		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
+	}
+	
+	//장애물-불고리 큰 거
+	for (int i = OBSTACLE_RING_FIRST_1; i <= OBSTACLE_RING_SECOND_2; i++)
+	{
+		//고리 비트맵 불러와서 벡터에 저장하기
+		std::string FileNameTmp = "ring_" + std::to_string(i);
+		BitMap NewBitMapTmp(FileNameTmp);
+		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
+	}
+
+	//장애물-불고리 작은 거
+	for (int i = OBSTACLE_LITTLERING_1; i <= OBSTACLE_LITTLERING_2; i++)
+	{
+		//고리 비트맵 불러와서 벡터에 저장하기
+		std::string FileNameTmp = "littlering_" + std::to_string(i);
+		BitMap NewBitMapTmp(FileNameTmp);
+		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
+	}
+
+	{
+		//맞으면 죽는 장애물은 아니지만 돈주머니
+		std::string FileNameTmp = "cash_1";
+		BitMap NewBitMapTmp(FileNameTmp);
+		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
+	}
 }
 
 
@@ -43,6 +82,11 @@ HBITMAP ResourceManager::ReturnCharacterImage(const int& MotionNumber)
 HBITMAP ResourceManager::ReturnBackgroundImage(const int& BackgroundNumber)
 {
 	return m_BackgroundImageVector[BackgroundNumber];
+}
+
+HBITMAP ResourceManager::ReturnObstacleImage(const int& ObstacleNumber)
+{
+	return m_ObstacleImageVector[ObstacleNumber];
 }
 
 /*

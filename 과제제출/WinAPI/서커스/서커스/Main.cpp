@@ -92,10 +92,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 					if (0.02f <= CharacterFrame)
 					{
 						//캐릭터 움직이는 부분
-						if (GameMgr->ReturnIsMoving() && (!GameMgr->ReturnIsJumping()))
+						/*if (GameMgr->ReturnIsMoving() && (!GameMgr->ReturnIsJumping()))
+						{
+							GameMgr->StandingCharacter();
+						}*/
+						
+						if ((!GameMgr->ReturnIsJumping()))
 						{
 							GameMgr->StandingCharacter();
 						}
+						/*
+						모션 교체를 위하여 메인 함수에서는 캐릭터가 점프 중이 아닐 때 모션을 갱신하도록 변경하였음
+						자세한 내막은 GameManager의 StandCharacter() 함수로...
+						*/
 						CharacterFrame = 0;
 					}
 				}
@@ -131,7 +140,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			{
 				//캐릭터가 움직이고 있는 중이거나 점프 중일 때는 방향키값 체크 X
-					//점프는 점프 중인지만 확인한다
+				//점프는 점프 중인지만 확인한다
 				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()))
 				{
 					if (GetAsyncKeyState(VK_LEFT) & 0x8000)
@@ -212,7 +221,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 /*
 시작하고 1~2초 지나면 키입력해도 안 됨
-뭐가 문젠지 모르겠다...
+뭐가 문젠지 모르겠다...<-해결함
 
 현재까지 구현 완료한 것
 캐릭터 움직이는 모션 구현
@@ -220,7 +229,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 이제 고민해야 하는 부분
-백그라운드를 어떻게 출력시킬 것인지
+백그라운드를 어떻게 출력시킬 것인지<-해결함
 
 
 맵 이동까지 구현하고 나면 이제 장애물 배치와 충돌체크를 확인하도록 하자...
@@ -234,4 +243,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 2. 속도감 문제
 
 elapsed를 곱하라는데 사실 이거 뭔 말인지 모르겠음
+
+이거 내가 로직 제대로 짜고 있는 거 맞나?/?
+
+
+이제 장애물 배치가 중요함
+원판에서는 동일 패턴을 사이클 돌리면서 내는 건지 아니면 처음부터 끝까지 패턴이 배치되어있는건지 아닌 건지 똥손이라 못해서 모르겠음
+
+화로 출력까진 성공함
+고리 출력시키면서 어떻게 이동시킬지가 겁나게 문젠데
+일단 고리 리젠은 일정 시간마다 하는 게 편하긴 할 거 같음
 */

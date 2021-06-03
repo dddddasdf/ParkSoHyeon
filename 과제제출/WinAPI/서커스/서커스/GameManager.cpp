@@ -65,14 +65,26 @@ void GameManager::ChangeCharacterYLocation()
 
 void GameManager::StandingCharacter()
 {
-	m_PlayerData->ChangeMotion(MOTION_STAND);
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	{
+		switch (m_PlayerData->ReturnMotion())
+		{
+		case MOTION_JUMPING:
+			m_PlayerData->ChangeMotion(MOTION_RUNNING);
+			break;
+		case MOTION_RUNNING:
+			m_PlayerData->ChangeMotion(MOTION_JUMPING);
+			break;
+		}
+	}
+	else
+		m_PlayerData->ChangeMotion(MOTION_STAND);
 
-	m_IsMoving = false;
-}
-
-void GameManager::ChangeAnotherMotion()
-{
-	m_PlayerData->ChangeMotion(MOTION_JUMPING);
+	/*
+	지금 보니까 모션이 달리는 중에는 캐릭터 스프라이트 2, 3이 번갈아가면서 나오더라
+	일단 구현을 위해서 이렇게 하였다... 모션을 바꾸는 함수인 이 함수가 호출되는 순간 키입력이 지속적으로 이루어지고 있다면 다른 달리는 모션으로
+	없다면 스탠딩으로
+	*/
 
 	m_IsMoving = false;
 }

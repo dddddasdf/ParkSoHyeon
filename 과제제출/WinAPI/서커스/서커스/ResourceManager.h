@@ -15,7 +15,7 @@ public:
 	void InitImages();
 	HBITMAP ReturnCharacterImage(const int& MotionNumber);
 	HBITMAP ReturnBackgroundImage(const int& BackgroundNumber);
-
+	HBITMAP ReturnObstacleImage(const int& ObstacleNumber);
 };
 
 #define ResourceMgr ResourceManager::GetInstance()

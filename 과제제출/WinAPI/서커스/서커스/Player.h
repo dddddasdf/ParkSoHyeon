@@ -16,11 +16,11 @@ public:
 
 	void InitPlayer();
 	void ChangeMotion(const int& State);
-	void ChangeYLocation(bool IsUp);
 	void ChangeXLocation(const int& Key);
+	void ChangeYLocation(bool IsUp);
 
 	int ReturnMotion() { return m_PlayerMotion; }
-	int ReturnCharacterYLocation() { return m_PlayerYLocation; }
 	int ReturnCharacterXLocation() { return m_PlayerXLocation; }
+	int ReturnCharacterYLocation() { return m_PlayerYLocation; }
 };
 
