@@ -55,6 +55,16 @@ void DrawManager::Init(HWND hWnd)
 
 		m_FireAnimation = OBSTACLE_FIRE_1;	//겸사겸사 화로 애니메이션을 위한 멤버변수도 초기화
 	}
+
+	{
+		//고리 X좌표 초기 위치 설정
+
+		m_Ring1XLocation = 500;
+		m_Ring2XLocation = 1000;
+		m_LittleRingXLocation = 2000;
+
+		m_RingAnimation = OBSTACLE_RING_FIRST_1;	//겸사겸사 고리 애니메이션을 위한 멤버변수도 초기화
+	}
 }
 
 void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
@@ -112,60 +122,132 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	HBITMAP OlbBitMapObstacle;
 	HBITMAP BitMapObstacle = NULL;
 
-	//장애물 그리는 파트1 (불 고리 왼쪽 면)
+	//장애물 그리는 파트1 (불 고리 왼쪽 면, 화로)
 
+	//불 고리 왼쪽 그림
+	{
+		switch (m_RingAnimation)
+		{
+		case OBSTACLE_RING_FIRST_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_FIRST_1);
+			break;
+		case OBSTACLE_RING_SECOND_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_SECOND_1);
+			break;
+		}
+		//오른쪽 면 그릴 때 애니메이션 변수 변경해주면 됨
+
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		int RingSizeX = BitMapImageSize.bmWidth;
+		int RingSizeY = BitMapImageSize.bmHeight;
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_Ring1XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_Ring2XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+	}
+
+	//화로 그림
+	{
+		switch (m_FireAnimation)
+		{
+		case OBSTACLE_FIRE_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_1);
+			m_FireAnimation = OBSTACLE_FIRE_2;	//비트맵을 받아온 다음 애니메이션 관리 변수를 미리 다음 걸로 교체해서 다음 프레임 출력 때 바로바로 변경된 변수가 되도록 한다
+			break;
+		case OBSTACLE_FIRE_2:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_2);
+			m_FireAnimation = OBSTACLE_FIRE_1;
+			break;
+		}
+
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//화로 비트맵 사이즈 구함
+		int FireSizeX = BitMapImageSize.bmWidth;
+		int FireSizeY = BitMapImageSize.bmHeight;
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+
+		for (int i = 500 - (CharacterXLocation % FIRE_DISTANCE) - 40; i <= m_WindowWidth; i += 500)
+		{
+			//일정 간격으로 화로 출력
+			/*
+			유저의 맵에서의 X좌표를 기준으로 출력하게끔 한다. 화로는 영점에서부터 500 간격으로 놓여져 있다... 유저의 위치를 화로 간격으로 나눈 나머지값을 통해 다음 화로까지의 거리를 구하여
+			출력한다
+			*/
+
+			TransparentBlt(MemDCBack, i, HORIZON_FIRE - FireSizeY, FireSizeX, FireSizeY, MemDCObstacle, 0, 0, FireSizeX, FireSizeY, RGB(255, 0, 255));
+		}
+	}
 
 	//장애물 그리는 파트1 끝
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	//캐릭터 그리는 파트
+	
 	//캐릭터 담당
 	HDC MemDCCharacter = CreateCompatibleDC(hdc);
 	HBITMAP OlbBitMapCharacter;
 	HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
+
+	{
+		//그리는 연산
+		GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
+		int CharacterSizeX = BitMapImageSize.bmWidth;
+		int CharacterSizeY = BitMapImageSize.bmHeight;
+
+		OlbBitMapCharacter = (HBITMAP)SelectObject(MemDCCharacter, BitMapCharacter);
+		TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CharacterSizeX, CharacterSizeY, MemDCCharacter, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
+		SelectObject(MemDCCharacter, OlbBitMapCharacter);		
+	}
 	
-
-	//캐릭터 그리는 파트
-	GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
-	int CharacterSizeX = BitMapImageSize.bmWidth;
-	int CharacterSizeY = BitMapImageSize.bmHeight;
-
-	OlbBitMapCharacter = (HBITMAP)SelectObject(MemDCCharacter, BitMapCharacter);
-	TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CharacterSizeX, CharacterSizeY, MemDCCharacter, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
-	SelectObject(MemDCCharacter, OlbBitMapCharacter);
 	//캐릭터 그리는 파트 끝
-
+	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//장애물 그리는 파트2 (불 고리 오른쪽 면, 화로)
-
-	//화로 그림
-	switch (m_FireAnimation)
-	{
-	case OBSTACLE_FIRE_1:
-		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_1);
-		m_FireAnimation = OBSTACLE_FIRE_2;	//비트맵을 받아온 다음 애니메이션 변수를 미리 다음 걸로 교체해서 다음 프레임 출력 때 바로바로 변경된 변수이도록 한다
-		break;
-	case OBSTACLE_FIRE_2:
-		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_2);
-		m_FireAnimation = OBSTACLE_FIRE_1;
-		break;
-	}
-
-	GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);
-	int FireSizeX = BitMapImageSize.bmWidth;
-	int FireSizeY = BitMapImageSize.bmHeight;
-
-	for (int i = 500 - (CharacterXLocation % FIRE_DISTANCE) - 40; i <= m_WindowWidth; i += 500)
-	{
-		//일정 간격으로 화로 출력
-		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, i, HORIZON_FIRE - FireSizeY, FireSizeX, FireSizeY, MemDCObstacle, 0, 0, FireSizeX, FireSizeY, RGB(255, 0, 255));
-		SelectObject(MemDCObstacle, OlbBitMapObstacle);
-	}
-
+	//장애물 그리는 파트2 (불 고리 오른쪽 면)
 	
+	//불 고리 오른쪽 그림
+	{
+		//그리는 연산 부분
+		switch (m_RingAnimation)
+		{
+		case OBSTACLE_RING_FIRST_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_FIRST_2);
+			m_RingAnimation = OBSTACLE_RING_SECOND_1;	//비트맵을 받아온 다음 애니메이션 관리 변수를 미리 다음 걸로 교체해서 다음 프레임 출력 때 바로바로 변경된 변수가 되도록 한다
+			break;
+		case OBSTACLE_RING_SECOND_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_SECOND_2);
+			m_RingAnimation = OBSTACLE_RING_FIRST_1;
+			break;
+		}
 
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		int RingSizeX = BitMapImageSize.bmWidth;
+		int RingSizeY = BitMapImageSize.bmHeight;
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_Ring1XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_Ring2XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+
+		//불 고리 X 좌표 변경하는 부분
+		m_Ring1XLocation -= RING_MOVE_PIXEL;
+		m_Ring2XLocation -= RING_MOVE_PIXEL;
+
+		if (m_Ring1XLocation < CHARACTER_LOCATION_X - 50)
+			m_Ring1XLocation += 1000;
+
+		if (m_Ring2XLocation < CHARACTER_LOCATION_X - 50)
+			m_Ring2XLocation += 1000;
+
+		//여기 손 좀 봐야 함... 그리고 프레임 조절 못하나? 너무 렉걸리는데
+	}
+
+
+	SelectObject(MemDCObstacle, OlbBitMapObstacle);
 
 
 	//장애물 그리는 파트2 끝

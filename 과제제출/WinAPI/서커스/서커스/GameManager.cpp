@@ -46,7 +46,6 @@ void GameManager::ChangeCharacterYLocation()
 		{
 			m_IsHighest = true;
 		}
-			
 	}
 		break;
 	case true:

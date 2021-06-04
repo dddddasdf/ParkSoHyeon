@@ -51,7 +51,7 @@ void ResourceManager::InitImages()
 	for (int i = OBSTACLE_RING_FIRST_1; i <= OBSTACLE_RING_SECOND_2; i++)
 	{
 		//고리 비트맵 불러와서 벡터에 저장하기
-		std::string FileNameTmp = "ring_" + std::to_string(i);
+		std::string FileNameTmp = "ring_" + std::to_string(i - 2);
 		BitMap NewBitMapTmp(FileNameTmp);
 		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
 	}
@@ -60,7 +60,7 @@ void ResourceManager::InitImages()
 	for (int i = OBSTACLE_LITTLERING_1; i <= OBSTACLE_LITTLERING_2; i++)
 	{
 		//고리 비트맵 불러와서 벡터에 저장하기
-		std::string FileNameTmp = "littlering_" + std::to_string(i);
+		std::string FileNameTmp = "littlering_" + std::to_string(i - 6);
 		BitMap NewBitMapTmp(FileNameTmp);
 		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
 	}

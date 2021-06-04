@@ -24,8 +24,13 @@ private:
 	int m_CrowdYStart;	//배경에서 군중의 Y좌표 시작 부분
 	int m_FloorYStart;	//배경에서 바닥의 Y좌표 시작 부분
 
-	std::vector <int> m_ObstacleFireXLocation;	//장애물-화로의 X좌표를 저장하는 벡터
+	std::vector <int> m_ObstacleFireXLocation;	//장애물-화로의 X좌표를 저장하는 벡터<-막상 해보니까 이거 쓸 필요가 없었네 일단 더미로 남겨둠
 	int m_FireAnimation;	//화로 애니메이션 조정을 위한 멤버변수
+
+	int m_Ring1XLocation;	//첫번째 불 고리 위치를 조정하는 멤버변수
+	int m_Ring2XLocation;	//두번째 불 고리 위치를 조정하는 멤버변수
+	int m_LittleRingXLocation;	//작은 불 고리 위치를 조정하는 멤버변수
+	int m_RingAnimation;	//고리 애니메이션 조정을 위한 멤버변수
 
 public:
 	void Init(HWND hWnd);
