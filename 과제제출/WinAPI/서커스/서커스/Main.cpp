@@ -47,7 +47,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	RegisterClass(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, (HMENU)NULL, hInstance, NULL);
+	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1080, 640, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 
 
@@ -107,6 +107,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						*/
 						CharacterFrame = 0;
 					}
+
+					GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
+
+					if (!GameMgr->ReturnIsJumping())
+					{
+						
+					}
 				}
 			}
 		}
@@ -165,50 +172,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 	}
 		return 0;
-	//case WM_PAINT:
-	//	hdc = BeginPaint(hWnd, &ps);
-
-	//	GameMgr->DrawCharacterOrder(&hdc, hWnd);
-
-	//	EndPaint(hWnd, &ps);
-
-	//	return 0;
-	//case WM_KEYDOWN:
-	//{
-	//	//if(!IsMoving)
-	//	//{
-	//	////Chara->Moving(wParam);
-	//	//Chara->ChangeDirection(wParam);
-	//	//Chara->ChangeLocation();
-	//	////Chara->ChangeGesture();
-	//	////Chara->PrintCharacter(&hdc);
-	//	//IsMoving = true;
-	//	//count = 0;
-	//	////InvalidateRect(hWnd, NULL, TRUE);
-	//	//}
-
-	//	/*switch (wParam)
-	//	{
-	//	case VK_LEFT:
-	//		Chara->Moving(DIRECTION_LEFT);
-	//		Chara->Moving(DIRECTION_LEFT);
-	//		break;
-	//	case VK_RIGHT:
-	//		Chara->Moving(DIRECTION_RIGHT);
-	//		Chara->Moving(DIRECTION_RIGHT);
-	//		break;
-	//	case VK_UP:
-	//		Chara->Moving(DIRECTION_UP);
-	//		Chara->Moving(DIRECTION_UP);
-	//		break;
-	//	case VK_DOWN:
-	//		Chara->Moving(DIRECTION_DOWN);
-	//		Chara->Moving(DIRECTION_DOWN);
-	//		break;
-	//	}*/
-	//	
-	//}
-	//	return 0;
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
 		PostQuitMessage(0);
@@ -256,8 +219,15 @@ elapsed를 곱하라는데 사실 이거 뭔 말인지 모르겠음
 
 유저가 불 고리의 X좌표와 겹쳐서 지나간 다음 불 고리가 화면 너머로 사라지는 순간 불고리의 존재가 말소되어버림
 큰 고리는 5초마다 젠 시킨다 칩시다
-작은 고리는 10초마다 젠
+작은 고리는 10초마다 젠<-못해먹겠어서 그냥 좌표별로 나오도록 함
 
 불고리 좌표는 draw에서 관리하는 게 맞긋지...
 불고리 위치가 유저 위치보다 100 아래로 가면 화면 오른쪽으로 가서 대기...
+
+엔딩 어케 나는지를 알아야 겟는데 엔딩을 못 봐서 못구현하겟음 걍 아무렇게나 해야지
+
+이제 충돌 구현을 해야 할 차례
+이거 연산 너무 많은 거 아닌가??? 비트맵은 아예 멤버변수로 저장해버리는 게 낫나...
+
+화로 위치 출력을 좀 바꾸는 게 낫겟음,,, 상대위치보다는 절대위치식으로
 */

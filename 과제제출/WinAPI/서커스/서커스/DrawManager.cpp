@@ -50,7 +50,7 @@ void DrawManager::Init(HWND hWnd)
 		if (!m_ObstacleFireXLocation.empty())
 			m_ObstacleFireXLocation.clear();
 
-		for (int i = 300; i <= END_OF_MAP; i += 500)
+		for (int i = 400; i <= END_OF_MAP; i += 500)
 			m_ObstacleFireXLocation.push_back(i);	//화로는 500픽셀 간격으로 배치되어 있다
 
 		m_FireAnimation = OBSTACLE_FIRE_1;	//겸사겸사 화로 애니메이션을 위한 멤버변수도 초기화
@@ -58,7 +58,6 @@ void DrawManager::Init(HWND hWnd)
 
 	{
 		//고리 X좌표 초기 위치 설정
-
 		m_Ring1XLocation = 500;
 		m_Ring2XLocation = 1000;
 		m_LittleRingXLocation = 2000;
@@ -98,7 +97,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	//배경 그리는 파트 - 군중
 	int StartBlock = CharacterXLocation / m_CrowdImageSizeWidth;	//플레이어 위치에 따라 시작할 블럭을 정해야 함
 	int CutWidth = CharacterXLocation - (m_CrowdImageSizeWidth * StartBlock);	//플레이어의 맵 X 좌표에 따라 잘리는 칸의 길이 계산
-	for (int i = StartBlock, j = 0; i < (m_WindowWidth / m_CrowdImageSizeWidth + (StartBlock +1)); i++, j++)
+	for (int i = StartBlock, j = 0; i < ((m_WindowWidth + m_CrowdImageSizeWidth) / m_CrowdImageSizeWidth + (StartBlock +1)); i++, j++)
 	{
 		BitMapBackground = ResourceMgr->ReturnBackgroundImage((m_BackgroundTileVector.at(i % CROWD_PATTERN)));
 		OlbBitMapBackground = (HBITMAP)SelectObject(MemDCBackground, BitMapBackground);
@@ -148,6 +147,31 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		TransparentBlt(MemDCBack, m_Ring2XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
+	//작은 불 고리 왼쪽 그림
+	{
+		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_LITTLERING_1);
+
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		int RingSizeX = BitMapImageSize.bmWidth;
+		int RingSizeY = BitMapImageSize.bmHeight;
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_LittleRingXLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+	}
+
+	//돈주머니 그림
+	{
+		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_CASH);
+
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		int CashSizeX = BitMapImageSize.bmWidth;
+		int CashSizeY = BitMapImageSize.bmHeight;
+
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_LittleRingXLocation - (CashSizeX / 2), RING_LOCATION_Y + 25, CashSizeX, CashSizeY, MemDCObstacle, 0, 0, CashSizeX, CashSizeY, RGB(255, 0, 255));
+		//돈주머니는 작은 고리 X좌표와 공유한다
+	}
+
 	//화로 그림
 	{
 		switch (m_FireAnimation)
@@ -168,11 +192,11 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
 
-		for (int i = 500 - (CharacterXLocation % FIRE_DISTANCE) - 40; i <= m_WindowWidth; i += 500)
+		for (int i = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40; i <= m_WindowWidth; i += FIRE_DISTANCE)
 		{
 			//일정 간격으로 화로 출력
 			/*
-			유저의 맵에서의 X좌표를 기준으로 출력하게끔 한다. 화로는 영점에서부터 500 간격으로 놓여져 있다... 유저의 위치를 화로 간격으로 나눈 나머지값을 통해 다음 화로까지의 거리를 구하여
+			유저의 맵에서의 X좌표를 기준으로 출력하게끔 한다. 화로는 영점에서부터 600 간격으로 놓여져 있다... 유저의 위치를 화로 간격으로 나눈 나머지값을 통해 다음 화로까지의 거리를 구하여
 			출력한다
 			*/
 
@@ -232,18 +256,18 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
 		TransparentBlt(MemDCBack, m_Ring2XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+	}
 
-		//불 고리 X 좌표 변경하는 부분
-		m_Ring1XLocation -= RING_MOVE_PIXEL;
-		m_Ring2XLocation -= RING_MOVE_PIXEL;
+	//작은 불 고리 오른쪽 그림
+	{
+		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_LITTLERING_2);
 
-		if (m_Ring1XLocation < CHARACTER_LOCATION_X - 50)
-			m_Ring1XLocation += 1000;
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		int RingSizeX = BitMapImageSize.bmWidth;
+		int RingSizeY = BitMapImageSize.bmHeight;
 
-		if (m_Ring2XLocation < CHARACTER_LOCATION_X - 50)
-			m_Ring2XLocation += 1000;
-
-		//여기 손 좀 봐야 함... 그리고 프레임 조절 못하나? 너무 렉걸리는데
+		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+		TransparentBlt(MemDCBack, m_LittleRingXLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
 
@@ -266,26 +290,25 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	DeleteObject(BitMapBack);
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//HBITMAP OldBitMap;
-	//HBITMAP BitMap = NULL;
-	//HDC MemDC = CreateCompatibleDC(hdc);
-	//BITMAP BitMapCharacterSize;	//이미지 파일 크기를 구하기 위한 비트맵
-	//
+}
 
-	////필요한 그림 불러오는 부분
-	//BitMap = ResourceMgr->ReturnCharacterImage(MotionNumber);
-	//GetObject(BitMap, sizeof(BITMAP), &BitMapCharacterSize);
+void DrawManager::MoveRings(float MovingRingPixel, float MovingLittleRingPixel)
+{
+	//불 고리 X 좌표 변경하는 부분
+	m_Ring1XLocation -= MovingRingPixel;
+	m_Ring2XLocation -= MovingRingPixel;
 
+	if (m_Ring1XLocation < CHARACTER_LOCATION_X - 50)
+		m_Ring1XLocation = 1200 + (CHARACTER_LOCATION_X - 50);
 
-	//OldBitMap = (HBITMAP)SelectObject(MemDC, BitMap);
+	if (m_Ring2XLocation < CHARACTER_LOCATION_X - 50)
+		m_Ring2XLocation = 1200 + (CHARACTER_LOCATION_X - 50);
 
-	//int CharacterSizeX = BitMapCharacterSize.bmWidth;
-	//int CharacterSizeY = BitMapCharacterSize.bmHeight;
+	//작은 불 고리 X 좌표 변경하는 부분
+	m_LittleRingXLocation -= MovingLittleRingPixel;
 
-	//TransparentBlt(hdc, CHARACTER_LOCATION_X, YLocation, CharacterSizeX, CharacterSizeY, MemDC, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
-
-	//SelectObject(MemDC, OldBitMap);
-	//DeleteDC(MemDC);
+	if (m_LittleRingXLocation < CHARACTER_LOCATION_X - 50)
+		m_LittleRingXLocation = 3000 + (CHARACTER_LOCATION_X - 50);
 }
 
 HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)

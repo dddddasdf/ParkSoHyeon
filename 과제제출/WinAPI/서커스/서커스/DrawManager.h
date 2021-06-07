@@ -35,6 +35,8 @@ private:
 public:
 	void Init(HWND hWnd);
 	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);
+
+	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel);	//링 위치 바꿔주기
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 };
 #define DrawMgr DrawManager::GetInstance()

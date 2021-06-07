@@ -7,6 +7,7 @@ void GameManager::WholeInit(HWND hWnd)
 	m_PlayerData = new Player;
 	m_IsMoving = false;
 	m_IsHighest = false;
+	m_MovingDirection = NULL;
 }
 
 void GameManager::MovingCharacter(const int& Key)
@@ -64,7 +65,7 @@ void GameManager::ChangeCharacterYLocation()
 
 void GameManager::StandingCharacter()
 {
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
 		switch (m_PlayerData->ReturnMotion())
 		{
@@ -75,9 +76,27 @@ void GameManager::StandingCharacter()
 			m_PlayerData->ChangeMotion(MOTION_JUMPING);
 			break;
 		}
+		m_MovingDirection = VK_RIGHT;
+	}
+	else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	{
+		switch (m_PlayerData->ReturnMotion())
+		{
+		case MOTION_STAND:
+			m_PlayerData->ChangeMotion(MOTION_RUNNING);
+			break;
+		case MOTION_RUNNING:
+			m_PlayerData->ChangeMotion(MOTION_STAND);
+			break;
+		}
+		m_MovingDirection = VK_LEFT;
 	}
 	else
+	{
 		m_PlayerData->ChangeMotion(MOTION_STAND);
+		m_MovingDirection = NULL;
+	}
+		
 
 	/*
 	지금 보니까 모션이 달리는 중에는 캐릭터 스프라이트 2, 3이 번갈아가면서 나오더라
@@ -86,6 +105,28 @@ void GameManager::StandingCharacter()
 	*/
 
 	m_IsMoving = false;
+}
+
+void GameManager::CalculateRings(float elapsed)
+{
+	if (m_MovingDirection == VK_RIGHT)
+	{
+		DrawMgr->MoveRings((RING_MOVE_PIXEL + 500) * elapsed, (LITTLERING_MOVE_PIXEL + 500) * elapsed);
+	}
+	else if (m_MovingDirection == VK_LEFT && m_PlayerData->ReturnCharacterXLocation() > 0)
+	{
+		DrawMgr->MoveRings((RING_MOVE_PIXEL - 500) * elapsed, (LITTLERING_MOVE_PIXEL - 450) * elapsed);
+	}
+	else
+		DrawMgr->MoveRings(RING_MOVE_PIXEL * elapsed, LITTLERING_MOVE_PIXEL * elapsed);
+
+
+	/*
+	처음에는 이 함수에서 키입력을 받을려고 했지만 그 경우 점프 동안 방향키를 바꿔버리면 링의 속도도 달라지는 대참사 발생
+	그런 고로 움직이는 함수에서 멤버 변수에 어느 방향으로 움직이고 있다는 것을 저장하여 그 변수를 이용하여 링의 움직임을 교체하도록 함
+
+	구현하긴 했는데 나 자신도 원리를 모르겠는 기적의 구현
+	*/
 }
 
 void GameManager::DrawCharacterOrder(HDC *hdc, HWND hWnd)

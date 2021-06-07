@@ -14,7 +14,7 @@ private:
 	bool m_IsHighest;	//점프할 때 Y축 조절을 위하여 최고 고도에 도달했는지 아닌지 확인하기
 
 
-
+	int m_MovingDirection;	//링 위치 조절을 위한 방향 저장 멤버 변수
 public:
 	void WholeInit(HWND hWnd);	//전체 초기화 총괄
 	void MovingCharacter(const int& Key);	//캐릭터 이동 시키기
@@ -24,6 +24,7 @@ public:
 	bool ReturnIsMoving() { return m_IsMoving; }
 	bool ReturnIsJumping() { return m_IsJumping; }
 
+	void CalculateRings(float elapsed);
 	void DrawCharacterOrder(HDC *hdc, HWND hWnd);
 };
 

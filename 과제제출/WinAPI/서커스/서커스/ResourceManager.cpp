@@ -67,7 +67,7 @@ void ResourceManager::InitImages()
 
 	{
 		//맞으면 죽는 장애물은 아니지만 돈주머니
-		std::string FileNameTmp = "cash_1";
+		std::string FileNameTmp = "cash";
 		BitMap NewBitMapTmp(FileNameTmp);
 		m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
 	}

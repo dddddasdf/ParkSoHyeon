@@ -14,11 +14,12 @@
 #define CROWD_PATTERN 7	//군중 패턴
 #define END_OF_MAP 5000	//맵의 총 가로 길이
 #define HORIZON_FIRE 398	//화로 놓여 있는 Y축의 값
-#define FIRE_DISTANCE 500	//화로가 놓여져 있는 X축 간격
+#define FIRE_DISTANCE 700	//화로가 놓여져 있는 X축 간격
 #define RING_DISTANCE 500	//고리가 젠 되는 간격
 #define LITTLERING_DISTANCE 500	//작은 고리가 젠 되는 간격
 #define RING_LOCATION_Y 217	//고리가 놓이는 Y축의 값
-#define RING_MOVE_PIXEL 1
+#define RING_MOVE_PIXEL 250	//고리가 움직이는 X축의 간격
+#define LITTLERING_MOVE_PIXEL 350	//작은 고리가 움직이는 X축의 간격
 
 enum DIRECTION
 {
