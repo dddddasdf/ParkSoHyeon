@@ -32,6 +32,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	ULONGLONG frameTime, limitFrameTime = GetTickCount64();
 	float CharacterFrame = 0;	//캐릭터 프레임 제어용
 	float JumpCounter = 0;	//점프 프레임 제어용
+	float DeadCounter = 0;	//사망시 시간 멈추기 제어용
 
 	srand(unsigned(time(NULL)));
 
@@ -64,9 +65,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		}
 		else
 		{
-
+			if (GameMgr->ReturnIsDead() == false)
 			{				
+				GameMgr->CollisionCheck();
 				GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
+				
+				
 
 				//여기서부터 프레임 제어 파트
 				
@@ -109,12 +113,24 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 					}
 
 					GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
-
-					if (!GameMgr->ReturnIsJumping())
-					{
-						
-					}
 				}
+			}
+			else
+			{
+				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
+				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
+				{
+					float elapsed = (frameTime - limitFrameTime) * 0.01f; //유저의 시스템 환경에 따라 발생하는 시간차이.
+					limitFrameTime = frameTime + 30;//30 => 0.03초.
+
+					DeadCounter += elapsed;
+
+					if (0.5f <= DeadCounter)
+					{
+						GameMgr->WholeInit(hWnd);
+						DeadCounter = 0;
+					}
+				}	
 			}
 		}
 	}
@@ -229,5 +245,11 @@ elapsed를 곱하라는데 사실 이거 뭔 말인지 모르겠음
 이제 충돌 구현을 해야 할 차례
 이거 연산 너무 많은 거 아닌가??? 비트맵은 아예 멤버변수로 저장해버리는 게 낫나...
 
-화로 위치 출력을 좀 바꾸는 게 낫겟음,,, 상대위치보다는 절대위치식으로
+화로 위치 출력을 좀 바꾸는 게 낫겟음,,, 상대위치보다는 절대위치식으로<-해봣는데 뭐가 나은지 잘 모르겟음,,,,,,,
+
+충돌체크 구현부터 하자
+ㄴ돈주머니 충돌 체크 구현 완료...
+ㄴ화로 충돌 체크 거의 다 됐는데...... 위치 계산 에러가 난 것 같다 이것 확인 必
+
+그리고 죽었을 때 전체 초기화가 아니라 장애물과 유저 위치만 초기화 하는 반반초기화 함수 증설 필요...
 */

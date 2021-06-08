@@ -32,11 +32,21 @@ private:
 	int m_LittleRingXLocation;	//작은 불 고리 위치를 조정하는 멤버변수
 	int m_RingAnimation;	//고리 애니메이션 조정을 위한 멤버변수
 
+	int m_CashSizeWidth;	//돈주머니 가로 크기
+	int m_CashSizeHeight;	//돈주머니 세로 크기
+	bool m_IsCashSwitchOn;	//돈주머니가 먹혔는지 아닌지 테스트하는 것
+
+	int m_FireSizeWidth;	//화로 가로 크기
+	int m_FireSizeHeight;	//화로 세로 크기
 public:
 	void Init(HWND hWnd);
 	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);
 
 	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel);	//링 위치 바꿔주기
+
+	bool IsCashCollision(const int& MotionNumber, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
+	bool IsFireCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//화로와 부딪쳤는지 체크
+
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 };
 #define DrawMgr DrawManager::GetInstance()

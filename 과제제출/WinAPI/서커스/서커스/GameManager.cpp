@@ -8,6 +8,7 @@ void GameManager::WholeInit(HWND hWnd)
 	m_IsMoving = false;
 	m_IsHighest = false;
 	m_MovingDirection = NULL;
+	m_IsDeadTrigger = false;
 }
 
 void GameManager::MovingCharacter(const int& Key)
@@ -127,6 +128,17 @@ void GameManager::CalculateRings(float elapsed)
 
 	구현하긴 했는데 나 자신도 원리를 모르겠는 기적의 구현
 	*/
+}
+
+void GameManager::CollisionCheck()
+{
+	DrawMgr->IsCashCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
+
+	if (DrawMgr->IsFireCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
+	{
+		m_PlayerData->ChangeMotion(MOTION_DEAD);
+		m_IsDeadTrigger = true;
+	}
 }
 
 void GameManager::DrawCharacterOrder(HDC *hdc, HWND hWnd)

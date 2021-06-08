@@ -12,7 +12,7 @@
 #define MOVE_PIXEL 15	//플레이어가 한 번 움직일 때 몇 픽셀씩 X축을 이동하는가
 #define PLAYER_LIFE 5	//플레이어 목숨
 #define CROWD_PATTERN 7	//군중 패턴
-#define END_OF_MAP 5000	//맵의 총 가로 길이
+#define END_OF_MAP 10000	//맵의 총 가로 길이
 #define HORIZON_FIRE 398	//화로 놓여 있는 Y축의 값
 #define FIRE_DISTANCE 700	//화로가 놓여져 있는 X축 간격
 #define RING_DISTANCE 500	//고리가 젠 되는 간격
@@ -34,7 +34,8 @@ enum MOTION
 {
 	MOTION_STAND = 1,
 	MOTION_RUNNING = 2,
-	MOTION_JUMPING = 3
+	MOTION_JUMPING = 3,
+	MOTION_DEAD = 6
 
 	//캐릭터의 모션을 관리하기 위한 번호
 };

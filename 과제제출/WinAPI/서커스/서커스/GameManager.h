@@ -15,6 +15,8 @@ private:
 
 
 	int m_MovingDirection;	//링 위치 조절을 위한 방향 저장 멤버 변수
+
+	bool m_IsDeadTrigger;	//사망 상태일 경우 화면 갱신을 잠시 멈추기 위한 변수, 살아있을 때는 true 죽었을 때는 false
 public:
 	void WholeInit(HWND hWnd);	//전체 초기화 총괄
 	void MovingCharacter(const int& Key);	//캐릭터 이동 시키기
@@ -23,8 +25,11 @@ public:
 	void StandingCharacter();	//캐릭터 모션 변경
 	bool ReturnIsMoving() { return m_IsMoving; }
 	bool ReturnIsJumping() { return m_IsJumping; }
+	bool ReturnIsDead() { return m_IsDeadTrigger; }
 
 	void CalculateRings(float elapsed);
+
+	void CollisionCheck();	//충돌 체크
 	void DrawCharacterOrder(HDC *hdc, HWND hWnd);
 };
 

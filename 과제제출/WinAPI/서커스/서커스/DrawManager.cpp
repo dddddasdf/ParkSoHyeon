@@ -39,6 +39,17 @@ void DrawManager::Init(HWND hWnd)
 		m_CrowdImageSizeWidth = BitmapTmp.bmWidth;
 		m_CrowdImageSizeHeight = BitmapTmp.bmHeight;	//군중 사이즈
 
+		HBitmapTmp = ResourceMgr->ReturnObstacleImage(OBSTACLE_CASH);
+		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
+
+		m_CashSizeWidth = BitmapTmp.bmWidth;
+		m_CashSizeHeight = BitmapTmp.bmHeight;	//돈주머니 사이즈
+
+		HBitmapTmp = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_1);
+		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
+
+		m_FireSizeWidth = BitmapTmp.bmWidth;
+		m_FireSizeHeight = BitmapTmp.bmHeight;	//화로 사이즈
 	}
 	
 	//Y좌표 시작 부분
@@ -50,7 +61,7 @@ void DrawManager::Init(HWND hWnd)
 		if (!m_ObstacleFireXLocation.empty())
 			m_ObstacleFireXLocation.clear();
 
-		for (int i = 400; i <= END_OF_MAP; i += 500)
+		for (int i = FIRE_DISTANCE; i <= END_OF_MAP; i += FIRE_DISTANCE)
 			m_ObstacleFireXLocation.push_back(i);	//화로는 500픽셀 간격으로 배치되어 있다
 
 		m_FireAnimation = OBSTACLE_FIRE_1;	//겸사겸사 화로 애니메이션을 위한 멤버변수도 초기화
@@ -64,6 +75,8 @@ void DrawManager::Init(HWND hWnd)
 
 		m_RingAnimation = OBSTACLE_RING_FIRST_1;	//겸사겸사 고리 애니메이션을 위한 멤버변수도 초기화
 	}
+
+	m_IsCashSwitchOn = true;	//돈주머니 스위치 온
 }
 
 void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
@@ -159,17 +172,18 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		TransparentBlt(MemDCBack, m_LittleRingXLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
-	//돈주머니 그림
+	//돈주머니 그림 - m_IsCashSwitchOn이 true일 때만 그리는 함수를 실행한다
 	{
-		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_CASH);
+		if (true == m_IsCashSwitchOn)
+		{
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_CASH);
 
-		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
-		int CashSizeX = BitMapImageSize.bmWidth;
-		int CashSizeY = BitMapImageSize.bmHeight;
+			GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
 
-		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_LittleRingXLocation - (CashSizeX / 2), RING_LOCATION_Y + 25, CashSizeX, CashSizeY, MemDCObstacle, 0, 0, CashSizeX, CashSizeY, RGB(255, 0, 255));
-		//돈주머니는 작은 고리 X좌표와 공유한다
+			OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
+			TransparentBlt(MemDCBack, m_LittleRingXLocation - (m_CashSizeWidth * 0.5f), RING_LOCATION_Y + 25, m_CashSizeWidth, m_CashSizeHeight, MemDCObstacle, 0, 0, m_CashSizeWidth, m_CashSizeHeight, RGB(255, 0, 255));
+			//돈주머니는 작은 고리 X좌표와 공유한다
+		}
 	}
 
 	//화로 그림
@@ -186,10 +200,6 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			break;
 		}
 
-		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//화로 비트맵 사이즈 구함
-		int FireSizeX = BitMapImageSize.bmWidth;
-		int FireSizeY = BitMapImageSize.bmHeight;
-
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
 
 		for (int i = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40; i <= m_WindowWidth; i += FIRE_DISTANCE)
@@ -200,7 +210,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			출력한다
 			*/
 
-			TransparentBlt(MemDCBack, i, HORIZON_FIRE - FireSizeY, FireSizeX, FireSizeY, MemDCObstacle, 0, 0, FireSizeX, FireSizeY, RGB(255, 0, 255));
+			TransparentBlt(MemDCBack, i, HORIZON_FIRE - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
 		}
 	}
 
@@ -273,7 +283,6 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 	SelectObject(MemDCObstacle, OlbBitMapObstacle);
 
-
 	//장애물 그리는 파트2 끝
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,7 +317,67 @@ void DrawManager::MoveRings(float MovingRingPixel, float MovingLittleRingPixel)
 	m_LittleRingXLocation -= MovingLittleRingPixel;
 
 	if (m_LittleRingXLocation < CHARACTER_LOCATION_X - 50)
+	{
 		m_LittleRingXLocation = 3000 + (CHARACTER_LOCATION_X - 50);
+		m_IsCashSwitchOn = true;	//겸사겸사 돈주머니 스위치도 같이 켜서 리젠시켜줌...
+	}
+}
+
+bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterYLocation)
+{
+	if (true == m_IsCashSwitchOn)
+	{
+		HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
+		BITMAP BitMapImageSize;
+
+		GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
+		int CharacterSizeX = BitMapImageSize.bmWidth;
+		int CharacterSizeY = BitMapImageSize.bmHeight;
+		//여기까지 캐릭터 비트맵 사이즈 구하는 부분
+
+		RECT TmpRect;
+		RECT PlayerRect = { CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CHARACTER_LOCATION_X + CharacterSizeX, CharacterYLocation };
+		RECT CashRect = { m_LittleRingXLocation - (m_CashSizeWidth * 0.5f), RING_LOCATION_Y + 25, m_LittleRingXLocation + (m_CashSizeWidth * 0.5f), (RING_LOCATION_Y + 25) + m_CashSizeHeight };
+
+		if (IntersectRect(&TmpRect, &PlayerRect, &CashRect))
+		{
+			m_IsCashSwitchOn = false;
+			return true;	//부딪친 것에 대해 참을 반환한다
+		}
+	}
+
+	return false;	//아무 일도 없었으면 false 반환
+}
+
+bool DrawManager::IsFireCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
+{
+	HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
+	BITMAP BitMapImageSize;
+
+	GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
+	int CharacterSizeX = BitMapImageSize.bmWidth;
+	int CharacterSizeY = BitMapImageSize.bmHeight;
+	//여기까지 캐릭터 비트맵 사이즈 구하는 부분
+
+	int i = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40;
+
+	RECT TmpRect;
+	RECT PlayerRect = { CharacterXLocation, CharacterYLocation - CharacterSizeY, CharacterXLocation + CharacterSizeX, CharacterYLocation };
+	RECT FireRectLeft = { i, HORIZON_FIRE - m_FireSizeWidth, i + m_FireSizeWidth, HORIZON_FIRE};
+	RECT FireRectRight = { i + FIRE_DISTANCE, HORIZON_FIRE - m_FireSizeWidth, (i + FIRE_DISTANCE) + m_FireSizeWidth, HORIZON_FIRE };
+	//버그가 아닌 이상 유저 앞의 두번째 화로와 부딪칠 일은 없으므로 유저 왼쪽의 화로 하나 오른쪽의 화로 하나만 체크하면 될지도 모름
+
+	if (IntersectRect(&TmpRect, &PlayerRect, &FireRectLeft))
+	{
+		return true;	//부딪친 것에 대해 참을 반환한다
+	}
+	if (IntersectRect(&TmpRect, &PlayerRect, &FireRectRight))
+	{
+		return true;	//부딪친 것에 대해 참을 반환한다
+	}
+
+
+	return false;
 }
 
 HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)
