@@ -249,9 +249,21 @@ elapsed를 곱하라는데 사실 이거 뭔 말인지 모르겠음
 
 충돌체크 구현부터 하자
 ㄴ돈주머니 충돌 체크 구현 완료...
-ㄴ화로 충돌 체크 거의 다 됐는데...... 위치 계산 에러가 난 것 같다 이것 확인 必
+ㄴ화로 충돌 체크 거의 다 됐는데...... 위치 계산 에러가 난 것 같다 이것 확인
 
 그리고 죽었을 때 전체 초기화가 아니라 장애물과 유저 위치만 초기화 하는 반반초기화 함수 증설 필요...
 
 반반초기화 함수 증설 완료,,, 화로 충돌 위치 버그 고쳐야 됨
+ㄴ고침
+
+
+CBitmap 이미지 데이터 정보, 로드된 이미지 저장
+CObject CBitmap, x, y, ..., virtual Update() = 0;
+CFirering : CObject
+CFirering2 : CFirering
+CireBotle : CObject
+CPlayer : CObject, .....
+CBackground : CObject,
+
+m_ringPivot
 */

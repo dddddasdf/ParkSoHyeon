@@ -2,6 +2,7 @@
 #pragma comment (lib, "Msimg32.lib")
 #include "Defines.h"
 #include "ResourceManager.h"
+#include "Object.h"
 
 
 class DrawManager : public Singleton <DrawManager>

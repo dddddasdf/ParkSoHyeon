@@ -57,12 +57,12 @@ void DrawManager::Init(HWND hWnd)
 	m_CrowdYStart = HORIZON_HEIGHT - m_FloorImageSizeHeight - m_CrowdImageSizeHeight;	//관중 타일 시작 Y좌표
 
 	{
-		//화로 X좌표 벡터 저장
-		if (!m_ObstacleFireXLocation.empty())
-			m_ObstacleFireXLocation.clear();	//이거 지금 안 쓰는 중임
-
-		for (int i = FIRE_DISTANCE; i <= END_OF_MAP; i += FIRE_DISTANCE)
-			m_ObstacleFireXLocation.push_back(i);	//화로는 500픽셀 간격으로 배치되어 있다
+		////화로 X좌표 벡터 저장
+		//if (!m_ObstacleFireXLocation.empty())
+		//	m_ObstacleFireXLocation.clear();	//이거 지금 안 쓰는 중임
+		//
+		//for (int i = FIRE_DISTANCE; i <= END_OF_MAP; i += FIRE_DISTANCE)
+		//	m_ObstacleFireXLocation.push_back(i);	//화로는 500픽셀 간격으로 배치되어 있다
 
 		m_FireAnimation = OBSTACLE_FIRE_1;	//겸사겸사 화로 애니메이션을 위한 멤버변수도 초기화
 	}
