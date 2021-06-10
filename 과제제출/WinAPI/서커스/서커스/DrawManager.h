@@ -40,12 +40,14 @@ private:
 	int m_FireSizeHeight;	//화로 세로 크기
 public:
 	void Init(HWND hWnd);
+	void DeadInit();	//아무튼 부딪쳐서 죽었을 때 일부분 초기화
 	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);
 
 	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel);	//링 위치 바꿔주기
 
 	bool IsCashCollision(const int& MotionNumber, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
-	bool IsFireCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//화로와 부딪쳤는지 체크
+	bool IsObstacleCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//화로와 부딪쳤는지 체크+걍 장애물 전반으로 변경함
+	bool IsRingCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//고리와 부딪쳤는지 체크
 
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 };

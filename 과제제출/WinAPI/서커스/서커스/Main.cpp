@@ -67,7 +67,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		{
 			if (GameMgr->ReturnIsDead() == false)
 			{				
-				GameMgr->CollisionCheck();
+				GameMgr->CollisionCheck();	//충돌 체크 함수
 				GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
 				
 				
@@ -127,7 +127,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 
 					if (0.5f <= DeadCounter)
 					{
-						GameMgr->WholeInit(hWnd);
+						GameMgr->PartialInit();
 						DeadCounter = 0;
 					}
 				}	
@@ -252,4 +252,6 @@ elapsed를 곱하라는데 사실 이거 뭔 말인지 모르겠음
 ㄴ화로 충돌 체크 거의 다 됐는데...... 위치 계산 에러가 난 것 같다 이것 확인 必
 
 그리고 죽었을 때 전체 초기화가 아니라 장애물과 유저 위치만 초기화 하는 반반초기화 함수 증설 필요...
+
+반반초기화 함수 증설 완료,,, 화로 충돌 위치 버그 고쳐야 됨
 */

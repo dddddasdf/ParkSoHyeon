@@ -59,7 +59,7 @@ void DrawManager::Init(HWND hWnd)
 	{
 		//화로 X좌표 벡터 저장
 		if (!m_ObstacleFireXLocation.empty())
-			m_ObstacleFireXLocation.clear();
+			m_ObstacleFireXLocation.clear();	//이거 지금 안 쓰는 중임
 
 		for (int i = FIRE_DISTANCE; i <= END_OF_MAP; i += FIRE_DISTANCE)
 			m_ObstacleFireXLocation.push_back(i);	//화로는 500픽셀 간격으로 배치되어 있다
@@ -71,10 +71,22 @@ void DrawManager::Init(HWND hWnd)
 		//고리 X좌표 초기 위치 설정
 		m_Ring1XLocation = 500;
 		m_Ring2XLocation = 1000;
-		m_LittleRingXLocation = 2000;
+		m_LittleRingXLocation = 2500;
 
 		m_RingAnimation = OBSTACLE_RING_FIRST_1;	//겸사겸사 고리 애니메이션을 위한 멤버변수도 초기화
 	}
+
+	m_IsCashSwitchOn = true;	//돈주머니 스위치 온
+}
+
+void DrawManager::DeadInit()
+{
+	//X좌표만 처음 위치로 되돌려 주면 된다
+
+	//고리 X좌표 초기 위치 설정
+	m_Ring1XLocation = 500;
+	m_Ring2XLocation = 1000;
+	m_LittleRingXLocation = 2000;
 
 	m_IsCashSwitchOn = true;	//돈주머니 스위치 온
 }
@@ -208,6 +220,8 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			/*
 			유저의 맵에서의 X좌표를 기준으로 출력하게끔 한다. 화로는 영점에서부터 600 간격으로 놓여져 있다... 유저의 위치를 화로 간격으로 나눈 나머지값을 통해 다음 화로까지의 거리를 구하여
 			출력한다
+
+			-40이 있는 이유: 유저 뒷쪽에 있는 화로도 온전히 출력하기 위해서
 			*/
 
 			TransparentBlt(MemDCBack, i, HORIZON_FIRE - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
@@ -318,7 +332,7 @@ void DrawManager::MoveRings(float MovingRingPixel, float MovingLittleRingPixel)
 
 	if (m_LittleRingXLocation < CHARACTER_LOCATION_X - 50)
 	{
-		m_LittleRingXLocation = 3000 + (CHARACTER_LOCATION_X - 50);
+		m_LittleRingXLocation = 3500 + (CHARACTER_LOCATION_X - 50);
 		m_IsCashSwitchOn = true;	//겸사겸사 돈주머니 스위치도 같이 켜서 리젠시켜줌...
 	}
 }
@@ -327,6 +341,7 @@ bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterY
 {
 	if (true == m_IsCashSwitchOn)
 	{
+		//돈주머니가 젠 되어있을 때만 체크하면 된다... 먹어서 없는 동안에는 연산 돌려봐야 무의미
 		HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
 		BITMAP BitMapImageSize;
 
@@ -349,7 +364,7 @@ bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterY
 	return false;	//아무 일도 없었으면 false 반환
 }
 
-bool DrawManager::IsFireCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
+bool DrawManager::IsObstacleCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {
 	HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
 	BITMAP BitMapImageSize;
@@ -359,25 +374,77 @@ bool DrawManager::IsFireCollision(const int& MotionNumber, const int& CharacterX
 	int CharacterSizeY = BitMapImageSize.bmHeight;
 	//여기까지 캐릭터 비트맵 사이즈 구하는 부분
 
-	int i = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40;
-
 	RECT TmpRect;
-	RECT PlayerRect = { CharacterXLocation, CharacterYLocation - CharacterSizeY, CharacterXLocation + CharacterSizeX, CharacterYLocation };
-	RECT FireRectLeft = { i, HORIZON_FIRE - m_FireSizeWidth, i + m_FireSizeWidth, HORIZON_FIRE};
-	RECT FireRectRight = { i + FIRE_DISTANCE, HORIZON_FIRE - m_FireSizeWidth, (i + FIRE_DISTANCE) + m_FireSizeWidth, HORIZON_FIRE };
-	//버그가 아닌 이상 유저 앞의 두번째 화로와 부딪칠 일은 없으므로 유저 왼쪽의 화로 하나 오른쪽의 화로 하나만 체크하면 될지도 모름
+	RECT PlayerRect = { CharacterXLocation, CharacterYLocation - CharacterSizeY, CharacterXLocation + CharacterSizeX, CharacterYLocation };	//유저 사각형(안 보임)
 
-	if (IntersectRect(&TmpRect, &PlayerRect, &FireRectLeft))
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//화로와 부딪쳤는지 체크함
 	{
-		return true;	//부딪친 것에 대해 참을 반환한다
+		int FireXLocation = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40 + CharacterXLocation - m_FireSizeWidth + 25;
+
+		RECT FireRectLeft = { FireXLocation, HORIZON_FIRE - m_FireSizeHeight + 10, FireXLocation + m_FireSizeWidth - 15, HORIZON_FIRE };
+		RECT FireRectRight = { FireXLocation + FIRE_DISTANCE, HORIZON_FIRE - m_FireSizeHeight + 10, (FireXLocation + FIRE_DISTANCE) + m_FireSizeWidth - 15, HORIZON_FIRE };
+		//버그가 아닌 이상 유저 앞의 두번째 화로와 부딪칠 일은 없으므로 유저 뒷쪽의 화로 하나 오른쪽의 화로 하나만 체크하면 될지도 모름
+		//판정 너무 빡세서 상수 조금씩 보태가며 보정해주는 중임...
+
+		if (IntersectRect(&TmpRect, &PlayerRect, &FireRectLeft))
+		{
+			return true;	//부딪친 것에 대해 참을 반환한다
+		}
+		if (IntersectRect(&TmpRect, &PlayerRect, &FireRectRight))
+		{
+			return true;	//부딪친 것에 대해 참을 반환한다
+		}
 	}
-	if (IntersectRect(&TmpRect, &PlayerRect, &FireRectRight))
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//고리와 부딪쳤는지 체크함
+	//고리는 윗부분 아랫부분으로 쪼개서 그 둘과 부딪쳤는지 체크한다
+
 	{
-		return true;	//부딪친 것에 대해 참을 반환한다
+		BITMAP BitMapSize;
+		HBITMAP BitMapObstacle = NULL;
+		switch (m_RingAnimation)
+		{
+		case OBSTACLE_RING_FIRST_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_FIRST_1);
+			break;
+		case OBSTACLE_RING_SECOND_1:
+			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_SECOND_1);
+			break;
+		}
+
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		int RingSizeY = BitMapImageSize.bmHeight;
+
+		RECT Ring1RectUp = { m_Ring1XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y, m_Ring1XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y - RING_COLLISION_HEIGHT_PIEXL };
+		RECT Ring1RectDown = { m_Ring1XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY - RING_COLLISION_HEIGHT_PIEXL,
+			m_Ring1XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY };
+		RECT Ring2RectUp = { m_Ring2XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y, m_Ring2XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y - RING_COLLISION_HEIGHT_PIEXL };
+		RECT Ring2RectDown = { m_Ring2XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY - RING_COLLISION_HEIGHT_PIEXL,
+			m_Ring2XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY };
+
+		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_LITTLERING_1);
+
+		GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
+		RingSizeY = BitMapImageSize.bmHeight;
+
+		RECT LittleRingRectUp = { m_LittleRingXLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y, m_LittleRingXLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y - RING_COLLISION_HEIGHT_PIEXL };
+		RECT LittleRingRectDown = { m_LittleRingXLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY - RING_COLLISION_HEIGHT_PIEXL,
+			m_LittleRingXLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY };
+
+		if (IntersectRect(&TmpRect, &PlayerRect, &Ring1RectUp) || IntersectRect(&TmpRect, &PlayerRect, &Ring1RectDown) || IntersectRect(&TmpRect, &PlayerRect, &Ring2RectUp)
+		|| IntersectRect(&TmpRect, &PlayerRect, &Ring2RectDown) || IntersectRect(&TmpRect, &PlayerRect, &LittleRingRectUp) || IntersectRect(&TmpRect, &PlayerRect, &LittleRingRectDown))
+		{
+			return true;	//부딪친 것에 대해 참을 반환한다
+		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	return false;
+	return false; //아무것도 안 부딪침
 }
 
 HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)

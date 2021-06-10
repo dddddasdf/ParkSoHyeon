@@ -6,6 +6,19 @@ void GameManager::WholeInit(HWND hWnd)
 	DrawMgr->Init(hWnd);
 	m_PlayerData = new Player;
 	m_IsMoving = false;
+	m_IsJumping = false;
+	m_IsHighest = false;
+	m_MovingDirection = NULL;
+	m_IsDeadTrigger = false;
+}
+
+void GameManager::PartialInit()
+{
+	DrawMgr->DeadInit();
+	m_PlayerData->DeadInit();
+	
+	m_IsMoving = false;
+	m_IsJumping = false;
 	m_IsHighest = false;
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
@@ -134,7 +147,7 @@ void GameManager::CollisionCheck()
 {
 	DrawMgr->IsCashCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
 
-	if (DrawMgr->IsFireCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
+	if (DrawMgr->IsObstacleCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
 	{
 		m_PlayerData->ChangeMotion(MOTION_DEAD);
 		m_IsDeadTrigger = true;

@@ -15,6 +15,7 @@ public:
 	Player() { InitPlayer(); }
 
 	void InitPlayer();
+	void DeadInit();	//아무튼 부딪쳐서 죽었을 때 일부분 초기화
 	void ChangeMotion(const int& State);
 	void ChangeXLocation(const int& Key);
 	void ChangeYLocation(bool IsUp);

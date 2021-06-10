@@ -20,6 +20,8 @@
 #define RING_LOCATION_Y 217	//고리가 놓이는 Y축의 값
 #define RING_MOVE_PIXEL 250	//고리가 움직이는 X축의 간격
 #define LITTLERING_MOVE_PIXEL 350	//작은 고리가 움직이는 X축의 간격
+#define RING_COLLISION_WIDTH_PIEXL 10	//고리 충돌 판정을 갖는 좌우 픽셀 길이
+#define RING_COLLISION_HEIGHT_PIEXL 14	//고리 충돌 판정을 갖는 상하 픽셀 길이
 
 enum DIRECTION
 {
