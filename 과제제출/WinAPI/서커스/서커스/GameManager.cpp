@@ -125,6 +125,7 @@ void GameManager::CalculateRings(float elapsed)
 {
 	if (m_MovingDirection == VK_RIGHT)
 	{
+		//MOVE_PIXEL * 40;
 		DrawMgr->MoveRings((RING_MOVE_PIXEL + 500) * elapsed, (LITTLERING_MOVE_PIXEL + 500) * elapsed);
 	}
 	else if (m_MovingDirection == VK_LEFT && m_PlayerData->ReturnCharacterXLocation() > 0)
@@ -146,10 +147,10 @@ void GameManager::CalculateRings(float elapsed)
 void GameManager::CollisionCheck()
 {
 	DrawMgr->IsCashCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
-
+	
 	if (DrawMgr->IsObstacleCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
 	{
-		m_PlayerData->ChangeMotion(MOTION_DEAD);
+	m_PlayerData->ChangeMotion(MOTION_DEAD);
 		m_IsDeadTrigger = true;
 	}
 }

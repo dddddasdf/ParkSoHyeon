@@ -261,9 +261,21 @@ CBitmap 이미지 데이터 정보, 로드된 이미지 저장
 CObject CBitmap, x, y, ..., virtual Update() = 0;
 CFirering : CObject
 CFirering2 : CFirering
-CireBotle : CObject
+CireBottle : CObject
 CPlayer : CObject, .....
 CBackground : CObject,
 
 m_ringPivot
+
+고리랑 충돌판정 잘못 일어나는 거 지금 이유...
+캐릭터 좌표는 맵길이상의 X좌표인데 고리는 화면상에서의 X좌표라서
+고리 좌표를 맵길이상의 좌표로 옮겨야 할 필요성 있음
+
+상속받은 플레이어 오브젝트는 HBITMAP 벡터를 들고있는 거롤....
+오ㅓ브젝트들도 전부 벡터 갖고 있나? 애니메이션 조정하게
+
+상속 어케함 어렵네
+
+벡터는 만들지 못하고 배열식으로 임의로 할 수는 있을 것 같은데 아님 말고
+
 */

@@ -126,7 +126,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	{
 		BitMapBackground = ResourceMgr->ReturnBackgroundImage((m_BackgroundTileVector.at(i % CROWD_PATTERN)));
 		OlbBitMapBackground = (HBITMAP)SelectObject(MemDCBackground, BitMapBackground);
-		TransparentBlt(MemDCBack, (0 - CutWidth) + m_CrowdImageSizeWidth * j, m_CrowdYStart, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight,
+		TransparentBlt(MemDCBack, -CutWidth + m_CrowdImageSizeWidth * j, m_CrowdYStart, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight,
 			MemDCBackground, 0, 0, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight, RGB(255, 0, 255));
 	}
 	/*
