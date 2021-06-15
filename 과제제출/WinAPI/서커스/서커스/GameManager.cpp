@@ -1,9 +1,9 @@
 #include "GameManager.h"
 
-void GameManager::WholeInit(HWND hWnd)
+void GameManager::WholeInit(HWND hWnd, HDC hdc)
 {
 	ResourceMgr->InitImages();
-	DrawMgr->Init(hWnd);
+	DrawMgr->Init(hWnd, hdc);
 	m_PlayerData = new Player;
 	m_IsMoving = false;
 	m_IsJumping = false;

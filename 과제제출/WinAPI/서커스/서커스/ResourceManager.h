@@ -16,6 +16,9 @@ public:
 	HBITMAP ReturnCharacterImage(const int& MotionNumber);
 	HBITMAP ReturnBackgroundImage(const int& BackgroundNumber);
 	HBITMAP ReturnObstacleImage(const int& ObstacleNumber);
+
+	BitMap ReturnCharacterBitMapClass(const int& ImageNumber);
+	BitMap ReturnRingBitMapClass(const int& ImageNumber);
 };
 
 #define ResourceMgr ResourceManager::GetInstance()

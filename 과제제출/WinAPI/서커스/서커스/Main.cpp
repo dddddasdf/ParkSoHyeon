@@ -51,8 +51,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1080, 640, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 
-
 	hdc = GetDC(hWnd);
+	GameMgr->WholeInit(hWnd, hdc);	//전체 초기화
+
 	while (true)
 	{
 		if (PeekMessage(&Message, NULL, 0U, 0U, PM_REMOVE))
@@ -153,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 1, 60, NULL);	//캐릭터 프레임 조절용
 		//SendMessage(hWnd, WM_TIMER, 1, 0);
 		//SetTimer(hWnd, 3, 1000, NULL);	//캐릭터 점프 감지용-쓸 수도 있고 아닐 수도 있고...
-		GameMgr->WholeInit(hWnd);	//전체 초기화
+		
 		return 0;
 	case WM_TIMER:
 	{
@@ -190,6 +191,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
+		DrawMgr->~DrawManager();
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -278,4 +280,11 @@ m_ringPivot
 
 벡터는 만들지 못하고 배열식으로 임의로 할 수는 있을 것 같은데 아님 말고
 
+
+오늘 할 우선 순위
+일단 오브젝트들 상속으로 전부 완성함
+그다음 고리의 좌표를 상대좌표(화면이 기준)가 아니라 절대좌표(맵이 기준)으로 수정할 것...
+
+이렇게 되면 리소스매니저가 하는 일이 뭐지???????????????
+for문 다 분리시켜야 하나??
 */

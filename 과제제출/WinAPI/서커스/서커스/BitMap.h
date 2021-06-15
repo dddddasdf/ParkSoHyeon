@@ -13,7 +13,7 @@ public:
 	BitMap();	//나중에 삭제 필요
 	BitMap(std::string FileName);
 
-	HBITMAP ReturnBitMap();	//매니저로 비트맵 정보 넘김
+	HBITMAP ReturnBitMap();	//비트맵 정보 넘김
 
 	int ReturnBitMapWidth() { return m_SizeWidth; }
 	int ReturnBitMapHeight() { return m_SizeHeight; }

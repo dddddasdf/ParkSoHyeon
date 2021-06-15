@@ -11,6 +11,12 @@ private:
 	int m_WindowWidth;	//윈도우 창 크기 - 가로
 	int m_WindowHeight;	//윈도우 창 크기 - 세로
 
+	HDC m_MemDCBack;
+
+
+
+	///////////////////////////////////////////////////이놈들 다 지울 예정
+
 	int m_CharacterImageSizeWidth;	//캐릭터 비트맵의 가로 크기
 	int m_CharacterImageSizeHeight;	//캐릭터 비트맵의 세로 크기
 
@@ -40,7 +46,7 @@ private:
 	int m_FireSizeWidth;	//화로 가로 크기
 	int m_FireSizeHeight;	//화로 세로 크기
 public:
-	void Init(HWND hWnd);
+	void Init(HWND hWnd, HDC hdc);
 	void DeadInit();	//아무튼 부딪쳐서 죽었을 때 일부분 초기화
 	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);
 
@@ -51,6 +57,8 @@ public:
 	bool IsRingCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//고리와 부딪쳤는지 체크
 
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
+
+	~DrawManager();
 };
 #define DrawMgr DrawManager::GetInstance()
 

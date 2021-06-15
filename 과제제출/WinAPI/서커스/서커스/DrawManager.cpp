@@ -2,13 +2,19 @@
 
 #define TEST_LOCATION 500	//테스트할 때 임시 좌표
 
-void DrawManager::Init(HWND hWnd)
+void DrawManager::Init(HWND hWnd, HDC hdc)
 {
 	//윈도우 크기 구해서 사이즈 멤버 변수에 넣어두기
 	RECT WindowRect;
 	GetWindowRect(hWnd, &WindowRect);
 	m_WindowWidth = WindowRect.right - WindowRect.left;
 	m_WindowHeight = WindowRect.bottom - WindowRect.top;
+
+	m_MemDCBack = CreateCompatibleDC(hdc);	//멤버 변수로 있던 DC 생성
+
+
+
+	////////////////////아래놈들 다 지울 예정
 
 	{
 		//배경 맵 타일-군중 벡터 저장
@@ -94,9 +100,9 @@ void DrawManager::DeadInit()
 void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {	
 	//본 화면
-	HDC MemDCBack = CreateCompatibleDC(hdc);
+	
 	HBITMAP BitMapBack = CreateDIBSectionRe(hdc, m_WindowWidth, m_WindowHeight);
-	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(MemDCBack, BitMapBack);
+	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(m_MemDCBack, BitMapBack);
 
 	BITMAP BitMapImageSize;	//이미지 파일 크기를 구하기 위한 비트맵
 
@@ -104,8 +110,8 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 	//배경 담당
 	HDC MemDCBackground = CreateCompatibleDC(hdc);
-	HBITMAP OlbBitMapBackground;
-	HBITMAP BitMapBackground = NULL;
+	HBITMAP OlbBitMapBackground;	//지움
+	HBITMAP BitMapBackground = NULL;	//지움
 
 
 	//배경 그리는 파트 - 바닥
@@ -114,7 +120,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 	for (int i = 0; i < (m_WindowWidth / m_FloorImageSizeWidth + 1); i++)
 	{
-		TransparentBlt(MemDCBack, m_FloorImageSizeWidth * i, m_FloorYStart, m_FloorImageSizeWidth, m_FloorImageSizeHeight, 
+		TransparentBlt(m_MemDCBack, m_FloorImageSizeWidth * i, m_FloorYStart, m_FloorImageSizeWidth, m_FloorImageSizeHeight, 
 			MemDCBackground, 0, 0, m_FloorImageSizeWidth, m_FloorImageSizeHeight, RGB(255, 0, 255));
 	}
 
@@ -126,7 +132,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	{
 		BitMapBackground = ResourceMgr->ReturnBackgroundImage((m_BackgroundTileVector.at(i % CROWD_PATTERN)));
 		OlbBitMapBackground = (HBITMAP)SelectObject(MemDCBackground, BitMapBackground);
-		TransparentBlt(MemDCBack, -CutWidth + m_CrowdImageSizeWidth * j, m_CrowdYStart, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight,
+		TransparentBlt(m_MemDCBack, -CutWidth + m_CrowdImageSizeWidth * j, m_CrowdYStart, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight,
 			MemDCBackground, 0, 0, m_CrowdImageSizeWidth, m_CrowdImageSizeHeight, RGB(255, 0, 255));
 	}
 	/*
@@ -166,10 +172,10 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		int RingSizeY = BitMapImageSize.bmHeight;
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_Ring1XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, m_Ring1XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_Ring2XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, m_Ring2XLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
 	//작은 불 고리 왼쪽 그림
@@ -181,7 +187,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		int RingSizeY = BitMapImageSize.bmHeight;
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_LittleRingXLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, m_LittleRingXLocation - RingSizeX, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
 	//돈주머니 그림 - m_IsCashSwitchOn이 true일 때만 그리는 함수를 실행한다
@@ -193,7 +199,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
 
 			OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-			TransparentBlt(MemDCBack, m_LittleRingXLocation - (m_CashSizeWidth * 0.5f), RING_LOCATION_Y + 25, m_CashSizeWidth, m_CashSizeHeight, MemDCObstacle, 0, 0, m_CashSizeWidth, m_CashSizeHeight, RGB(255, 0, 255));
+			TransparentBlt(m_MemDCBack, m_LittleRingXLocation - (m_CashSizeWidth * 0.5f), RING_LOCATION_Y + 25, m_CashSizeWidth, m_CashSizeHeight, MemDCObstacle, 0, 0, m_CashSizeWidth, m_CashSizeHeight, RGB(255, 0, 255));
 			//돈주머니는 작은 고리 X좌표와 공유한다
 		}
 	}
@@ -224,7 +230,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			-40이 있는 이유: 유저 뒷쪽에 있는 화로도 온전히 출력하기 위해서
 			*/
 
-			TransparentBlt(MemDCBack, i, HORIZON_FIRE - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
+			TransparentBlt(m_MemDCBack, i, HORIZON_FIRE - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
 		}
 	}
 
@@ -246,7 +252,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		int CharacterSizeY = BitMapImageSize.bmHeight;
 
 		OlbBitMapCharacter = (HBITMAP)SelectObject(MemDCCharacter, BitMapCharacter);
-		TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CharacterSizeX, CharacterSizeY, MemDCCharacter, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CharacterSizeX, CharacterSizeY, MemDCCharacter, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
 		SelectObject(MemDCCharacter, OlbBitMapCharacter);		
 	}
 	
@@ -276,10 +282,10 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		int RingSizeY = BitMapImageSize.bmHeight;
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_Ring1XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, m_Ring1XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_Ring2XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, m_Ring2XLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
 	//작은 불 고리 오른쪽 그림
@@ -291,7 +297,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 		int RingSizeY = BitMapImageSize.bmHeight;
 
 		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-		TransparentBlt(MemDCBack, m_LittleRingXLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
+		TransparentBlt(m_MemDCBack, m_LittleRingXLocation, RING_LOCATION_Y, RingSizeX, RingSizeY, MemDCObstacle, 0, 0, RingSizeX, RingSizeY, RGB(255, 0, 255));
 	}
 
 
@@ -302,13 +308,12 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
-	SelectObject(MemDCBack, OldBitMapBack);
+	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
+	SelectObject(m_MemDCBack, OldBitMapBack);
 
 
 	DeleteDC(MemDCCharacter);
 	DeleteDC(MemDCBackground);
-	DeleteDC(MemDCBack);
 	DeleteDC(MemDCObstacle);
 	DeleteObject(BitMapBack);
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,4 +464,10 @@ HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)
 
 	LPVOID pBits;
 	return CreateDIBSection(hdc, &bm_info, DIB_RGB_COLORS, (void**)&pBits, NULL, 0);
+}
+
+
+DrawManager::~DrawManager()
+{
+	DeleteDC(m_MemDCBack);
 }

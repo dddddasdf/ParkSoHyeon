@@ -1,6 +1,7 @@
 #pragma once
 #include "BitMap.h"
 #include "Defines.h"
+#include "ResourceManager.h"
 
 class Object
 {
@@ -8,35 +9,42 @@ private:
 	int m_LocationX;
 	int m_LocationY;
 
-	BitMap m_ObjectBitMap;
-
 protected:
+	BitMap* m_ObjectBitMap;
+	HDC m_MemDC;
 
 public:
+	Object(HDC hdc);
+	virtual ~Object();
+
 	virtual void Update() = 0;
-
-	void SetBitMap(BitMap BitMapTmp) { m_ObjectBitMap = BitMapTmp; }
-
-	void Draw(HDC MemDCBack);		//의미 없는 거 같은데 혹시 모르니 일단 유보
-	int ReturnObjectWidth() { return m_ObjectBitMap.ReturnBitMapWidth(); }
-	int ReturnObjectHeight() { return m_ObjectBitMap.ReturnBitMapHeight(); }
+	virtual void Draw() = 0;
+	virtual void GetMemDC() = 0;
 
 	int GetLocationX() { return m_LocationX; }
 	int GetLocationY() { return m_LocationY; }
 
-	void SetLocationX(int X) { m_LocationX = X; }
-	void SetLocationY(int Y) { m_LocationY = Y; }
+	void SetLocationX(const int& X) { m_LocationX = X; }
+	void SetLocationY(const int& Y) { m_LocationY = Y; }
 };
 
 class Ring1 : public Object
 {
 private:
+	int m_AnimationState;	//애니메이션 관리를 위한 멤버변수
 
 public:
+	Ring1(HDC hdc, int X, int Y);
+	virtual ~Ring1();
+
+	void Update() { }
+	void Draw(HDC MemDCBack, bool IsLeft);
+	void GetMemDC() { }
+
 
 };
 
-class Ring2 : public Object
+class Ring2 : public Ring1
 {
 private:
 

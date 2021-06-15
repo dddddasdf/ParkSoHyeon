@@ -18,7 +18,7 @@ private:
 
 	bool m_IsDeadTrigger;	//사망 상태일 경우 화면 갱신을 잠시 멈추기 위한 변수, 살아있을 때는 true 죽었을 때는 false
 public:
-	void WholeInit(HWND hWnd);	//전체 초기화 총괄
+	void WholeInit(HWND hWnd, HDC hdc);	//전체 초기화 총괄
 	void PartialInit();	//화로나 고리에 부딪쳤을시 일부분 초기화
 	void MovingCharacter(const int& Key);	//캐릭터 이동 시키기
 	void JumpingCharacter();	//캐릭터 점프 시키기
