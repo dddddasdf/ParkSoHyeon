@@ -13,7 +13,10 @@ private:
 
 	HDC m_MemDCBack;
 
+	Ring1 *FireRing1;
+	Ring1 *FireRing2;
 
+	LittleRing* LittleFireRing;
 
 	///////////////////////////////////////////////////이놈들 다 지울 예정
 

@@ -101,7 +101,8 @@ BitMap ResourceManager::ReturnRingBitMapClass(const int& ImageNumber)
 {
 	std::string FileNameTmp = "ring_" + std::to_string(ImageNumber);
 	BitMap NewBitMapTmp(FileNameTmp);
-	m_ObstacleImageVector.push_back(NewBitMapTmp.ReturnBitMap());
+	
+	return NewBitMapTmp;
 }
 
 /*
