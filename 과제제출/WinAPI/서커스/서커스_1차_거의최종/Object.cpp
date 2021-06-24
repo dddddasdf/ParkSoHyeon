@@ -157,6 +157,7 @@ Cash::Cash(HDC hdc, int X) : Object(hdc)
 	*m_ObjectBitMap = ResourceMgr->ReturnCashBitMapClass();
 
 	SetLocationX(X);
+	SetLocationY(RING_LOCATION_Y + 25);
 	
 	m_IsSwitchOn = true;
 }
@@ -173,7 +174,7 @@ void Cash::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	case true:
 	{
 		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
-		TransparentBlt(MemDCBack, GetLocationX() - (ReturnMemberBitMapWidth() * 0.5) - CharacterLocationX, RING_LOCATION_Y + 25, ReturnMemberBitMapWidth(),
+		TransparentBlt(MemDCBack, GetLocationX() - (ReturnMemberBitMapWidth() * 0.5) - CharacterLocationX, GetLocationY(), ReturnMemberBitMapWidth(),
 			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 	}
 		break;
@@ -225,7 +226,7 @@ MapTile::~MapTile()
 
 void MapTile::Draw(HDC MemDCBack, const int& CharacterLocationX)
 {
-	//바닥 선
+	//바닥
 	m_BitMapNumberTmp = BACKGROUND_FLOOR;
 	for (int i = 0; i < 20; i++)
 	{
@@ -256,7 +257,12 @@ void MapTile::Draw(HDC MemDCBack, const int& CharacterLocationX)
 
 Character::Character(HDC hdc, int X) : Object(hdc)
 {
+	m_ObjectBitMap = new BitMap[MOTION_DEAD + 1];	//번호 관리의 용이성을 위해 0번은 아무 것도 없는 더미
 
+	for (int i = MOTION_STAND; i <= MOTION_DEAD; i++)
+	{
+		m_ObjectBitMap[i] = ResourceMgr->ReturnCharacterBitMapClass(i);
+	}
 }
 
 Character::~Character()
@@ -264,7 +270,10 @@ Character::~Character()
 	delete[] m_ObjectBitMap;
 }
 
-void Character::Draw(HDC MemDCBack, const int& CharacterLocationX)
+void Character::DrawChracater(HDC MemDCBack, const int& CharacterLocationY, const int& MotionNumber)
 {
-
+	m_BitMapNumberTmp = MotionNumber;
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+	TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, CharacterLocationY - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), 
+		m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 }

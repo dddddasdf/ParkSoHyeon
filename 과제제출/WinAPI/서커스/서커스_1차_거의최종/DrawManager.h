@@ -22,6 +22,8 @@ private:
 
 	MapTile* Map;
 
+	Character* CharacterObject;
+
 	///////////////////////////////////////////////////이놈들 다 지울 예정
 
 	int m_CharacterImageSizeWidth;	//캐릭터 비트맵의 가로 크기
@@ -59,8 +61,8 @@ public:
 
 	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel, int CharacterLocationX);	//링 위치 바꿔주기
 
-	bool IsCashCollision(const int& MotionNumber, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
-	bool IsObstacleCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//화로와 부딪쳤는지 체크+걍 장애물 전반으로 변경함
+	bool IsCashCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
+	bool IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//화로와 부딪쳤는지 체크+걍 장애물 전반으로 변경함
 	bool IsRingCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//고리와 부딪쳤는지 체크
 
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);

@@ -129,6 +129,7 @@ BitMap ResourceManager::ReturnMapTileBitMapClass(const int& ImageNumber)
 	return NewBitMapTmp;
 }
 
+
 /*
 
 */

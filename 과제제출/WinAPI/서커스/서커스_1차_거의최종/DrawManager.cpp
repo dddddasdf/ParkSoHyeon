@@ -21,7 +21,7 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 	LittleFireRing = new LittleRing(hdc, DEFAULT_LITTLERING_START);
 	Cash1 = new Cash(hdc, DEFAULT_LITTLERING_START);
 	Map = new MapTile(hdc, NULL);
-
+	CharacterObject = new Character(hdc, NULL);
 
 
 
@@ -29,17 +29,6 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 
 	////////////////////아래놈들 다 지울 예정
 
-	{
-		//배경 맵 타일-군중 벡터 저장
-		if (!m_BackgroundTileVector.empty())
-			m_BackgroundTileVector.clear();
-
-		m_BackgroundTileVector.push_back(BACKGROUND_ELEPHANT);
-		for (int i = 1; i <= CROWD_PATTERN; i++)
-		{
-			m_BackgroundTileVector.push_back(BACKGROUND_CROWD_FIRST);
-		}
-	}
 	
 	{
 		//각 이미지 사이즈 미리 구해놓기
@@ -49,20 +38,7 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 		HBitmapTmp = ResourceMgr->ReturnBackgroundImage(BACKGROUND_FLOOR);
 		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
 
-		m_FloorImageSizeWidth = BitmapTmp.bmWidth;
-		m_FloorImageSizeHeight = BitmapTmp.bmHeight;	//바닥 사이즈
 
-		HBitmapTmp = ResourceMgr->ReturnBackgroundImage(BACKGROUND_CROWD_FIRST);
-		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
-
-		m_CrowdImageSizeWidth = BitmapTmp.bmWidth;
-		m_CrowdImageSizeHeight = BitmapTmp.bmHeight;	//군중 사이즈
-
-		HBitmapTmp = ResourceMgr->ReturnObstacleImage(OBSTACLE_CASH);
-		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
-
-		m_CashSizeWidth = BitmapTmp.bmWidth;
-		m_CashSizeHeight = BitmapTmp.bmHeight;	//돈주머니 사이즈
 
 		HBitmapTmp = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_1);
 		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
@@ -70,10 +46,7 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 		m_FireSizeWidth = BitmapTmp.bmWidth;
 		m_FireSizeHeight = BitmapTmp.bmHeight;	//화로 사이즈
 	}
-	
-	//Y좌표 시작 부분
-	m_FloorYStart = HORIZON_HEIGHT - m_FloorImageSizeHeight;	//바닥 타일 시작 Y좌표
-	m_CrowdYStart = HORIZON_HEIGHT - m_FloorImageSizeHeight - m_CrowdImageSizeHeight;	//관중 타일 시작 Y좌표
+
 
 	{
 		////화로 X좌표 벡터 저장
@@ -92,9 +65,10 @@ void DrawManager::DeadInit()
 	//X좌표만 처음 위치로 되돌려 주면 된다
 
 	FireRing1->SetLocationX(DEFAULT_RING1_START);
-	FireRing1->SetLocationX(DEFAULT_RING2_START);
+	FireRing2->SetLocationX(DEFAULT_RING2_START);
 	LittleFireRing->SetLocationX(DEFAULT_LITTLERING_START);
 	Cash1->SetLocationX(DEFAULT_LITTLERING_START);
+	Cash1->SwitchOnCash();
 }
 
 void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
@@ -173,24 +147,9 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//캐릭터 그리는 파트
-	
-	//캐릭터 담당
-	HDC MemDCCharacter = CreateCompatibleDC(hdc);
-	HBITMAP OlbBitMapCharacter;
-	HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
 
-	{
-		//그리는 연산
-		GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
-		int CharacterSizeX = BitMapImageSize.bmWidth;
-		int CharacterSizeY = BitMapImageSize.bmHeight;
+	CharacterObject->DrawChracater(m_MemDCBack, CharacterYLocation, MotionNumber);
 
-		OlbBitMapCharacter = (HBITMAP)SelectObject(MemDCCharacter, BitMapCharacter);
-		TransparentBlt(m_MemDCBack, CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CharacterSizeX, CharacterSizeY, MemDCCharacter, 0, 0, CharacterSizeX, CharacterSizeY, RGB(255, 0, 255));
-		SelectObject(MemDCCharacter, OlbBitMapCharacter);		
-	}
-	
-	//캐릭터 그리는 파트 끝
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -219,7 +178,6 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	SelectObject(m_MemDCBack, OldBitMapBack);
 
 
-	DeleteDC(MemDCCharacter);
 	DeleteDC(MemDCObstacle);
 	DeleteObject(BitMapBack);
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,73 +192,86 @@ void DrawManager::MoveRings(float MovingRingPixel, float MovingLittleRingPixel, 
 	Cash1->CashMoving(MovingLittleRingPixel, CharacterLocationX);
 }
 
-bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterYLocation)
+bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {
-	if (true == m_IsCashSwitchOn)
+	//돈주머니와 부딪쳤는지 체크함
+	//돈주머니가 젠 되어있을 때만 체크하면 된다... 먹어서 없는 동안에는 연산 돌려봐야 무의미
+	if (Cash1->ReturnIsCashSwitched())
 	{
-		//돈주머니가 젠 되어있을 때만 체크하면 된다... 먹어서 없는 동안에는 연산 돌려봐야 무의미
-		HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
-		BITMAP BitMapImageSize;
-
-		GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
-		int CharacterSizeX = BitMapImageSize.bmWidth;
-		int CharacterSizeY = BitMapImageSize.bmHeight;
-		//여기까지 캐릭터 비트맵 사이즈 구하는 부분
-
+		
 		RECT TmpRect;
-		RECT PlayerRect = { CHARACTER_LOCATION_X, CharacterYLocation - CharacterSizeY, CHARACTER_LOCATION_X + CharacterSizeX, CharacterYLocation };
-		RECT CashRect = { m_LittleRingXLocation - (m_CashSizeWidth * 0.5f), RING_LOCATION_Y + 25, m_LittleRingXLocation + (m_CashSizeWidth * 0.5f), (RING_LOCATION_Y + 25) + m_CashSizeHeight };
+		RECT CharacterRect = { CharacterXLocation + CHARACTER_LOCATION_X, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight(),
+			CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + CHARACTER_LOCATION_X * 0.5f, CharacterYLocation };	//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
+		//↑유저 사각형
+		
+		RECT CashRect = { Cash1->GetLocationX() - (Cash1->ReturnMemberBitMapWidth() * 0.5f), Cash1->GetLocationY(),
+			Cash1->GetLocationX() + (Cash1->ReturnMemberBitMapWidth() * 0.5f), Cash1->GetLocationY() + Cash1->ReturnMemberBitMapHeight() };
 
-		if (IntersectRect(&TmpRect, &PlayerRect, &CashRect))
+		if (IntersectRect(&TmpRect, &CharacterRect, &CashRect))
 		{
-			m_IsCashSwitchOn = false;
-			return true;	//부딪친 것에 대해 참을 반환한다
+			Cash1->SwitchOffCash();	//부딪쳤으면 돈주머니 스위치 끄기
+			return true;
 		}
 	}
-
 	return false;	//아무 일도 없었으면 false 반환
 }
 
-bool DrawManager::IsObstacleCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
+bool DrawManager::IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {
-	HBITMAP BitMapCharacter = ResourceMgr->ReturnCharacterImage(MotionNumber);
-	BITMAP BitMapImageSize;
-
-	GetObject(BitMapCharacter, sizeof(BITMAP), &BitMapImageSize);
-	int CharacterSizeX = BitMapImageSize.bmWidth;
-	int CharacterSizeY = BitMapImageSize.bmHeight;
-	//여기까지 캐릭터 비트맵 사이즈 구하는 부분
-
 	RECT TmpRect;
-	RECT PlayerRect = { CharacterXLocation, CharacterYLocation - CharacterSizeY, CharacterXLocation + CharacterSizeX, CharacterYLocation };	//유저 사각형(안 보임)
+	RECT CharacterRect = { CharacterXLocation + CHARACTER_LOCATION_X, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight(),
+		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + CHARACTER_LOCATION_X * 0.5f, CharacterYLocation };	//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
+	//↑유저 사각형
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//화로와 부딪쳤는지 체크함
-	{
-		int FireXLocation = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40 + CharacterXLocation - m_FireSizeWidth + 25;
+	//{
+	//	int FireXLocation = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40 + CharacterXLocation - m_FireSizeWidth + 25;
 
-		RECT FireRectLeft = { FireXLocation, HORIZON_FIRE - m_FireSizeHeight + 10, FireXLocation + m_FireSizeWidth - 15, HORIZON_FIRE };
-		RECT FireRectRight = { FireXLocation + FIRE_DISTANCE, HORIZON_FIRE - m_FireSizeHeight + 10, (FireXLocation + FIRE_DISTANCE) + m_FireSizeWidth - 15, HORIZON_FIRE };
-		//버그가 아닌 이상 유저 앞의 두번째 화로와 부딪칠 일은 없으므로 유저 뒷쪽의 화로 하나 오른쪽의 화로 하나만 체크하면 될지도 모름
-		//판정 너무 빡세서 상수 조금씩 보태가며 보정해주는 중임...
+	//	RECT FireRectLeft = { FireXLocation, HORIZON_FIRE - m_FireSizeHeight + 10, FireXLocation + m_FireSizeWidth - 15, HORIZON_FIRE };
+	//	RECT FireRectRight = { FireXLocation + FIRE_DISTANCE, HORIZON_FIRE - m_FireSizeHeight + 10, (FireXLocation + FIRE_DISTANCE) + m_FireSizeWidth - 15, HORIZON_FIRE };
+	//	//버그가 아닌 이상 유저 앞의 두번째 화로와 부딪칠 일은 없으므로 유저 뒷쪽의 화로 하나 오른쪽의 화로 하나만 체크하면 될지도 모름
+	//	//판정 너무 빡세서 상수 조금씩 보태가며 보정해주는 중임...
 
-		if (IntersectRect(&TmpRect, &PlayerRect, &FireRectLeft))
-		{
-			return true;	//부딪친 것에 대해 참을 반환한다
-		}
-		if (IntersectRect(&TmpRect, &PlayerRect, &FireRectRight))
-		{
-			return true;	//부딪친 것에 대해 참을 반환한다
-		}
-	}
+	//	if (IntersectRect(&TmpRect, &CharacterRect, &FireRectLeft))
+	//	{
+	//		return true;	//부딪친 것에 대해 참을 반환한다
+	//	}
+	//	if (IntersectRect(&TmpRect, &PlayerRect, &FireRectRight))
+	//	{
+	//		return true;	//부딪친 것에 대해 참을 반환한다
+	//	}
+	//}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//고리와 부딪쳤는지 체크함
 	//고리는 윗부분 아랫부분으로 쪼개서 그 둘과 부딪쳤는지 체크한다
+	{
+		RECT Ring1RectDown = { FireRing1->GetLocationX() - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() - RING_COLLISION_HEIGHT_PIEXL,
+			FireRing1->GetLocationX() + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() };
+		RECT Ring2RectDown = { FireRing2->GetLocationX() - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() - RING_COLLISION_HEIGHT_PIEXL,
+			FireRing2->GetLocationX() + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() };
+
+		RECT LittleRingRectDown = { LittleFireRing->GetLocationX() - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() - RING_COLLISION_HEIGHT_PIEXL + 7,
+			LittleFireRing->GetLocationX() + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() };
+
+		if (IntersectRect(&TmpRect, &CharacterRect, &Ring1RectDown) || IntersectRect(&TmpRect, &CharacterRect, &Ring2RectDown) || IntersectRect(&TmpRect, &CharacterRect, &LittleRingRectDown))
+		{
+       			return true;	//부딪친 것에 대해 참을 반환한다
+		}
+	}
 
 	//{
+	//	
+	//	
+	//	
+	//	
+	//	
+	//	
+	//	
+	//	
 	//	BITMAP BitMapSize;
 	//	HBITMAP BitMapObstacle = NULL;
 	//	switch (m_RingAnimation)

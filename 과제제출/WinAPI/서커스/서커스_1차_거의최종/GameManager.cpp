@@ -147,11 +147,11 @@ void GameManager::CalculateRings(float elapsed)
 
 void GameManager::CollisionCheck()
 {
-	/*DrawMgr->IsCashCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterYLocation());
+	DrawMgr->IsCashCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation());
 	
-	if (DrawMgr->IsObstacleCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
+	if (DrawMgr->IsObsjectCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
 	{
-	m_PlayerData->ChangeMotion(MOTION_DEAD);
+		m_PlayerData->ChangeMotion(MOTION_DEAD);
 		m_IsDeadTrigger = true;
-	}*/
+	}
 }

@@ -74,6 +74,10 @@ public:
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
 
 	void CashMoving(const int& MovePixel, const int& CharacterLocationX);
+
+	bool ReturnIsCashSwitched() { return m_IsSwitchOn; }
+	void SwitchOffCash() { m_IsSwitchOn = false; }
+	void SwitchOnCash() { m_IsSwitchOn = true; }
 };
 
 class MapTile : public Object
@@ -84,7 +88,7 @@ private:
 	int m_CrowdYStart;	//관중 타일 시작 Y좌표
 
 	int m_CrowdWidth;
-	int m_CrowdHeight;	//이것들이 왜 필요합니까?->코끼리랑 군중이랑 타일 크기 달라서 for문 처리시 대 참사 발생함
+	int m_CrowdHeight;	//이것들이 왜 필요합니까?->코끼리랑 군중이랑 타일 크기 달라서 for문 처리시 대참사 발생함
 public:
 	MapTile(HDC hdc, int X);
 	~MapTile();
@@ -99,7 +103,11 @@ private:
 
 public:
 	Character(HDC hdc, int X);
-	~
+	~Character();
+
+	void Update() override { }
+	void Draw(HDC MemDCBack, const int& CharacterLocationY) override {  }	//받아야 하는 매개변수가 다른 관계로 더미
+	void DrawChracater(HDC MemDCBack, const int& CharacterLocationY, const int& MotionNumber);
 };
 
 //class Fire : public Object
