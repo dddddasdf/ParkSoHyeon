@@ -13,7 +13,6 @@ void Player::InitPlayer()
 
 void Player::DeadInit()
 {
-	//m_PlayerLife = PLAYER_LIFE;	//지금은 점수 시스템 아직 안 넣었으니 나중에... 0 아래로 못 내려가게끔 막아두고
 	m_PlayerMotion = MOTION_STAND;
 	m_PlayerYLocation = HORIZON_CHARACTER;
 	m_PlayerXLocation = 0;

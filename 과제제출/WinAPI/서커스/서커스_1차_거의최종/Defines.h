@@ -20,13 +20,15 @@
 #define RING_LOCATION_Y 217	//고리가 놓이는 Y축의 값
 #define RING_MOVE_PIXEL 300	//고리가 움직이는 X축의 간격
 #define LITTLERING_MOVE_PIXEL 450	//작은 고리가 움직이는 X축의 간격
-#define RING_COLLISION_WIDTH_PIEXL 5	//고리 충돌 판정을 갖는 좌우 픽셀 길이
-#define RING_COLLISION_HEIGHT_PIEXL 14	//고리 충돌 판정을 갖는 상하 픽셀 길이
 #define DEFAULT_RING1_START 700	//첫번째 고리 시작 위치
 #define DEFAULT_RING2_START 2000	//두번째 고리 시작 위치
 #define DEFAULT_LITTLERING_START 3500	//작은 고리 시작 위치
 #define RING_BACK 1300	//링이 화면 뒤쪽으로 돌아갈때 얼마나 보내버릴지
 #define LITTLERING_BACK 3500	//작은 고리가 화면 뒤쪽으로 돌아갈때 얼마나 보내버릴지
+#define LIFE_LOCATION_Y 500
+#define LIFE_LOCATION_X 950
+#define SCORE_LOCATION_Y 500
+#define SCORE_LOCATION_X 350
 
 enum DIRECTION
 {
@@ -91,4 +93,22 @@ enum OBSTACLE_ANIMATION
 	ANIMATION_RING_2 = 1,
 	ANIMATION_FIRE_1 = 0,
 	ANIMATION_FIRE_2 = 1
+};
+
+enum HITBOX
+{
+	HITBOX_RING_WIDTH = 5,	//고리 충돌 판정을 갖는 좌우 픽셀 길이
+	HITBOX_RING_HEIGHT = 5,	//고리 충돌 판정을 갖는 상하 픽셀 길이
+	HITBOX_CHARACTER_WIDTH = 20,
+	HITBOX_CHARACTER_HEIGHT_UP = 20,
+	HITBOX_CHARACTER_HEIGHT_DOWN = 25,
+	//히트박스 크기 관리를 위한 곳
+};
+
+enum SCORE
+{
+	SCORE_OBJECT = 100,
+	SCORE_CASH = 200
+
+	//뭐 했느냐에 따라 점수 올리기
 };

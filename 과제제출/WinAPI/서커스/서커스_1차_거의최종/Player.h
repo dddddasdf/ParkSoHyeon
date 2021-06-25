@@ -23,5 +23,9 @@ public:
 	int ReturnMotion() { return m_PlayerMotion; }
 	int ReturnCharacterXLocation() { return m_PlayerXLocation; }
 	int ReturnCharacterYLocation() { return m_PlayerYLocation; }
+	int ReturnScore() { return m_PlayerScore; }
+	int ReturnLife() { return m_PlayerLife; }
+	void MinusLife() { m_PlayerLife--; }	//»ç¸Á½Ã ¸ñ¼û ÁÙ¾îµë
+	void PlusScore(const int& Score) { m_PlayerScore += Score; }
 };
 

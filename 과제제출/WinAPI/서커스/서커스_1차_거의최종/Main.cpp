@@ -108,9 +108,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						CharacterFrame = 0;
 					}
 
-					GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
-
 					GameMgr->CollisionCheck();	//충돌 체크 함수
+
+					GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
 					GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
 				}
 			}

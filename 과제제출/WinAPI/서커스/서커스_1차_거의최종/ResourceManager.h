@@ -21,7 +21,8 @@ public:
 	BitMap ReturnRingBitMapClass(const int& ImageNumber);
 	BitMap ReturnLittleRingBitMapClass(const int& ImageNumber);
 	BitMap ReturnCashBitMapClass();
-	BitMap ReturnMapTileBitMapClass(const int& ImagerNumber);
+	BitMap ReturnMapTileBitMapClass(const int& ImageNumber);
+	BitMap ReturnInterfaceBitMapClass(const int& ImageNumber);
 };
 
 #define ResourceMgr ResourceManager::GetInstance()

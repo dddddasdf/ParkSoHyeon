@@ -129,6 +129,13 @@ BitMap ResourceManager::ReturnMapTileBitMapClass(const int& ImageNumber)
 	return NewBitMapTmp;
 }
 
+BitMap ResourceManager::ReturnInterfaceBitMapClass(const int& ImageNumber)
+{
+	std::string FileNameTmp = "interface_" + std::to_string(ImageNumber);
+	BitMap NewBitMapTmp(FileNameTmp);
+
+	return NewBitMapTmp;
+}
 
 /*
 

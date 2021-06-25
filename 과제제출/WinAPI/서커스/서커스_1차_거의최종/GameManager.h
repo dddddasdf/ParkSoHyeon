@@ -31,7 +31,8 @@ public:
 	void CalculateRings(float elapsed);
 
 	void CollisionCheck();	//Ãæµ¹ Ã¼Å© ÃÑ°ý
-	void DrawCharacterOrder(HDC *hdc, HWND hWnd) { DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()); }
+	void DrawCharacterOrder(HDC *hdc, HWND hWnd) { DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation(), 
+		m_PlayerData->ReturnLife(), m_PlayerData->ReturnScore()); }
 };
 
 #define GameMgr GameManager::GetInstance()

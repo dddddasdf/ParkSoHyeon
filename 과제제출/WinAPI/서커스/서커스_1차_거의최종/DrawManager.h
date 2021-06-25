@@ -24,40 +24,22 @@ private:
 
 	Character* CharacterObject;
 
+
+	BitMap LifeImage;
+
 	///////////////////////////////////////////////////이놈들 다 지울 예정
 
-	int m_CharacterImageSizeWidth;	//캐릭터 비트맵의 가로 크기
-	int m_CharacterImageSizeHeight;	//캐릭터 비트맵의 세로 크기
-
-	int m_FloorImageSizeWidth;	//바닥 비트맵의 가로 크기
-	int m_FloorImageSizeHeight;	//바닥 비트맵의 세로 크기
-
-	int m_CrowdImageSizeWidth;	//군중 비트맵의 가로 크기
-	int m_CrowdImageSizeHeight;	//군중 비트맵의 세로 크기-코끼리가 1픽셀 더 길긴 한데 귀찮으니까 코끼리도 관중 크기로 관리
-
-	std::vector <int> m_BackgroundTileVector;	//배경 타일 중 바닥 부분을 제외한 부분을 벡터로 저장하기
-
-	int m_CrowdYStart;	//배경에서 군중의 Y좌표 시작 부분
-	int m_FloorYStart;	//배경에서 바닥의 Y좌표 시작 부분
 
 	std::vector <int> m_ObstacleFireXLocation;	//장애물-화로의 X좌표를 저장하는 벡터<-막상 해보니까 이거 쓸 필요가 없었네 일단 더미로 남겨둠
 	int m_FireAnimation;	//화로 애니메이션 조정을 위한 멤버변수
 
-	int m_Ring1XLocation;	//첫번째 불 고리 위치를 조정하는 멤버변수
-	int m_Ring2XLocation;	//두번째 불 고리 위치를 조정하는 멤버변수
-	int m_LittleRingXLocation;	//작은 불 고리 위치를 조정하는 멤버변수
-	int m_RingAnimation;	//고리 애니메이션 조정을 위한 멤버변수
-
-	int m_CashSizeWidth;	//돈주머니 가로 크기
-	int m_CashSizeHeight;	//돈주머니 세로 크기
-	bool m_IsCashSwitchOn;	//돈주머니가 먹혔는지 아닌지 테스트하는 것
 
 	int m_FireSizeWidth;	//화로 가로 크기
 	int m_FireSizeHeight;	//화로 세로 크기
 public:
 	void Init(HWND hWnd, HDC hdc);
 	void DeadInit();	//아무튼 부딪쳐서 죽었을 때 일부분 초기화
-	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);
+	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score);
 
 	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel, int CharacterLocationX);	//링 위치 바꿔주기
 
