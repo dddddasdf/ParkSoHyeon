@@ -150,12 +150,16 @@ void GameManager::CollisionCheck()
 	if (DrawMgr->IsCashCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
 		m_PlayerData->PlusScore(SCORE_CASH);
 	
-	if (DrawMgr->IsObsjectCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
+	int Tmp = DrawMgr->IsObsjectCollision(m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation());
+
+	if (CRASHED_OBJECT == Tmp)
 	{
 		m_PlayerData->ChangeMotion(MOTION_DEAD);
 		m_IsDeadTrigger = true;
 		m_PlayerData->MinusLife();
 	}
+	else
+		m_PlayerData->PlusScore(Tmp);
 
 	if (0 == m_PlayerData->ReturnLife())
 	{

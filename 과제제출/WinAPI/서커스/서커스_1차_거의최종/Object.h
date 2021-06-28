@@ -38,6 +38,7 @@ private:
 	int m_AnimationState;	//애니메이션 관리를 위한 멤버 변수
 	
 	bool m_IsLeft;	//현재 왼쪽면 출력을 해야 할 차례일지 오른쪽 면인지 구분하는 멤버 변수
+	bool m_IsGetScoreSwitch;	//점수 획득 관리를 위해서... 중복 획득하면 안 되므로 변수를 넣었다 돈주머니와 작동 원리 같음
 public:
 	Ring1(HDC hdc, int X);
 	~Ring1();
@@ -46,12 +47,15 @@ public:
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
 
 	void RingMoving(const int& MovePixel, const int& CharacterLocationX);
+	bool ReturnScoreSwitch() { return m_IsGetScoreSwitch; }
+	void SwitchOffScore() { m_IsGetScoreSwitch = false; }
 };
 
 class LittleRing : public Object
 {
 private:
 	bool m_IsLeft;	//현재 왼쪽면 출력을 해야 할 차례일지 오른쪽 면인지 구분하는 멤버변수
+	bool m_IsGetScoreSwitch;	//점수 획득 관리를 위해서... 중복 획득하면 안 되므로 변수를 넣었다 돈주머니와 작동 원리 같음
 public:
 	LittleRing(HDC hdc, int X);
 	~LittleRing();
@@ -60,6 +64,8 @@ public:
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
 
 	void RingMoving(const int& MovePixel, const int& CharacterLocationX);
+	bool ReturnScoreSwitch() { return m_IsGetScoreSwitch; }
+	void SwitchOffScore() { m_IsGetScoreSwitch = false; }
 };
 
 class Cash : public Object
@@ -108,6 +114,18 @@ public:
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationY) override {  }	//받아야 하는 매개변수가 다른 관계로 더미
 	void DrawChracater(HDC MemDCBack, const int& CharacterLocationY, const int& MotionNumber);
+};
+
+class Goal : public Object
+{
+private:
+
+public:
+	Goal(HDC hdc, int X);
+	~Goal();
+
+	void Update() override { }
+	void Draw(HDC MemDCBack, const int& CharacterLocationY) override;
 };
 
 //class Fire : public Object

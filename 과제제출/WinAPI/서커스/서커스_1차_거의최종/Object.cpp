@@ -15,9 +15,11 @@ Ring1::Ring1(HDC hdc, int X) : Object(hdc)
 	m_ObjectBitMap[HINDRANCE_RING_SECOND_2] = ResourceMgr->ReturnRingBitMapClass(HINDRANCE_RING_SECOND_2);
 
 	SetLocationX(X);
+	SetLocationY(RING_LOCATION_Y);
 
 	m_AnimationState = HINDRANCE_RING_FIRST_1;
 	m_IsLeft = true;
+	m_IsGetScoreSwitch = true;
 }
 
 Ring1::~Ring1()
@@ -80,7 +82,10 @@ void Ring1::RingMoving(const int& MovePixel, const int& CharacterLocationX)
 	SetLocationX(GetLocationX() - MovePixel);
 
 	if (GetLocationX() < CharacterLocationX - 50)
+	{
 		SetLocationX(GetLocationX() + RING_BACK);
+		m_IsGetScoreSwitch = true;
+	}
 }
 
 
@@ -97,8 +102,10 @@ LittleRing::LittleRing(HDC hdc, int X) : Object(hdc)
 	m_ObjectBitMap[HINDRANCE_LITTLERING_2] = ResourceMgr->ReturnLittleRingBitMapClass(HINDRANCE_LITTLERING_2);
 
 	SetLocationX(X);
+	SetLocationY(RING_LOCATION_Y);
 
 	m_IsLeft = true;
+	m_IsGetScoreSwitch = true;
 }
 
 void LittleRing::Draw(HDC MemDCBack, const int& CharacterLocationX)
@@ -137,7 +144,10 @@ void LittleRing::RingMoving(const int& MovePixel, const int& CharacterLocationX)
 	SetLocationX(GetLocationX() - MovePixel);
 
 	if (GetLocationX() < CharacterLocationX - 50)
+	{
 		SetLocationX(GetLocationX() + LITTLERING_BACK);
+		m_IsGetScoreSwitch = true;
+	}
 }
 
 LittleRing::~LittleRing()
@@ -276,4 +286,22 @@ void Character::DrawChracater(HDC MemDCBack, const int& CharacterLocationY, cons
 	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
 	TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, CharacterLocationY - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), 
 		m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+}
+
+
+
+
+Goal::Goal(HDC hdc, int X) : Object(hdc)
+{
+	m_ObjectBitMap = new BitMap;
+
+	*m_ObjectBitMap = ResourceMgr->ReturnGoalBitMapClass();
+
+	SetLocationX(GOAL_LOCATION_X);
+	SetLocationY(HORIZON_HEIGHT);
+}
+
+Goal::~Goal()
+{
+	delete[] m_ObjectBitMap;
 }

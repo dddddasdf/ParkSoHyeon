@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "Object.h"
 
+//#define Debug_Coll
 
 class DrawManager : public Singleton <DrawManager>
 {
@@ -24,8 +25,14 @@ private:
 
 	Character* CharacterObject;
 
-
 	BitMap LifeImage;
+
+	HFONT m_FontCustomize;
+
+	///////////////임시
+	RECT Ring1RectDown;
+	RECT Ring2RectDown;
+	RECT LittleRingRectDown;
 
 	///////////////////////////////////////////////////이놈들 다 지울 예정
 
@@ -44,7 +51,7 @@ public:
 	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel, int CharacterLocationX);	//링 위치 바꿔주기
 
 	bool IsCashCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
-	bool IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//화로와 부딪쳤는지 체크+걍 장애물 전반으로 변경함
+	int IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//장애물과 부딪쳤는지, 뛰어넘었는지를 체크함
 	bool IsRingCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//고리와 부딪쳤는지 체크
 
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);

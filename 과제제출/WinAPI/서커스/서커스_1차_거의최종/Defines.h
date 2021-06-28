@@ -12,10 +12,8 @@
 #define MOVE_PIXEL 15	//플레이어가 한 번 움직일 때 몇 픽셀씩 X축을 이동하는가
 #define PLAYER_LIFE 5	//플레이어 목숨
 #define CROWD_PATTERN 7	//군중 패턴
-#define END_OF_MAP 10000	//맵의 총 가로 길이
 #define HORIZON_FIRE 398	//화로 놓여 있는 Y축의 값
 #define FIRE_DISTANCE 700	//화로가 놓여져 있는 X축 간격
-#define RING_DISTANCE 500	//고리가 젠 되는 간격
 #define LITTLERING_DISTANCE 500	//작은 고리가 젠 되는 간격
 #define RING_LOCATION_Y 217	//고리가 놓이는 Y축의 값
 #define RING_MOVE_PIXEL 300	//고리가 움직이는 X축의 간격
@@ -23,12 +21,15 @@
 #define DEFAULT_RING1_START 700	//첫번째 고리 시작 위치
 #define DEFAULT_RING2_START 2000	//두번째 고리 시작 위치
 #define DEFAULT_LITTLERING_START 3500	//작은 고리 시작 위치
-#define RING_BACK 1300	//링이 화면 뒤쪽으로 돌아갈때 얼마나 보내버릴지
+#define RING_BACK 2600	//링이 화면 뒤쪽으로 돌아갈때 얼마나 보내버릴지
 #define LITTLERING_BACK 3500	//작은 고리가 화면 뒤쪽으로 돌아갈때 얼마나 보내버릴지
 #define LIFE_LOCATION_Y 500
 #define LIFE_LOCATION_X 950
-#define SCORE_LOCATION_Y 500
-#define SCORE_LOCATION_X 350
+#define SCORE_LOCATION_Y 475
+#define SCORE_LOCATION_X 150
+#define CRASHED_NOT 0	//아무것도 안 부딪침
+#define CRASHED_OBJECT -1	//화로나 고리와 부딪침
+#define GOAL_LOCATION_X 20000	//골인 지점 위치
 
 enum DIRECTION
 {
@@ -107,8 +108,15 @@ enum HITBOX
 
 enum SCORE
 {
-	SCORE_OBJECT = 100,
+	SCORE_RING = 100,
+	SCORE_FIRE = 100,
 	SCORE_CASH = 200
 
 	//뭐 했느냐에 따라 점수 올리기
+};
+
+enum LOCATION
+{
+
+	//매크로로 설정해둔 위치 좌표들 전부 여기다가 박아둘 예정
 };

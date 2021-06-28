@@ -28,6 +28,9 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 
 	LifeImage = ResourceMgr->ReturnInterfaceBitMapClass(2);
 
+	//폰트 설정...
+	m_FontCustomize = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "돋움");
+
 
 	////////////////////아래놈들 다 지울 예정
 
@@ -184,10 +187,23 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			MemDCObstacle, 0, 0, LifeImage.ReturnBitMapWidth(), LifeImage.ReturnBitMapHeight(), RGB(255, 0, 255));
 	}
 
-	SetTextAlign(m_MemDCBack, TA_LEFT);
+	//auto font = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, "궁서");
+	//SelectObject(m_MemDCBack, font);
+	SelectObject(m_MemDCBack, m_FontCustomize);
+	SetTextColor(m_MemDCBack, RGB(255, 255,255));
+	SetBkMode(m_MemDCBack, TRANSPARENT);
+	std::string str = std::to_string(Score);
+	TextOut(m_MemDCBack, SCORE_LOCATION_X, SCORE_LOCATION_Y, str.c_str(), str.length());
+	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+#ifdef Debug_Coll
+	Rectangle(m_MemDCBack, Ring1RectDown.left, Ring1RectDown.top, Ring1RectDown.right, Ring1RectDown.bottom);
+	Rectangle(m_MemDCBack, Ring2RectDown.left, Ring2RectDown.top, Ring2RectDown.right, Ring2RectDown.bottom);
+	Rectangle(m_MemDCBack, LittleRingRectDown.left, LittleRingRectDown.top, LittleRingRectDown.right, LittleRingRectDown.bottom);
+#endif // Debug_Coll
 
 	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
 	SelectObject(m_MemDCBack, OldBitMapBack);
@@ -232,12 +248,15 @@ bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterX
 	return false;	//아무 일도 없었으면 false 반환
 }
 
-bool DrawManager::IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
+int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {
 	RECT TmpRect;
 	RECT CharacterRect = { CharacterXLocation + CHARACTER_LOCATION_X, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight(),
 		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + CHARACTER_LOCATION_X * 0.5f, CharacterYLocation };	//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
 	//↑유저 사각형
+
+	int Score_Tmp = 0;	//넘은 장애물 수에 따라 보내줄 점수 임시
+	int User_Tmp = CharacterXLocation + CHARACTER_LOCATION_X + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -265,28 +284,20 @@ bool DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Charact
 	//고리와 부딪쳤는지 체크함
 	//고리는 윗부분 아랫부분으로 쪼개서 그 둘과 부딪쳤는지 체크한다
 	{
-		RECT Ring1RectDown = { FireRing1->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
-			FireRing1->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() };
-		RECT Ring2RectDown = { FireRing2->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
-			FireRing2->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() };
-
-		RECT LittleRingRectDown = { LittleFireRing->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
+		Ring1RectDown = { FireRing1->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
+		FireRing1->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() };
+		Ring2RectDown = { FireRing2->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
+		FireRing2->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() };
+		LittleRingRectDown = { LittleFireRing->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
 			LittleFireRing->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() };
 
 		if (IntersectRect(&TmpRect, &CharacterRect, &Ring1RectDown) || IntersectRect(&TmpRect, &CharacterRect, &Ring2RectDown) || IntersectRect(&TmpRect, &CharacterRect, &LittleRingRectDown))
 		{
-                            			return true;	//부딪친 것에 대해 참을 반환한다
+			return CRASHED_OBJECT;	//부딪친 것에 대해 참을 반환한다
 		}
 	}
 
 	//{
-	//	
-	//	
-	//	
-	//	
-	//	
-	//	
-	//	
 	//	
 	//	BITMAP BitMapSize;
 	//	HBITMAP BitMapObstacle = NULL;
@@ -326,9 +337,31 @@ bool DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Charact
 	//	}
 	//}
 
+	//점수 증가 부분
+	if (User_Tmp >= FireRing1->GetLocationX() && User_Tmp <= FireRing1->GetLocationX() + MOVE_PIXEL && 
+		CharacterYLocation <= RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() && true == FireRing1->ReturnScoreSwitch())
+	{
+ 		Score_Tmp += SCORE_RING;
+		FireRing1->SwitchOffScore();
+	}
+       	
+	if (User_Tmp >= FireRing2->GetLocationX() && User_Tmp <= FireRing2->GetLocationX() + MOVE_PIXEL &&
+		CharacterYLocation <= RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() && true == FireRing2->ReturnScoreSwitch())
+	{
+		Score_Tmp += SCORE_RING;
+		FireRing2->SwitchOffScore();
+	}
+
+	if (User_Tmp >= LittleFireRing->GetLocationX() && User_Tmp <= LittleFireRing->GetLocationX() + MOVE_PIXEL &&
+		CharacterYLocation <= RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() && true == LittleFireRing->ReturnScoreSwitch())
+	{
+		Score_Tmp += SCORE_RING;
+		LittleFireRing->SwitchOffScore();
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	return false; //아무것도 안 부딪침
+	return Score_Tmp; //넘어간 장애물 수에 따라 증가시켜야 할 점수 결정
 }
 
 HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)
