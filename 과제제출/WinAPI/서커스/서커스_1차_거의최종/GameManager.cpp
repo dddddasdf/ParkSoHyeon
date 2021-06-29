@@ -66,7 +66,7 @@ void GameManager::ChangeCharacterYLocation()
 	case true:
 	{
 		m_PlayerData->ChangeYLocation(false);
-		if (HORIZON_CHARACTER <= m_PlayerData->ReturnCharacterYLocation())
+		if (LOCATION_CHARACTER_HORIZON <= m_PlayerData->ReturnCharacterYLocation())
 		{
 			m_IsHighest = false;
 			m_IsJumping = false;

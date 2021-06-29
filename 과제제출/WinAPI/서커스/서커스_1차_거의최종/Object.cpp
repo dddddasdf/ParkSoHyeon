@@ -15,7 +15,7 @@ Ring1::Ring1(HDC hdc, int X) : Object(hdc)
 	m_ObjectBitMap[HINDRANCE_RING_SECOND_2] = ResourceMgr->ReturnRingBitMapClass(HINDRANCE_RING_SECOND_2);
 
 	SetLocationX(X);
-	SetLocationY(RING_LOCATION_Y);
+	SetLocationY(LOCATION_RING_Y);
 
 	m_AnimationState = HINDRANCE_RING_FIRST_1;
 	m_IsLeft = true;
@@ -63,11 +63,11 @@ void Ring1::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	switch (m_IsLeft)
 	{
 	case true:
-		TransparentBlt(MemDCBack, GetLocationX() - ReturnMemberBitMapWidth() - CharacterLocationX, RING_LOCATION_Y, ReturnMemberBitMapWidth(),
+		TransparentBlt(MemDCBack, GetLocationX() - ReturnMemberBitMapWidth() - CharacterLocationX, LOCATION_RING_Y, ReturnMemberBitMapWidth(),
 			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 		break;
 	case false:
-		TransparentBlt(MemDCBack, GetLocationX() - CharacterLocationX, RING_LOCATION_Y, ReturnMemberBitMapWidth(),
+		TransparentBlt(MemDCBack, GetLocationX() - CharacterLocationX, LOCATION_RING_Y, ReturnMemberBitMapWidth(),
 			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 		break;
 	}
@@ -102,7 +102,7 @@ LittleRing::LittleRing(HDC hdc, int X) : Object(hdc)
 	m_ObjectBitMap[HINDRANCE_LITTLERING_2] = ResourceMgr->ReturnLittleRingBitMapClass(HINDRANCE_LITTLERING_2);
 
 	SetLocationX(X);
-	SetLocationY(RING_LOCATION_Y);
+	SetLocationY(LOCATION_RING_Y);
 
 	m_IsLeft = true;
 	m_IsGetScoreSwitch = true;
@@ -120,7 +120,7 @@ void LittleRing::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	{
 		m_BitMapNumberTmp = HINDRANCE_LITTLERING_1;
 		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
-		TransparentBlt(MemDCBack, GetLocationX() - ReturnMemberBitMapWidth() - CharacterLocationX, RING_LOCATION_Y, ReturnMemberBitMapWidth(),
+		TransparentBlt(MemDCBack, GetLocationX() - ReturnMemberBitMapWidth() - CharacterLocationX, LOCATION_RING_Y, ReturnMemberBitMapWidth(),
 			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 	}
 	break;
@@ -128,7 +128,7 @@ void LittleRing::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	{
 		m_BitMapNumberTmp = HINDRANCE_LITTLERING_2;
 		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
-		TransparentBlt(MemDCBack, GetLocationX() - CharacterLocationX, RING_LOCATION_Y, ReturnMemberBitMapWidth(),
+		TransparentBlt(MemDCBack, GetLocationX() - CharacterLocationX, LOCATION_RING_Y, ReturnMemberBitMapWidth(),
 			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 	}
 	break;
@@ -167,7 +167,7 @@ Cash::Cash(HDC hdc, int X) : Object(hdc)
 	*m_ObjectBitMap = ResourceMgr->ReturnCashBitMapClass();
 
 	SetLocationX(X);
-	SetLocationY(RING_LOCATION_Y + 25);
+	SetLocationY(LOCATION_RING_Y + 25);
 	
 	m_IsSwitchOn = true;
 }
@@ -284,7 +284,7 @@ void Character::DrawChracater(HDC MemDCBack, const int& CharacterLocationY, cons
 {
 	m_BitMapNumberTmp = MotionNumber;
 	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
-	TransparentBlt(MemDCBack, CHARACTER_LOCATION_X, CharacterLocationY - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), 
+	TransparentBlt(MemDCBack, LOCATION_CHARACTER_VERTICAL, CharacterLocationY - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), 
 		m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 }
 
@@ -297,11 +297,40 @@ Goal::Goal(HDC hdc, int X) : Object(hdc)
 
 	*m_ObjectBitMap = ResourceMgr->ReturnGoalBitMapClass();
 
-	SetLocationX(GOAL_LOCATION_X);
+	SetLocationX(LOCATION_GOAL_X);
 	SetLocationY(HORIZON_HEIGHT);
 }
 
 Goal::~Goal()
 {
 	delete[] m_ObjectBitMap;
+}
+
+
+
+
+Fire::Fire(HDC hdc, int X) : Object(hdc)
+{
+	m_ObjectBitMap = new BitMap[HINDRANCE_FIRE_2 + 1];	//번호 관리의 용이성을 위해 0번은 아무 것도 없는 더미
+
+	m_ObjectBitMap[HINDRANCE_FIRE_1] = ResourceMgr->ReturnRingBitMapClass(HINDRANCE_FIRE_1);
+	m_ObjectBitMap[HINDRANCE_FIRE_2] = ResourceMgr->ReturnRingBitMapClass(HINDRANCE_FIRE_2);
+
+	SetLocationX(X);
+	SetLocationY(LOCATION_RING_Y);
+
+	m_AnimationState = HINDRANCE_RING_FIRST_1;
+	m_IsGetScoreSwitch = true;
+}
+
+
+
+Fire::~Fire()
+{
+	delete[] m_ObjectBitMap;
+}
+
+void Fire::Draw(HDC MemDCBack, const int& CharacterLocationY)
+{
+
 }

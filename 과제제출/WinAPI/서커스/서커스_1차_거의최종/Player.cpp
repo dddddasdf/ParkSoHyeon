@@ -6,7 +6,7 @@ void Player::InitPlayer()
 	m_PlayerLife = PLAYER_LIFE;
 	m_PlayerScore = 0;
 	m_PlayerMotion = MOTION_STAND;
-	m_PlayerYLocation = HORIZON_CHARACTER;
+	m_PlayerYLocation = LOCATION_CHARACTER_HORIZON;
 	m_PlayerXLocation = 0;
 	m_PlayerDirection = DIRECTION_STAND;
 }
@@ -14,7 +14,7 @@ void Player::InitPlayer()
 void Player::DeadInit()
 {
 	m_PlayerMotion = MOTION_STAND;
-	m_PlayerYLocation = HORIZON_CHARACTER;
+	m_PlayerYLocation = LOCATION_CHARACTER_HORIZON;
 	m_PlayerXLocation = 0;
 	m_PlayerDirection = DIRECTION_STAND;
 }
@@ -41,8 +41,8 @@ void Player::ChangeYLocation(bool IsUp)
 	case false:
 		m_PlayerYLocation += JUMP_PIXEL;
 		{
-			if (HORIZON_CHARACTER < m_PlayerYLocation)
-				m_PlayerYLocation = HORIZON_CHARACTER;
+			if (LOCATION_CHARACTER_HORIZON < m_PlayerYLocation)
+				m_PlayerYLocation = LOCATION_CHARACTER_HORIZON;
 		}
 		break;
 	}

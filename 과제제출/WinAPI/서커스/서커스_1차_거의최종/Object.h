@@ -125,21 +125,20 @@ public:
 	~Goal();
 
 	void Update() override { }
+	void Draw(HDC MemDCBack, const int& CharacterLocationY) override {}
+};
+
+class Fire : public Object
+{
+private:
+	int m_AnimationState;	//애니메이션 관리를 위한 멤버 변수
+
+	bool m_IsGetScoreSwitch;	//점수 획득 관리를 위해서... 중복 획득하면 안 되므로 변수를 넣었다 돈주머니와 작동 원리 같음
+public:
+	Fire(HDC hdc, int X);
+	~Fire();
+
+	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationY) override;
 };
 
-//class Fire : public Object
-//{
-//private:
-//
-//public:
-//	void Draw();
-//};
-//
-//class Character : public Object
-//{
-//private:
-//
-//public:
-//
-//};

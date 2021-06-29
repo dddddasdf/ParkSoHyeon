@@ -145,6 +145,14 @@ BitMap ResourceManager::ReturnGoalBitMapClass()
 	return NewBitMapTmp;
 }
 
+BitMap ReturnPointBitMapClass()
+{
+	std::string FileNameTmp = "point";
+	BitMap NewBitMapTmp(FileNameTmp);
+
+	return NewBitMapTmp;
+}
+
 /*
 
 */

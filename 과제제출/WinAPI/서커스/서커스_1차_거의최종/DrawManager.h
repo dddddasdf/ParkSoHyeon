@@ -29,10 +29,13 @@ private:
 
 	HFONT m_FontCustomize;
 
+	Fire* FireObjects;
+
 	///////////////임시
 	RECT Ring1RectDown;
 	RECT Ring2RectDown;
 	RECT LittleRingRectDown;
+	RECT CharacterRect;
 
 	///////////////////////////////////////////////////이놈들 다 지울 예정
 
@@ -53,6 +56,8 @@ public:
 	bool IsCashCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
 	int IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//장애물과 부딪쳤는지, 뛰어넘었는지를 체크함
 	bool IsRingCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//고리와 부딪쳤는지 체크
+
+	void DrawGameOver();	//게임오버 화면 출력
 
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 

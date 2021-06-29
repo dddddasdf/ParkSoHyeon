@@ -16,20 +16,28 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//오브젝트 클래스 초기화
 
-	FireRing1 = new Ring1(hdc, DEFAULT_RING1_START);
-	FireRing2 = new Ring1(hdc, DEFAULT_RING2_START);
-	LittleFireRing = new LittleRing(hdc, DEFAULT_LITTLERING_START);
-	Cash1 = new Cash(hdc, DEFAULT_LITTLERING_START);
+	FireRing1 = new Ring1(hdc, LOCATION_RING1_START);
+	FireRing2 = new Ring1(hdc, LOCATION_RING2_START);
+	LittleFireRing = new LittleRing(hdc, LOCATION_LITTLERING_START);
+	Cash1 = new Cash(hdc, LOCATION_LITTLERING_START);
 	Map = new MapTile(hdc, NULL);
 	CharacterObject = new Character(hdc, NULL);
 
 
-	//간단한 비트맵 받아두기...
-
+	//간단한 비트맵 받아두기... 오브젝트로 빼야 할 필요가 없다고 판단해서 목숨 표시는 비트맵으로만 굴림
 	LifeImage = ResourceMgr->ReturnInterfaceBitMapClass(2);
 
-	//폰트 설정...
+	//폰트 설정... - 점수용
 	m_FontCustomize = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "돋움");
+
+	//화로 클래스 배열 초기화
+	int Tmp = (LOCATION_GOAL_X - FIRE_DISTANCE) / FIRE_DISTANCE;
+	FireObjects = new Fire[Tmp];	//벡터로 빼기
+	
+	for (int i = 1; i < (LOCATION_GOAL_X - FIRE_DISTANCE) / FIRE_DISTANCE; i++)
+	{
+		//
+	}
 
 
 	////////////////////아래놈들 다 지울 예정
@@ -69,10 +77,10 @@ void DrawManager::DeadInit()
 {
 	//X좌표만 처음 위치로 되돌려 주면 된다
 
-	FireRing1->SetLocationX(DEFAULT_RING1_START);
-	FireRing2->SetLocationX(DEFAULT_RING2_START);
-	LittleFireRing->SetLocationX(DEFAULT_LITTLERING_START);
-	Cash1->SetLocationX(DEFAULT_LITTLERING_START);
+	FireRing1->SetLocationX(LOCATION_RING1_START);
+	FireRing2->SetLocationX(LOCATION_RING2_START);
+	LittleFireRing->SetLocationX(LOCATION_LITTLERING_START);
+	Cash1->SetLocationX(LOCATION_LITTLERING_START);
 	Cash1->SwitchOnCash();
 }
 
@@ -143,7 +151,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 			-40이 있는 이유: 유저 뒷쪽에 있는 화로도 온전히 출력하기 위해서
 			*/
 
-			TransparentBlt(m_MemDCBack, i, HORIZON_FIRE - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
+			TransparentBlt(m_MemDCBack, i, LOCATION_FIRE_Y - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
 		}
 	}
 
@@ -183,7 +191,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	for (int i = Life; i > 0; i--)
 	{
 		(HBITMAP)SelectObject(MemDCObstacle, LifeImage.ReturnBitMap());
-		TransparentBlt(m_MemDCBack, LIFE_LOCATION_X - LifeImage.ReturnBitMapWidth() * i, LIFE_LOCATION_Y, LifeImage.ReturnBitMapWidth(), LifeImage.ReturnBitMapHeight(), 
+		TransparentBlt(m_MemDCBack, LOCATION_LIFE_X - LifeImage.ReturnBitMapWidth() * i, LOCATION_LIFE_Y, LifeImage.ReturnBitMapWidth(), LifeImage.ReturnBitMapHeight(), 
 			MemDCObstacle, 0, 0, LifeImage.ReturnBitMapWidth(), LifeImage.ReturnBitMapHeight(), RGB(255, 0, 255));
 	}
 
@@ -193,7 +201,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	SetTextColor(m_MemDCBack, RGB(255, 255,255));
 	SetBkMode(m_MemDCBack, TRANSPARENT);
 	std::string str = std::to_string(Score);
-	TextOut(m_MemDCBack, SCORE_LOCATION_X, SCORE_LOCATION_Y, str.c_str(), str.length());
+	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_SCORE_Y, str.c_str(), str.length());
 	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,6 +211,7 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	Rectangle(m_MemDCBack, Ring1RectDown.left, Ring1RectDown.top, Ring1RectDown.right, Ring1RectDown.bottom);
 	Rectangle(m_MemDCBack, Ring2RectDown.left, Ring2RectDown.top, Ring2RectDown.right, Ring2RectDown.bottom);
 	Rectangle(m_MemDCBack, LittleRingRectDown.left, LittleRingRectDown.top, LittleRingRectDown.right, LittleRingRectDown.bottom);
+	Rectangle(m_MemDCBack, CharacterRect.left, CharacterRect.top, CharacterRect.right, CharacterRect.bottom);
 #endif // Debug_Coll
 
 	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
@@ -231,15 +240,16 @@ bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterX
 	{
 		
 		RECT TmpRect;
-		RECT CharacterRect = { (CharacterXLocation + CHARACTER_LOCATION_X) + (CharacterObject->ReturnMemberBitMapWidth() * 0.5) - HITBOX_CHARACTER_WIDTH, CharacterYLocation - HITBOX_CHARACTER_HEIGHT_UP,
-			(CharacterXLocation + CHARACTER_LOCATION_X) + (CharacterObject->ReturnMemberBitMapWidth() * 0.5) + HITBOX_CHARACTER_WIDTH, CharacterYLocation - HITBOX_CHARACTER_HEIGHT_DOWN };
+		RECT CharacterRectCash = { (CharacterXLocation + LOCATION_CHARACTER_VERTICAL) + (LONG)(CharacterObject->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_CHARACTER_WIDTH, 
+			CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight(),
+			(CharacterXLocation + LOCATION_CHARACTER_VERTICAL) + (LONG)(CharacterObject->ReturnMemberBitMapWidth() * 0.5f) + HITBOX_CHARACTER_WIDTH, CharacterYLocation - HITBOX_CHARACTER_HEIGHT_DOWN };
 		//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
 		//↑유저 사각형
 		
 		RECT CashRect = { Cash1->GetLocationX() - (Cash1->ReturnMemberBitMapWidth() * 0.5f), Cash1->GetLocationY(),
 			Cash1->GetLocationX() + (Cash1->ReturnMemberBitMapWidth() * 0.5f), Cash1->GetLocationY() + Cash1->ReturnMemberBitMapHeight() };
 
-		if (IntersectRect(&TmpRect, &CharacterRect, &CashRect))
+		if (IntersectRect(&TmpRect, &CharacterRectCash, &CashRect))
 		{
 			Cash1->SwitchOffCash();	//부딪쳤으면 돈주머니 스위치 끄기
 			return true;
@@ -251,12 +261,12 @@ bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterX
 int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {
 	RECT TmpRect;
-	RECT CharacterRect = { CharacterXLocation + CHARACTER_LOCATION_X, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight(),
-		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + CHARACTER_LOCATION_X * 0.5f, CharacterYLocation };	//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
+	CharacterRect = { CharacterXLocation + LOCATION_CHARACTER_VERTICAL, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight() + HITBOX_CHARACTER_HEIGHT_UP,
+		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + (LONG)(LOCATION_CHARACTER_VERTICAL * 0.5f), CharacterYLocation - HITBOX_CHARACTER_HEIGHT_DOWN };	//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
 	//↑유저 사각형
 
 	int Score_Tmp = 0;	//넘은 장애물 수에 따라 보내줄 점수 임시
-	int User_Tmp = CharacterXLocation + CHARACTER_LOCATION_X + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;
+	int User_Tmp = CharacterXLocation + LOCATION_CHARACTER_VERTICAL + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -284,12 +294,12 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 	//고리와 부딪쳤는지 체크함
 	//고리는 윗부분 아랫부분으로 쪼개서 그 둘과 부딪쳤는지 체크한다
 	{
-		Ring1RectDown = { FireRing1->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
-		FireRing1->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() };
-		Ring2RectDown = { FireRing2->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
-		FireRing2->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() };
-		LittleRingRectDown = { LittleFireRing->GetLocationX() - HITBOX_RING_WIDTH, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
-			LittleFireRing->GetLocationX() + HITBOX_RING_WIDTH, RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() };
+		Ring1RectDown = { FireRing1->GetLocationX() - HITBOX_RING_WIDTH, LOCATION_RING_Y + FireRing1->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
+		FireRing1->GetLocationX() + HITBOX_RING_WIDTH, LOCATION_RING_Y + FireRing1->ReturnMemberBitMapHeight() };
+		Ring2RectDown = { FireRing2->GetLocationX() - HITBOX_RING_WIDTH, LOCATION_RING_Y + FireRing2->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
+		FireRing2->GetLocationX() + HITBOX_RING_WIDTH, LOCATION_RING_Y + FireRing2->ReturnMemberBitMapHeight() };
+		LittleRingRectDown = { LittleFireRing->GetLocationX() - HITBOX_RING_WIDTH, LOCATION_RING_Y + LittleFireRing->ReturnMemberBitMapHeight() - HITBOX_RING_HEIGHT,
+			LittleFireRing->GetLocationX() + HITBOX_RING_WIDTH, LOCATION_RING_Y + LittleFireRing->ReturnMemberBitMapHeight() };
 
 		if (IntersectRect(&TmpRect, &CharacterRect, &Ring1RectDown) || IntersectRect(&TmpRect, &CharacterRect, &Ring2RectDown) || IntersectRect(&TmpRect, &CharacterRect, &LittleRingRectDown))
 		{
@@ -339,21 +349,21 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 
 	//점수 증가 부분
 	if (User_Tmp >= FireRing1->GetLocationX() && User_Tmp <= FireRing1->GetLocationX() + MOVE_PIXEL && 
-		CharacterYLocation <= RING_LOCATION_Y + FireRing1->ReturnMemberBitMapHeight() && true == FireRing1->ReturnScoreSwitch())
+		CharacterYLocation <= LOCATION_RING_Y + FireRing1->ReturnMemberBitMapHeight() && true == FireRing1->ReturnScoreSwitch())
 	{
  		Score_Tmp += SCORE_RING;
 		FireRing1->SwitchOffScore();
 	}
        	
 	if (User_Tmp >= FireRing2->GetLocationX() && User_Tmp <= FireRing2->GetLocationX() + MOVE_PIXEL &&
-		CharacterYLocation <= RING_LOCATION_Y + FireRing2->ReturnMemberBitMapHeight() && true == FireRing2->ReturnScoreSwitch())
+		CharacterYLocation <= LOCATION_RING_Y + FireRing2->ReturnMemberBitMapHeight() && true == FireRing2->ReturnScoreSwitch())
 	{
 		Score_Tmp += SCORE_RING;
 		FireRing2->SwitchOffScore();
 	}
 
 	if (User_Tmp >= LittleFireRing->GetLocationX() && User_Tmp <= LittleFireRing->GetLocationX() + MOVE_PIXEL &&
-		CharacterYLocation <= RING_LOCATION_Y + LittleFireRing->ReturnMemberBitMapHeight() && true == LittleFireRing->ReturnScoreSwitch())
+		CharacterYLocation <= LOCATION_RING_Y + LittleFireRing->ReturnMemberBitMapHeight() && true == LittleFireRing->ReturnScoreSwitch())
 	{
 		Score_Tmp += SCORE_RING;
 		LittleFireRing->SwitchOffScore();

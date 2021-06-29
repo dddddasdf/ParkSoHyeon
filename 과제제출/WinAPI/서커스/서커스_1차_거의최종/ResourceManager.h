@@ -24,6 +24,7 @@ public:
 	BitMap ReturnMapTileBitMapClass(const int& ImageNumber);
 	BitMap ReturnInterfaceBitMapClass(const int& ImageNumber);
 	BitMap ReturnGoalBitMapClass();
+	BitMap ReturnPointBitMapClass();
 };
 
 #define ResourceMgr ResourceManager::GetInstance()
