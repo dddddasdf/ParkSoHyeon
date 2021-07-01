@@ -145,9 +145,17 @@ BitMap ResourceManager::ReturnGoalBitMapClass()
 	return NewBitMapTmp;
 }
 
-BitMap ReturnPointBitMapClass()
+BitMap ResourceManager::ReturnPointBitMapClass()
 {
 	std::string FileNameTmp = "point";
+	BitMap NewBitMapTmp(FileNameTmp);
+
+	return NewBitMapTmp;
+}
+
+BitMap ResourceManager::ReturnFireBitMapClass(const int& ImageNumber)
+{
+	std::string FileNameTmp = "fire_" + std::to_string(ImageNumber);
 	BitMap NewBitMapTmp(FileNameTmp);
 
 	return NewBitMapTmp;

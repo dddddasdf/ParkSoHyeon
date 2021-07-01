@@ -30,6 +30,7 @@ private:
 	HFONT m_FontCustomize;
 
 	Fire* FireObjects;
+	std::vector <Fire*> m_FireVector;
 
 	///////////////임시
 	RECT Ring1RectDown;
@@ -37,19 +38,10 @@ private:
 	RECT LittleRingRectDown;
 	RECT CharacterRect;
 
-	///////////////////////////////////////////////////이놈들 다 지울 예정
-
-
-	std::vector <int> m_ObstacleFireXLocation;	//장애물-화로의 X좌표를 저장하는 벡터<-막상 해보니까 이거 쓸 필요가 없었네 일단 더미로 남겨둠
-	int m_FireAnimation;	//화로 애니메이션 조정을 위한 멤버변수
-
-
-	int m_FireSizeWidth;	//화로 가로 크기
-	int m_FireSizeHeight;	//화로 세로 크기
 public:
 	void Init(HWND hWnd, HDC hdc);
 	void DeadInit();	//아무튼 부딪쳐서 죽었을 때 일부분 초기화
-	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score);
+	void DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score, const int& BonusScore);
 
 	void MoveRings(float MovingRingPixel, float MovingLittleRingPixel, int CharacterLocationX);	//링 위치 바꿔주기
 

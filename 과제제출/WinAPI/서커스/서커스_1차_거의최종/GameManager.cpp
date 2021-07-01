@@ -10,6 +10,7 @@ void GameManager::WholeInit(HWND hWnd, HDC hdc)
 	m_IsHighest = false;
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
+	m_BonusScore = BONUS_SCORE;
 }
 
 void GameManager::PartialInit()
@@ -22,6 +23,7 @@ void GameManager::PartialInit()
 	m_IsHighest = false;
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
+	m_BonusScore = BONUS_SCORE;
 }
 
 void GameManager::MovingCharacter(const int& Key)

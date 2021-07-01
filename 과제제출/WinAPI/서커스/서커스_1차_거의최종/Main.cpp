@@ -33,6 +33,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	float CharacterFrame = 0;	//캐릭터 프레임 제어용
 	float JumpCounter = 0;	//점프 프레임 제어용
 	float DeadCounter = 0;	//사망시 시간 멈추기 제어용
+	float BonusCounter = 0;	//보너스 점수 차감 제어용
 
 	srand(unsigned(time(NULL)));
 
@@ -78,6 +79,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 
 					CharacterFrame += elapsed;
 					JumpCounter += elapsed;
+					BonusCounter += elapsed;
 
 					if (0.02f <= JumpCounter)
 					{
@@ -106,6 +108,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						자세한 내막은 GameManager의 StandCharacter() 함수로...
 						*/
 						CharacterFrame = 0;
+					}
+
+					if (0.5f <= BonusCounter)
+					{
+						//보너스 점수 제어용
+
+						GameMgr->MinusBonusScore();
+						BonusCounter = 0;
 					}
 
 					GameMgr->CollisionCheck();	//충돌 체크 함수

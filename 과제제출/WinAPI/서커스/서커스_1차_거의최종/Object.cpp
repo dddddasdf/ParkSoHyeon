@@ -288,6 +288,10 @@ void Character::DrawChracater(HDC MemDCBack, const int& CharacterLocationY, cons
 		m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 }
 
+void Character::DrawCharacter(HDC MemDCBack, const int& CharacterLocationX, const int& CharacterLocationY, const int& MotionNumber)
+{
+
+}
 
 
 
@@ -313,13 +317,13 @@ Fire::Fire(HDC hdc, int X) : Object(hdc)
 {
 	m_ObjectBitMap = new BitMap[HINDRANCE_FIRE_2 + 1];	//번호 관리의 용이성을 위해 0번은 아무 것도 없는 더미
 
-	m_ObjectBitMap[HINDRANCE_FIRE_1] = ResourceMgr->ReturnRingBitMapClass(HINDRANCE_FIRE_1);
-	m_ObjectBitMap[HINDRANCE_FIRE_2] = ResourceMgr->ReturnRingBitMapClass(HINDRANCE_FIRE_2);
+	m_ObjectBitMap[HINDRANCE_FIRE_1] = ResourceMgr->ReturnFireBitMapClass(HINDRANCE_FIRE_1);
+	m_ObjectBitMap[HINDRANCE_FIRE_2] = ResourceMgr->ReturnFireBitMapClass(HINDRANCE_FIRE_2);
 
 	SetLocationX(X);
-	SetLocationY(LOCATION_RING_Y);
+	SetLocationY(LOCATION_FIRE_Y);
 
-	m_AnimationState = HINDRANCE_RING_FIRST_1;
+	m_AnimationState = HINDRANCE_FIRE_1;
 	m_IsGetScoreSwitch = true;
 }
 
@@ -330,7 +334,28 @@ Fire::~Fire()
 	delete[] m_ObjectBitMap;
 }
 
-void Fire::Draw(HDC MemDCBack, const int& CharacterLocationY)
+void Fire::Draw(HDC MemDCBack, const int& CharacterLocationX)
 {
+	switch (m_AnimationState)
+	{
+	case HINDRANCE_FIRE_1:
+		{
+			m_BitMapNumberTmp = HINDRANCE_FIRE_1;
+			m_AnimationState = HINDRANCE_FIRE_2;
+		}
+		break;
+	case HINDRANCE_FIRE_2:
+		{
+			m_BitMapNumberTmp = HINDRANCE_FIRE_2;
+			m_AnimationState = HINDRANCE_FIRE_1;
+		}
+		break;
+	}
 
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+
+	TransparentBlt(MemDCBack, GetLocationX() - CharacterLocationX - LOCATION_CHARACTER_VERTICAL, LOCATION_FIRE_Y - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(),
+		ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+
+	//캐릭터가 화로를 지나가도 화로 위치가 완전히 화면 밖을 벗어나기 전까지는 화로가 출력되도록 LOCATION_CHARACTER_VERTICAL을 보정값
 }

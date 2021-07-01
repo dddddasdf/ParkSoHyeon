@@ -113,7 +113,8 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationY) override {  }	//받아야 하는 매개변수가 다른 관계로 더미
-	void DrawChracater(HDC MemDCBack, const int& CharacterLocationY, const int& MotionNumber);
+	void DrawChracater(HDC MemDCBack, const int& CharacterLocationY, const int& MotionNumber);	//골 도착하기 한참 전에 사용하는 함수
+	void DrawCharacter(HDC MemDCBack, const int& CharacterLocationX, const int& CharacterLocationY, const int& MotionNumber);	//골 도착하기 직전에 사용하는 함수-오버로드
 };
 
 class Goal : public Object
@@ -125,7 +126,7 @@ public:
 	~Goal();
 
 	void Update() override { }
-	void Draw(HDC MemDCBack, const int& CharacterLocationY) override {}
+	void Draw(HDC MemDCBack, const int& CharacterLocationX) override {}
 };
 
 class Fire : public Object
@@ -139,6 +140,10 @@ public:
 	~Fire();
 
 	void Update() override { }
-	void Draw(HDC MemDCBack, const int& CharacterLocationY) override;
+	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	
+	bool ReturnScoreSwitch() { return m_IsGetScoreSwitch; }
+	void SwitchOffScore() { m_IsGetScoreSwitch = false; }
+	void SwitchOnScore() { m_IsGetScoreSwitch = true; }
 };
 

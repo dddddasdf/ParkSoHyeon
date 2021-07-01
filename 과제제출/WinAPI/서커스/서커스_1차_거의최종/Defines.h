@@ -18,6 +18,7 @@
 #define LITTLERING_BACK 3500	//작은 고리가 화면 뒤쪽으로 돌아갈때 얼마나 보내버릴지
 #define CRASHED_NOT 0	//아무것도 안 부딪침
 #define CRASHED_OBJECT -1	//화로나 고리와 부딪침
+#define BONUS_SCORE 10000
 
 enum DIRECTION
 {
@@ -89,8 +90,10 @@ enum HITBOX
 	HITBOX_RING_WIDTH = 5,	//고리 충돌 판정을 갖는 좌우 픽셀 길이
 	HITBOX_RING_HEIGHT = 5,	//고리 충돌 판정을 갖는 상하 픽셀 길이
 	HITBOX_CHARACTER_WIDTH = 20,
-	HITBOX_CHARACTER_HEIGHT_UP = 20,
+	HITBOX_CHARACTER_HEIGHT_UP = 10,
 	HITBOX_CHARACTER_HEIGHT_DOWN = 25,
+	HITBOX_FIRE_UP = 45,
+	HITBOX_FIRE_WIDTH = 20
 	//히트박스 크기 관리를 위한 곳
 };
 
@@ -111,8 +114,10 @@ enum LOCATION
 	LOCATION_LIFE_X = 950,	//목숨 표시 위치 X좌표
 	LOCATION_LIFE_Y = 500,	//목숨 표시 위치 Y좌표
 	LOCATION_FIRE_Y = 398,	//화로 놓여 있는 Y축의 값
-	LOCATION_SCORE_X = 150,	//점수 표시 X위치
+	LOCATION_SCORE_X = 170,	//점수 표시 X위치
 	LOCATION_SCORE_Y = 475,	//점수 표시 Y위치
+	LOCATION_BONUS_SCORE_X = 100,	//보너스 점수 표시 X위치
+	LOCATION_BONUS_SCORE_Y = 520,	//보너스 점수 표시 X위치
 	LOCATION_RING1_START = 700,	//첫번째 고리 시작 위치
 	LOCATION_RING2_START = 2000,	//두번째 고리 시작 위치
 	LOCATION_LITTLERING_START = 3500,	//작은 고리 시작 위치

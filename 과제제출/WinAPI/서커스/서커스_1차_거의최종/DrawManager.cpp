@@ -30,46 +30,12 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 	//폰트 설정... - 점수용
 	m_FontCustomize = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "돋움");
 
-	//화로 클래스 배열 초기화
-	int Tmp = (LOCATION_GOAL_X - FIRE_DISTANCE) / FIRE_DISTANCE;
-	FireObjects = new Fire[Tmp];	//벡터로 빼기
+	//화로 클래스 배열(벡터0 초기화
 	
 	for (int i = 1; i < (LOCATION_GOAL_X - FIRE_DISTANCE) / FIRE_DISTANCE; i++)
 	{
-		//
-	}
-
-
-	////////////////////아래놈들 다 지울 예정
-
-	
-	{
-		//각 이미지 사이즈 미리 구해놓기
-		HBITMAP HBitmapTmp;
-		BITMAP BitmapTmp;
-
-		HBitmapTmp = ResourceMgr->ReturnBackgroundImage(BACKGROUND_FLOOR);
-		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
-
-
-
-		HBitmapTmp = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_1);
-		GetObject(HBitmapTmp, sizeof(BITMAP), &BitmapTmp);
-
-		m_FireSizeWidth = BitmapTmp.bmWidth;
-		m_FireSizeHeight = BitmapTmp.bmHeight;	//화로 사이즈
-	}
-
-
-	{
-		////화로 X좌표 벡터 저장
-		//if (!m_ObstacleFireXLocation.empty())
-		//	m_ObstacleFireXLocation.clear();	//이거 지금 안 쓰는 중임
-		//
-		//for (int i = FIRE_DISTANCE; i <= END_OF_MAP; i += FIRE_DISTANCE)
-		//	m_ObstacleFireXLocation.push_back(i);	//화로는 500픽셀 간격으로 배치되어 있다
-
-		m_FireAnimation = OBSTACLE_FIRE_1;	//겸사겸사 화로 애니메이션을 위한 멤버변수도 초기화
+		Fire *fire = new Fire(m_MemDCBack, FIRE_DISTANCE * i);
+		m_FireVector.push_back(fire);
 	}
 }
 
@@ -81,17 +47,27 @@ void DrawManager::DeadInit()
 	FireRing2->SetLocationX(LOCATION_RING2_START);
 	LittleFireRing->SetLocationX(LOCATION_LITTLERING_START);
 	Cash1->SetLocationX(LOCATION_LITTLERING_START);
-	Cash1->SwitchOnCash();
+	Cash1->SwitchOnCash();	//점수 스위치 초기화
+
+	//화로 점수 스위치 초기화
+	for (int i = 0; i < ((LOCATION_GOAL_X - FIRE_DISTANCE) / FIRE_DISTANCE) - 1; i++)
+	{
+		(m_FireVector.at(i))->SwitchOnScore();
+	}
 }
 
-void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score)
+void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score, const int& BonusScore)
 {	
+	if (m_WindowWidth >= LOCATION_GOAL_X - CharacterXLocation)
+	{
+		//골이 보이기 시작할 경우에 대하여...... 스크롤 제어를 위한 부분
+	}
+	
+	
 	//본 화면
 	
 	HBITMAP BitMapBack = CreateDIBSectionRe(hdc, m_WindowWidth, m_WindowHeight);
 	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(m_MemDCBack, BitMapBack);
-
-	BITMAP BitMapImageSize;	//이미지 파일 크기를 구하기 위한 비트맵
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -127,32 +103,12 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 	//화로 그림
 	{
-		switch (m_FireAnimation)
-		{
-		case OBSTACLE_FIRE_1:
-			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_1);
-			m_FireAnimation = OBSTACLE_FIRE_2;	//비트맵을 받아온 다음 애니메이션 관리 변수를 미리 다음 걸로 교체해서 다음 프레임 출력 때 바로바로 변경된 변수가 되도록 한다
-			break;
-		case OBSTACLE_FIRE_2:
-			BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_FIRE_2);
-			m_FireAnimation = OBSTACLE_FIRE_1;
-			break;
-		}
+		int Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 출력해야 하는지 알기 위해 임시로 변수 구함
 
-		OlbBitMapObstacle = (HBITMAP)SelectObject(MemDCObstacle, BitMapObstacle);
-
-		for (int i = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40; i <= m_WindowWidth; i += FIRE_DISTANCE)
-		{
-			//일정 간격으로 화로 출력
-			/*
-			유저의 맵에서의 X좌표를 기준으로 출력하게끔 한다. 화로는 영점에서부터 600 간격으로 놓여져 있다... 유저의 위치를 화로 간격으로 나눈 나머지값을 통해 다음 화로까지의 거리를 구하여
-			출력한다
-
-			-40이 있는 이유: 유저 뒷쪽에 있는 화로도 온전히 출력하기 위해서
-			*/
-
-			TransparentBlt(m_MemDCBack, i, LOCATION_FIRE_Y - m_FireSizeWidth, m_FireSizeWidth, m_FireSizeHeight, MemDCObstacle, 0, 0, m_FireSizeWidth, m_FireSizeHeight, RGB(255, 0, 255));
-		}
+		(m_FireVector.at(Tmp))->Draw(m_MemDCBack, CharacterXLocation);
+		(m_FireVector.at(Tmp + 1))->Draw(m_MemDCBack, CharacterXLocation);
+		(m_FireVector.at(Tmp + 2))->Draw(m_MemDCBack, CharacterXLocation);
+		//한 번에 3개만 출력하면 된다
 	}
 
 	//장애물 그리는 파트1 끝
@@ -180,8 +136,6 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	}
 
 
-	SelectObject(MemDCObstacle, OlbBitMapObstacle);
-
 	//장애물 그리는 파트2 끝
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,6 +156,8 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	SetBkMode(m_MemDCBack, TRANSPARENT);
 	std::string str = std::to_string(Score);
 	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_SCORE_Y, str.c_str(), str.length());
+	str = "Bonus: " + std::to_string(BonusScore);
+	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
 	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,23 +227,23 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//화로와 부딪쳤는지 체크함
-	//{
-	//	int FireXLocation = FIRE_DISTANCE - (CharacterXLocation % FIRE_DISTANCE) - 40 + CharacterXLocation - m_FireSizeWidth + 25;
+	int Fire_Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 충돌 체크 해야 하는지 임시로 변수 구함
+	{
+		RECT FireRectLeft = { m_FireVector.at(Fire_Tmp)->GetLocationX() + (m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL,
+			LOCATION_FIRE_Y - HITBOX_FIRE_UP,
+			m_FireVector.at(Fire_Tmp)->GetLocationX() + (m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapWidth() * 0.5f) + HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL,
+			LOCATION_FIRE_Y };
+		RECT FireRectRight = { m_FireVector.at(Fire_Tmp + 1)->GetLocationX() + (m_FireVector.at(Fire_Tmp + 1)->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL, 
+			LOCATION_FIRE_Y - HITBOX_FIRE_UP,
+			m_FireVector.at(Fire_Tmp + 1)->GetLocationX() + (m_FireVector.at(Fire_Tmp + 1)->ReturnMemberBitMapWidth() * 0.5f) + HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL, LOCATION_FIRE_Y };
 
-	//	RECT FireRectLeft = { FireXLocation, HORIZON_FIRE - m_FireSizeHeight + 10, FireXLocation + m_FireSizeWidth - 15, HORIZON_FIRE };
-	//	RECT FireRectRight = { FireXLocation + FIRE_DISTANCE, HORIZON_FIRE - m_FireSizeHeight + 10, (FireXLocation + FIRE_DISTANCE) + m_FireSizeWidth - 15, HORIZON_FIRE };
-	//	//버그가 아닌 이상 유저 앞의 두번째 화로와 부딪칠 일은 없으므로 유저 뒷쪽의 화로 하나 오른쪽의 화로 하나만 체크하면 될지도 모름
-	//	//판정 너무 빡세서 상수 조금씩 보태가며 보정해주는 중임...
+		if (IntersectRect(&TmpRect, &CharacterRect, &FireRectLeft) || IntersectRect(&TmpRect, &CharacterRect, &FireRectRight))
+		{
+			return CRASHED_OBJECT;	//부딪친 것에 대해 참을 반환한다
+		}
 
-	//	if (IntersectRect(&TmpRect, &CharacterRect, &FireRectLeft))
-	//	{
-	//		return true;	//부딪친 것에 대해 참을 반환한다
-	//	}
-	//	if (IntersectRect(&TmpRect, &PlayerRect, &FireRectRight))
-	//	{
-	//		return true;	//부딪친 것에 대해 참을 반환한다
-	//	}
-	//}
+		//LOCATION_CHARACTER_VERTICAL는 위치에 대한 보정값
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -307,45 +263,6 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 		}
 	}
 
-	//{
-	//	
-	//	BITMAP BitMapSize;
-	//	HBITMAP BitMapObstacle = NULL;
-	//	switch (m_RingAnimation)
-	//	{
-	//	case OBSTACLE_RING_FIRST_1:
-	//		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_FIRST_1);
-	//		break;
-	//	case OBSTACLE_RING_SECOND_1:
-	//		BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_RING_SECOND_1);
-	//		break;
-	//	}
-
-	//	GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
-	//	int RingSizeY = BitMapImageSize.bmHeight;
-
-	//	RECT Ring1RectUp = { m_Ring1XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y, m_Ring1XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y - RING_COLLISION_HEIGHT_PIEXL };
-	//	RECT Ring1RectDown = { m_Ring1XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY - RING_COLLISION_HEIGHT_PIEXL,
-	//		m_Ring1XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY };
-	//	RECT Ring2RectUp = { m_Ring2XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y, m_Ring2XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y - RING_COLLISION_HEIGHT_PIEXL };
-	//	RECT Ring2RectDown = { m_Ring2XLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY - RING_COLLISION_HEIGHT_PIEXL,
-	//		m_Ring2XLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY };
-
-	//	BitMapObstacle = ResourceMgr->ReturnObstacleImage(OBSTACLE_LITTLERING_1);
-
-	//	GetObject(BitMapObstacle, sizeof(BITMAP), &BitMapImageSize);	//고리 비트맵 사이즈 구함
-	//	RingSizeY = BitMapImageSize.bmHeight;
-
-	//	RECT LittleRingRectUp = { m_LittleRingXLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y, m_LittleRingXLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y - RING_COLLISION_HEIGHT_PIEXL };
-	//	RECT LittleRingRectDown = { m_LittleRingXLocation - RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY - RING_COLLISION_HEIGHT_PIEXL,
-	//		m_LittleRingXLocation + RING_COLLISION_WIDTH_PIEXL, RING_LOCATION_Y + RingSizeY };
-
-	//	if (IntersectRect(&TmpRect, &PlayerRect, &Ring1RectUp) || IntersectRect(&TmpRect, &PlayerRect, &Ring1RectDown) || IntersectRect(&TmpRect, &PlayerRect, &Ring2RectUp)
-	//	|| IntersectRect(&TmpRect, &PlayerRect, &Ring2RectDown) || IntersectRect(&TmpRect, &PlayerRect, &LittleRingRectUp) || IntersectRect(&TmpRect, &PlayerRect, &LittleRingRectDown))
-	//	{
-	//		return true;	//부딪친 것에 대해 참을 반환한다
-	//	}
-	//}
 
 	//점수 증가 부분
 	if (User_Tmp >= FireRing1->GetLocationX() && User_Tmp <= FireRing1->GetLocationX() + MOVE_PIXEL && 
@@ -367,6 +284,13 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 	{
 		Score_Tmp += SCORE_RING;
 		LittleFireRing->SwitchOffScore();
+	}
+
+	if (User_Tmp >= m_FireVector.at(Fire_Tmp)->GetLocationX() - LOCATION_CHARACTER_VERTICAL && User_Tmp <= m_FireVector.at(Fire_Tmp)->GetLocationX() + MOVE_PIXEL &&
+		CharacterYLocation <= LOCATION_FIRE_Y + m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapHeight() - LOCATION_CHARACTER_VERTICAL && true == m_FireVector.at(Fire_Tmp)->ReturnScoreSwitch())
+	{
+		Score_Tmp += SCORE_RING;
+		m_FireVector.at(Fire_Tmp)->SwitchOffScore();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

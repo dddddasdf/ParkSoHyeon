@@ -17,6 +17,8 @@ private:
 	int m_MovingDirection;	//링 위치 조절을 위한 방향 저장 멤버 변수
 
 	bool m_IsDeadTrigger;	//사망 상태일 경우 화면 갱신을 잠시 멈추기 위한 변수, 살아있을 때는 true 죽었을 때는 false
+
+	int m_BonusScore;	//보너스 점수
 public:
 	void WholeInit(HWND hWnd, HDC hdc);	//전체 초기화 총괄
 	void PartialInit();	//화로나 고리에 부딪쳤을시 일부분 초기화
@@ -29,10 +31,11 @@ public:
 	bool ReturnIsDead() { return m_IsDeadTrigger; }
 
 	void CalculateRings(float elapsed);
+	void MinusBonusScore() { if (m_BonusScore > 0) m_BonusScore -= 10; }
 
 	void CollisionCheck();	//충돌 체크 총괄
 	void DrawCharacterOrder(HDC *hdc, HWND hWnd) { DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation(), 
-		m_PlayerData->ReturnLife(), m_PlayerData->ReturnScore()); }
+		m_PlayerData->ReturnLife(), m_PlayerData->ReturnScore(), m_BonusScore); }
 };
 
 #define GameMgr GameManager::GetInstance()
