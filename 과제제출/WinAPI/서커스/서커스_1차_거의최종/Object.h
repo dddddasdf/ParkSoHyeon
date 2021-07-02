@@ -20,6 +20,7 @@ public:
 
 	virtual void Update() = 0;
 	virtual void Draw(HDC MemDCBack, const int& CharacterLocationX) = 0;
+	virtual void DrawFinal(HDC MemDCBack, const int& WindowWidth) = 0;
 
 	int GetLocationX() { return m_LocationX; }
 	int GetLocationY() { return m_LocationY; }
@@ -45,6 +46,7 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	void DrawFinal(HDC MemDCBack, const int& WindowWidth) override;
 
 	void RingMoving(const int& MovePixel, const int& CharacterLocationX);
 	bool ReturnScoreSwitch() { return m_IsGetScoreSwitch; }
@@ -62,6 +64,7 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	void DrawFinal(HDC MemDCBack, const int& WindowWidth) override;
 
 	void RingMoving(const int& MovePixel, const int& CharacterLocationX);
 	bool ReturnScoreSwitch() { return m_IsGetScoreSwitch; }
@@ -78,6 +81,7 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	void DrawFinal(HDC MemDCBack, const int& WindowWidth) override;
 
 	void CashMoving(const int& MovePixel, const int& CharacterLocationX);
 
@@ -101,6 +105,7 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	void DrawFinal(HDC MemDCBack, const int& WindowWidth) override;
 };
 
 class Character : public Object
@@ -113,8 +118,9 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationY) override {  }	//받아야 하는 매개변수가 다른 관계로 더미
+	virtual void DrawFinal(HDC MemDCBack, const int& MapWidth) override {  }	//이상 동문
 	void DrawChracater(HDC MemDCBack, const int& CharacterLocationY, const int& MotionNumber);	//골 도착하기 한참 전에 사용하는 함수
-	void DrawCharacter(HDC MemDCBack, const int& CharacterLocationX, const int& CharacterLocationY, const int& MotionNumber);	//골 도착하기 직전에 사용하는 함수-오버로드
+	void DrawCharacterFinal(HDC MemDCBack, const int& CharacterLocationX, const int& CharacterLocationY, const int& MotionNumber);	//골직전에 쓰는 함수
 };
 
 class Goal : public Object
@@ -126,7 +132,8 @@ public:
 	~Goal();
 
 	void Update() override { }
-	void Draw(HDC MemDCBack, const int& CharacterLocationX) override {}
+	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	void DrawFinal(HDC MemDCBack, const int& WindowWidth) override;
 };
 
 class Fire : public Object
@@ -141,6 +148,7 @@ public:
 
 	void Update() override { }
 	void Draw(HDC MemDCBack, const int& CharacterLocationX) override;
+	void DrawFinal(HDC MemDCBack, const int& WindowWidth) override;
 	
 	bool ReturnScoreSwitch() { return m_IsGetScoreSwitch; }
 	void SwitchOffScore() { m_IsGetScoreSwitch = false; }

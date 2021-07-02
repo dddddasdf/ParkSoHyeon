@@ -19,6 +19,7 @@
 #define CRASHED_NOT 0	//아무것도 안 부딪침
 #define CRASHED_OBJECT -1	//화로나 고리와 부딪침
 #define BONUS_SCORE 10000
+#define MAP_WIDTH 5000	//전체 맵길이
 
 enum DIRECTION
 {
@@ -75,6 +76,8 @@ enum HINDRANCE
 	HINDRANCE_LITTLERING_1 = 1,
 	HINDRANCE_LITTLERING_2 = 2,
 	HINDRANCE_CASH
+
+	//장애물 타일 관리 번호
 };
 
 enum OBSTACLE_ANIMATION
@@ -83,6 +86,8 @@ enum OBSTACLE_ANIMATION
 	ANIMATION_RING_2 = 1,
 	ANIMATION_FIRE_1 = 0,
 	ANIMATION_FIRE_2 = 1
+
+	//고리, 화로 애니메이션 관리 번호
 };
 
 enum HITBOX
@@ -94,6 +99,7 @@ enum HITBOX
 	HITBOX_CHARACTER_HEIGHT_DOWN = 25,
 	HITBOX_FIRE_UP = 45,
 	HITBOX_FIRE_WIDTH = 20
+
 	//히트박스 크기 관리를 위한 곳
 };
 
@@ -121,7 +127,7 @@ enum LOCATION
 	LOCATION_RING1_START = 700,	//첫번째 고리 시작 위치
 	LOCATION_RING2_START = 2000,	//두번째 고리 시작 위치
 	LOCATION_LITTLERING_START = 3500,	//작은 고리 시작 위치
-	LOCATION_GOAL_X = 20000	//골인 지점 위치
+	LOCATION_GOAL_X = 4900	//골인 지점 위치
 
 	//매크로로 설정해둔 위치 좌표들 전부 여기다가 박아둘 예정
 };

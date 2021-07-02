@@ -29,6 +29,8 @@ private:
 
 	HFONT m_FontCustomize;
 
+	Goal* GoalObject;
+
 	Fire* FireObjects;
 	std::vector <Fire*> m_FireVector;
 

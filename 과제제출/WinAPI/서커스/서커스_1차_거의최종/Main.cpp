@@ -118,7 +118,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						BonusCounter = 0;
 					}
 
-					GameMgr->CollisionCheck();	//충돌 체크 함수
+					//GameMgr->CollisionCheck();	//충돌 체크 함수
 
 					GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
 					GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
@@ -126,17 +126,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 			}
 			else
 			{
+				//장애물에 부딪쳤을 때 진행하는 부분
+				//게임 오버도 여기서 구현한다
+				
 				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
 				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
 				{
 					float elapsed = (frameTime - limitFrameTime) * 0.01f; //유저의 시스템 환경에 따라 발생하는 시간차이.
 					limitFrameTime = frameTime + 30;//30 => 0.03초.
 
-					DeadCounter += elapsed;
+					DeadCounter += elapsed;	//부딪쳐서 꿱 모션 취할 때 잠시 화면 멈추는 용도
 
 					if (0.5f <= DeadCounter)
 					{
-						GameMgr->PartialInit();
+						GameMgr->PartialInit();	//화면 멈추는 시간 다 지나가면 부분적으로 초기화한다
 						DeadCounter = 0;
 					}
 				}	
@@ -326,5 +329,7 @@ for문 다 분리시켜야 하나??
 왜 화로배열을 만들 수 없는가........
 
 
-
+골 구현하고 게임오버 구현하면 끝
+스크롤이 개판되어서 미치겠어양
+왜 의도한대로 안 되는 거임
 */

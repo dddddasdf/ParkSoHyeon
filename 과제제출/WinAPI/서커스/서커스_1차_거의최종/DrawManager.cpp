@@ -30,13 +30,19 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 	//폰트 설정... - 점수용
 	m_FontCustomize = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "돋움");
 
+	//골 오브젝트 설정...
+	GoalObject = new Goal(hdc, LOCATION_GOAL_X);
+
 	//화로 클래스 배열(벡터0 초기화
 	
-	for (int i = 1; i < (LOCATION_GOAL_X - FIRE_DISTANCE) / FIRE_DISTANCE; i++)
+	for (int i = 1; i < MAP_WIDTH / FIRE_DISTANCE; i++)
 	{
 		Fire *fire = new Fire(m_MemDCBack, FIRE_DISTANCE * i);
 		m_FireVector.push_back(fire);
 	}
+	Fire* LastFire = new Fire(m_MemDCBack, NULL);	//골 앞에 있는 마지막 화로 설정
+	LastFire->SetLocationX(LOCATION_GOAL_X - LastFire->ReturnMemberBitMapWidth());
+	m_FireVector.push_back(LastFire);
 }
 
 void DrawManager::DeadInit()
@@ -58,87 +64,162 @@ void DrawManager::DeadInit()
 
 void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score, const int& BonusScore)
 {	
-	if (m_WindowWidth >= LOCATION_GOAL_X - CharacterXLocation)
-	{
-		//골이 보이기 시작할 경우에 대하여...... 스크롤 제어를 위한 부분
-	}
-	
-	
 	//본 화면
-	
+
 	HBITMAP BitMapBack = CreateDIBSectionRe(hdc, m_WindowWidth, m_WindowHeight);
 	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(m_MemDCBack, BitMapBack);
+	
+	switch (m_WindowWidth >= MAP_WIDTH - CharacterXLocation + LOCATION_CHARACTER_VERTICAL)
+	{
+	case false:
+	{
+		//배경 담당
+		Map->Draw(m_MemDCBack, CharacterXLocation);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//배경 그리는 파트 끝
 
-	//배경 담당
-	Map->Draw(m_MemDCBack, CharacterXLocation);
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//배경 그리는 파트 끝
+		//장애물 그리는 파트1 (불 고리 왼쪽 면, 화로)
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//불 고리 왼쪽 그림
+		{
+			FireRing1->Draw(m_MemDCBack, CharacterXLocation);
+			FireRing2->Draw(m_MemDCBack, CharacterXLocation);
+		}
 
-	//장애물 담당
+		//작은 불 고리 왼쪽 그림
+		{
+			LittleFireRing->Draw(m_MemDCBack, CharacterXLocation);
+		}
+
+		//돈주머니 그림 - m_IsCashSwitchOn이 true일 때만 그리는 함수를 실행한다
+		{
+			Cash1->Draw(m_MemDCBack, CharacterXLocation);
+		}
+
+		//화로 그림
+		{
+			int Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 출력해야 하는지 알기 위해 임시로 변수 구함
+
+			for (int i = 0; i <= 2; i++)
+			{
+				if ((m_FireVector.size()) > Tmp + i)
+					(m_FireVector.at(Tmp + i))->Draw(m_MemDCBack, CharacterXLocation);	//마지막 화로가 되어서 다음 걸 참조할 수 없을 경우에 대해 예외처리
+				else
+					break;
+			}
+			//한 번에 3개만 출력하면 된다
+		}
+
+		//장애물 그리는 파트1 끝
+		
+		//골 그림
+		GoalObject->Draw(m_MemDCBack, CharacterXLocation);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//캐릭터 그리는 파트
+		CharacterObject->DrawChracater(m_MemDCBack, CharacterYLocation, MotionNumber);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//장애물 그리는 파트2 (불 고리 오른쪽 면)
+
+		//불 고리 오른쪽 그림
+		{
+			FireRing1->Draw(m_MemDCBack, CharacterXLocation);
+			FireRing2->Draw(m_MemDCBack, CharacterXLocation);
+		}
+
+		//작은 불 고리 오른쪽 그림
+		{
+			LittleFireRing->Draw(m_MemDCBack, CharacterXLocation);
+		}
+
+		//장애물 그리는 파트2 끝
+
+		
+	}
+		break;
+	case true:
+	{
+		//배경 담당
+		Map->DrawFinal(m_MemDCBack, m_WindowWidth);
+
+		//배경 그리는 파트 끝
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//장애물 그리는 파트1 (불 고리 왼쪽 면, 화로)
+
+		//불 고리 왼쪽 그림
+		{
+			FireRing1->DrawFinal(m_MemDCBack, m_WindowWidth);
+			FireRing2->DrawFinal(m_MemDCBack, m_WindowWidth);
+		}
+
+		//작은 불 고리 왼쪽 그림
+		{
+			LittleFireRing->DrawFinal(m_MemDCBack, m_WindowWidth);
+		}
+
+		//돈주머니 그림 - m_IsCashSwitchOn이 true일 때만 그리는 함수를 실행한다
+		{
+			Cash1->DrawFinal(m_MemDCBack, m_WindowWidth);
+		}
+
+		//화로 그림
+		{
+			int Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 출력해야 하는지 알기 위해 임시로 변수 구함
+
+			for (int i = 0; i <= 2; i++)
+			{
+				if ((m_FireVector.size()) > Tmp + i)
+					(m_FireVector.at(Tmp + i))->DrawFinal(m_MemDCBack, m_WindowWidth);	//마지막 화로가 되어서 다음 걸 참조할 수 없을 경우에 대해 예외처리
+				else
+					break;
+			}
+			//한 번에 3개만 출력하면 된다
+		}
+
+		//장애물 그리는 파트1 끝
+
+		//골 그림
+		GoalObject->DrawFinal(m_MemDCBack, m_WindowWidth);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//캐릭터 그리는 파트
+
+		int CharacterXTmp = m_WindowWidth - (MAP_WIDTH - CharacterXLocation);	//이 경우 전용 캐릭터 화면 표시 위치 임시 좌표
+		CharacterObject->DrawCharacterFinal(m_MemDCBack, CharacterXTmp, CharacterYLocation, MotionNumber);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//장애물 그리는 파트2 (불 고리 오른쪽 면)
+
+		//불 고리 오른쪽 그림
+		{
+			FireRing1->DrawFinal(m_MemDCBack, m_WindowWidth);
+			FireRing2->DrawFinal(m_MemDCBack, m_WindowWidth);
+		}
+
+		//작은 불 고리 오른쪽 그림
+		{
+			LittleFireRing->DrawFinal(m_MemDCBack, m_WindowWidth);
+		}
+
+		//장애물 그리는 파트2 끝
+	
+	}
+		break;
+	}
+	
+	//장애물 담당 - 이었던 것 지금은 텍스트 출력용 임시
 	HDC MemDCObstacle = CreateCompatibleDC(hdc);
 	HBITMAP OlbBitMapObstacle;
 	HBITMAP BitMapObstacle = NULL;
-
-	//장애물 그리는 파트1 (불 고리 왼쪽 면, 화로)
-
-	//불 고리 왼쪽 그림
-	{
-		FireRing1->Draw(m_MemDCBack, CharacterXLocation);
-		FireRing2->Draw(m_MemDCBack, CharacterXLocation);		
-	}
-
-	//작은 불 고리 왼쪽 그림
-	{
-		LittleFireRing->Draw(m_MemDCBack, CharacterXLocation);
-	}
-
-	//돈주머니 그림 - m_IsCashSwitchOn이 true일 때만 그리는 함수를 실행한다
-	{
-		Cash1->Draw(m_MemDCBack, CharacterXLocation);
-	}
-
-	//화로 그림
-	{
-		int Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 출력해야 하는지 알기 위해 임시로 변수 구함
-
-		(m_FireVector.at(Tmp))->Draw(m_MemDCBack, CharacterXLocation);
-		(m_FireVector.at(Tmp + 1))->Draw(m_MemDCBack, CharacterXLocation);
-		(m_FireVector.at(Tmp + 2))->Draw(m_MemDCBack, CharacterXLocation);
-		//한 번에 3개만 출력하면 된다
-	}
-
-	//장애물 그리는 파트1 끝
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//캐릭터 그리는 파트
-
-	CharacterObject->DrawChracater(m_MemDCBack, CharacterYLocation, MotionNumber);
-
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//장애물 그리는 파트2 (불 고리 오른쪽 면)
-	
-	//불 고리 오른쪽 그림
-	{
-		FireRing1->Draw(m_MemDCBack, CharacterXLocation);
-		FireRing2->Draw(m_MemDCBack, CharacterXLocation);
-	}
-
-	//작은 불 고리 오른쪽 그림
-	{
-		LittleFireRing->Draw(m_MemDCBack, CharacterXLocation);
-	}
-
-
-	//장애물 그리는 파트2 끝
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//점수, 목숨 출력
 
@@ -158,6 +239,8 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_SCORE_Y, str.c_str(), str.length());
 	str = "Bonus: " + std::to_string(BonusScore);
 	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
+	str = "테스트용 픽셀:" + std::to_string(CharacterXLocation);
+	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y + 25, str.c_str(), str.length());
 	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

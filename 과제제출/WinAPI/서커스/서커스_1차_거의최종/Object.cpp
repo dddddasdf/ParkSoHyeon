@@ -75,6 +75,54 @@ void Ring1::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	m_IsLeft = !m_IsLeft;	//다 끝났으니 다음면 출력 준비를 위해 좌우 구분 멤버 변수 반전
 }
 
+void Ring1::DrawFinal(HDC MemDCBack, const int & WindowWidth)
+{
+	int XTmp = WindowWidth - (MAP_WIDTH - GetLocationX());
+
+	switch (m_AnimationState)
+	{
+	case HINDRANCE_RING_FIRST_1:
+	{
+		if (true == m_IsLeft)
+			m_BitMapNumberTmp = HINDRANCE_RING_FIRST_1;
+		else
+		{
+			m_BitMapNumberTmp = HINDRANCE_RING_FIRST_2;
+			m_AnimationState = HINDRANCE_RING_SECOND_1;
+		}
+	}
+	break;
+	case HINDRANCE_RING_SECOND_1:
+	{
+		if (true == m_IsLeft)
+			m_BitMapNumberTmp = HINDRANCE_RING_SECOND_1;
+		else
+		{
+			m_BitMapNumberTmp = HINDRANCE_RING_SECOND_2;
+			m_AnimationState = HINDRANCE_RING_FIRST_1;
+		}
+	}
+	break;
+	}
+
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+
+	switch (m_IsLeft)
+	{
+	case true:
+		TransparentBlt(MemDCBack, XTmp - ReturnMemberBitMapWidth(), LOCATION_RING_Y, ReturnMemberBitMapWidth(),
+			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+		break;
+	case false:
+		TransparentBlt(MemDCBack, XTmp, LOCATION_RING_Y, ReturnMemberBitMapWidth(),
+			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+		break;
+	}
+
+	m_IsLeft = !m_IsLeft;	//다 끝났으니 다음면 출력 준비를 위해 좌우 구분 멤버 변수 반전
+
+}
+
 void Ring1::RingMoving(const int& MovePixel, const int& CharacterLocationX)
 {
 	//불 고리 X 좌표 변경하는 부분
@@ -137,6 +185,33 @@ void LittleRing::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	m_IsLeft = !m_IsLeft;	//다 끝났으니 다음면 출력 준비를 위해 좌우 구분 멤버 변수 반전
 }
 
+void LittleRing::DrawFinal(HDC MemDCBack, const int& WindowWidth)
+{
+	int XTmp = WindowWidth - (MAP_WIDTH - GetLocationX());
+	
+	switch (m_IsLeft)
+	{
+	case true:
+	{
+		m_BitMapNumberTmp = HINDRANCE_LITTLERING_1;
+		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+		TransparentBlt(MemDCBack, XTmp - ReturnMemberBitMapWidth(), LOCATION_RING_Y, ReturnMemberBitMapWidth(),
+			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+	}
+	break;
+	case false:
+	{
+		m_BitMapNumberTmp = HINDRANCE_LITTLERING_2;
+		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+		TransparentBlt(MemDCBack, XTmp, LOCATION_RING_Y, ReturnMemberBitMapWidth(),
+			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+	}
+	break;
+	}
+
+	m_IsLeft = !m_IsLeft;	//다 끝났으니 다음면 출력 준비를 위해 좌우 구분 멤버 변수 반전
+}
+
 void LittleRing::RingMoving(const int& MovePixel, const int& CharacterLocationX)
 {
 	//불 고리 X 좌표 변경하는 부분
@@ -169,6 +244,8 @@ Cash::Cash(HDC hdc, int X) : Object(hdc)
 	SetLocationX(X);
 	SetLocationY(LOCATION_RING_Y + 25);
 	
+	m_BitMapNumberTmp = 0;
+
 	m_IsSwitchOn = true;
 }
 
@@ -194,6 +271,27 @@ void Cash::Draw(HDC MemDCBack, const int& CharacterLocationX)
 
 	//스위치가 켜져 있을 때만 출력한다
 }
+
+void Cash::DrawFinal(HDC MemDCBack, const int& WindowWidth)
+{
+	int XTmp = WindowWidth - (MAP_WIDTH - GetLocationX());
+
+	switch (m_IsSwitchOn)
+	{
+	case true:
+	{
+		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+		TransparentBlt(MemDCBack, XTmp - (ReturnMemberBitMapWidth() * 0.5), GetLocationY(), ReturnMemberBitMapWidth(),
+			ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+	}
+	break;
+	case false:
+		break;
+	}
+
+	//스위치가 켜져 있을 때만 출력한다
+}
+
 
 void Cash::CashMoving(const int& MovePixel, const int& CharacterLocationX)
 {
@@ -263,6 +361,39 @@ void MapTile::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	}
 }
 
+void MapTile::DrawFinal(HDC MemDCBack, const int& WindowWidth)
+{
+	int XTmp = WindowWidth - (MAP_WIDTH - GetLocationX());
+
+	//바닥
+	m_BitMapNumberTmp = BACKGROUND_FLOOR;
+	for (int i = 0; i < 20; i++)
+	{
+		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+		TransparentBlt(MemDCBack, ReturnMemberBitMapWidth() * i, m_FloorYStart, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(),
+			m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+	}
+
+	//군중
+	int StartBlock = XTmp / m_CrowdWidth;	//플레이어 위치에 따라 시작할 블럭을 정해야 함
+	int CutWidth = XTmp - (m_CrowdWidth * StartBlock);	//플레이어의 맵 X 좌표에 따라 잘리는 칸의 길이 계산
+	for (int i = 0; i < 20; i++)
+	{
+		if (StartBlock % 7 == 0)
+			m_BitMapNumberTmp = BACKGROUND_ELEPHANT;
+		else
+			m_BitMapNumberTmp = BACKGROUND_CROWD_FIRST;
+
+		(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+		TransparentBlt(MemDCBack, -CutWidth + m_CrowdWidth * i, m_CrowdYStart, m_CrowdWidth, m_CrowdHeight,
+			m_MemDC, 0, 0, m_CrowdWidth, m_CrowdHeight, RGB(255, 0, 255));
+
+		StartBlock++;
+	}
+}
+
+
+
 
 
 Character::Character(HDC hdc, int X) : Object(hdc)
@@ -288,9 +419,12 @@ void Character::DrawChracater(HDC MemDCBack, const int& CharacterLocationY, cons
 		m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 }
 
-void Character::DrawCharacter(HDC MemDCBack, const int& CharacterLocationX, const int& CharacterLocationY, const int& MotionNumber)
+void Character::DrawCharacterFinal(HDC MemDCBack, const int& CharacterLocationX, const int& CharacterLocationY, const int& MotionNumber)
 {
-
+	m_BitMapNumberTmp = MotionNumber;
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+	TransparentBlt(MemDCBack, CharacterLocationX, CharacterLocationY - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(),
+		m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 }
 
 
@@ -301,13 +435,31 @@ Goal::Goal(HDC hdc, int X) : Object(hdc)
 
 	*m_ObjectBitMap = ResourceMgr->ReturnGoalBitMapClass();
 
-	SetLocationX(LOCATION_GOAL_X);
-	SetLocationY(HORIZON_HEIGHT);
+	m_BitMapNumberTmp = 0;
+
+	SetLocationX(LOCATION_GOAL_X - ReturnMemberBitMapWidth());
+	SetLocationY(HORIZON_HEIGHT - ReturnMemberBitMapHeight());
 }
 
 Goal::~Goal()
 {
 	delete[] m_ObjectBitMap;
+}
+
+void Goal::Draw(HDC MemDCBack, const int& CharacterLocationX)
+{
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+	TransparentBlt(MemDCBack, GetLocationX(), GetLocationY(), ReturnMemberBitMapWidth(),
+		ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+}
+
+void Goal::DrawFinal(HDC MemDCBack, const int& WindowWidth)
+{
+	int XTmp = WindowWidth - (MAP_WIDTH - GetLocationX());
+
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+	TransparentBlt(MemDCBack, XTmp, GetLocationY(), ReturnMemberBitMapWidth(),
+		ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 }
 
 
@@ -319,6 +471,8 @@ Fire::Fire(HDC hdc, int X) : Object(hdc)
 
 	m_ObjectBitMap[HINDRANCE_FIRE_1] = ResourceMgr->ReturnFireBitMapClass(HINDRANCE_FIRE_1);
 	m_ObjectBitMap[HINDRANCE_FIRE_2] = ResourceMgr->ReturnFireBitMapClass(HINDRANCE_FIRE_2);
+
+	m_BitMapNumberTmp = HINDRANCE_FIRE_1;
 
 	SetLocationX(X);
 	SetLocationY(LOCATION_FIRE_Y);
@@ -355,6 +509,34 @@ void Fire::Draw(HDC MemDCBack, const int& CharacterLocationX)
 	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
 
 	TransparentBlt(MemDCBack, GetLocationX() - CharacterLocationX - LOCATION_CHARACTER_VERTICAL, LOCATION_FIRE_Y - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(),
+		ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
+
+	//캐릭터가 화로를 지나가도 화로 위치가 완전히 화면 밖을 벗어나기 전까지는 화로가 출력되도록 LOCATION_CHARACTER_VERTICAL을 보정값
+}
+
+void Fire::DrawFinal(HDC MemDCBack, const int& WindowWidth)
+{
+	int XTmp = WindowWidth - (MAP_WIDTH - GetLocationX());
+
+	switch (m_AnimationState)
+	{
+	case HINDRANCE_FIRE_1:
+	{
+		m_BitMapNumberTmp = HINDRANCE_FIRE_1;
+		m_AnimationState = HINDRANCE_FIRE_2;
+	}
+	break;
+	case HINDRANCE_FIRE_2:
+	{
+		m_BitMapNumberTmp = HINDRANCE_FIRE_2;
+		m_AnimationState = HINDRANCE_FIRE_1;
+	}
+	break;
+	}
+
+	(HBITMAP)SelectObject(m_MemDC, ReturnMemberBitmap());
+
+	TransparentBlt(MemDCBack, XTmp, LOCATION_FIRE_Y - ReturnMemberBitMapHeight(), ReturnMemberBitMapWidth(),
 		ReturnMemberBitMapHeight(), m_MemDC, 0, 0, ReturnMemberBitMapWidth(), ReturnMemberBitMapHeight(), RGB(255, 0, 255));
 
 	//캐릭터가 화로를 지나가도 화로 위치가 완전히 화면 밖을 벗어나기 전까지는 화로가 출력되도록 LOCATION_CHARACTER_VERTICAL을 보정값
