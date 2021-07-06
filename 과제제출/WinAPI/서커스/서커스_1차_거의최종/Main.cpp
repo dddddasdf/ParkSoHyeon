@@ -34,6 +34,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 	float JumpCounter = 0;	//점프 프레임 제어용
 	float DeadCounter = 0;	//사망시 시간 멈추기 제어용
 	float BonusCounter = 0;	//보너스 점수 차감 제어용
+	float WinningCounter = 0;	//승리 모션 취하는 프레임 제어용
 
 	srand(unsigned(time(NULL)));
 
@@ -67,10 +68,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		}
 		else
 		{
-			if (GameMgr->ReturnIsDead() == false)
+			switch (GameMgr->ReturnState())
 			{
-				//여기서부터 프레임 제어 파트
-				
+			case STATE_NULL:
+			{
 				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
 				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
 				{
@@ -98,7 +99,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						{
 							GameMgr->StandingCharacter();
 						}*/
-						
+
 						if ((!GameMgr->ReturnIsJumping()))
 						{
 							GameMgr->StandingCharacter();
@@ -118,17 +119,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 						BonusCounter = 0;
 					}
 
-					//GameMgr->CollisionCheck();	//충돌 체크 함수
+					GameMgr->CollisionCheck();	//충돌 체크 함수
+
 
 					GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
-					GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
+					GameMgr->DrawCharacterOrder(&hdc);	//그리는 함수 호출
+					GameMgr->GoalInCheck();
 				}
 			}
-			else
+				break;
+			case STATE_DEAD:
 			{
 				//장애물에 부딪쳤을 때 진행하는 부분
 				//게임 오버도 여기서 구현한다
-				
+
 				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
 				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
 				{
@@ -139,13 +143,129 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 
 					if (0.5f <= DeadCounter)
 					{
-						GameMgr->PartialInit();	//화면 멈추는 시간 다 지나가면 부분적으로 초기화한다
+						if (GameMgr->IsGameOver() == false)
+						{
+							GameMgr->PartialInit();	//화면 멈추는 시간 다 지나가면 부분적으로 초기화한다
+						}
+
 						DeadCounter = 0;
 					}
-				}	
+				}
 			}
+				break;
+			case STATE_WIN:
+			{
+				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
+				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
+				{
+					float elapsed = (frameTime - limitFrameTime) * 0.01f; //유저의 시스템 환경에 따라 발생하는 시간차이.
+					limitFrameTime = frameTime + 30;//30 => 0.03초.
+
+					WinningCounter += elapsed;	//승리 모션 바꾸기
+					
+
+					if (0.3f <= WinningCounter)
+					{
+						GameMgr->ChangeWinningMotion();	//화면 멈추는 시간 다 지나가면 부분적으로 초기화한다
+						WinningCounter = 0;
+					}
+				}
+				GameMgr->Winning(&hdc);
+				GameMgr->CaculatingScore();
+
+			}
+				break;
+			case STATE_GAMEOVER:
+			{
+				GameMgr->GameOver(&hdc);
+			}
+			break;
+			}
+
+			//if (GameMgr->ReturnIsDead() == false)
+			//{
+			//	//여기서부터 프레임 제어 파트
+			//	frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
+			//	if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
+			//	{
+			//		float elapsed = (frameTime - limitFrameTime) * 0.01f; //유저의 시스템 환경에 따라 발생하는 시간차이.
+			//		limitFrameTime = frameTime + 30;//30 => 0.03초.
+
+			//		CharacterFrame += elapsed;
+			//		JumpCounter += elapsed;
+			//		BonusCounter += elapsed;
+
+			//		if (0.02f <= JumpCounter)
+			//		{
+			//			//점프하는 부분
+			//			if (GameMgr->ReturnIsJumping())
+			//			{
+			//				GameMgr->ChangeCharacterYLocation();
+			//			}
+			//			JumpCounter = 0;
+			//		}
+
+			//		if (0.02f <= CharacterFrame)
+			//		{
+			//			//캐릭터 움직이는 부분
+			//			/*if (GameMgr->ReturnIsMoving() && (!GameMgr->ReturnIsJumping()))
+			//			{
+			//				GameMgr->StandingCharacter();
+			//			}*/
+
+			//			if ((!GameMgr->ReturnIsJumping()))
+			//			{
+			//				GameMgr->StandingCharacter();
+			//			}
+			//			/*
+			//			모션 교체를 위하여 메인 함수에서는 캐릭터가 점프 중이 아닐 때 모션을 갱신하도록 변경하였음
+			//			자세한 내막은 GameManager의 StandCharacter() 함수로...
+			//			*/
+			//			CharacterFrame = 0;
+			//		}
+
+			//		if (0.5f <= BonusCounter)
+			//		{
+			//			//보너스 점수 제어용
+
+			//			GameMgr->MinusBonusScore();
+			//			BonusCounter = 0;
+			//		}
+
+			//		//GameMgr->CollisionCheck();	//충돌 체크 함수
+
+
+			//		GameMgr->CalculateRings(elapsed);	//링 위치 조절하는 곳
+			//		//GameMgr->Winning(&hdc, hWnd);
+			//		GameMgr->DrawCharacterOrder(&hdc, hWnd);	//그리는 함수 호출
+			//	}
+			//	
+			//}
+			//else
+			//{
+			//	//장애물에 부딪쳤을 때 진행하는 부분
+			//	//게임 오버도 여기서 구현한다
+			//	
+			//	frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
+			//	if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
+			//	{
+			//		float elapsed = (frameTime - limitFrameTime) * 0.01f; //유저의 시스템 환경에 따라 발생하는 시간차이.
+			//		limitFrameTime = frameTime + 30;//30 => 0.03초.
+
+			//		DeadCounter += elapsed;	//부딪쳐서 꿱 모션 취할 때 잠시 화면 멈추는 용도
+
+			//		if (0.5f <= DeadCounter)
+			//		{
+			//			GameMgr->PartialInit();	//화면 멈추는 시간 다 지나가면 부분적으로 초기화한다
+			//			DeadCounter = 0;
+			//		}
+			//	}	
+			//}
 		}
 	}
+
+	KillTimer(hWnd, 1);
+	GameMgr->~GameManager();
 	ReleaseDC(hWnd, hdc);
 	return (int)Message.wParam;
 }
@@ -176,7 +296,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			{
 				//캐릭터가 움직이고 있는 중이거나 점프 중일 때는 방향키값 체크 X
 				//점프는 점프 중인지만 확인한다<-이것들 싹다 게임매니저에 넣는 게 낫나?? 낫나???
-				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()))
+				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()) && GameMgr->ReturnState() == STATE_NULL)
 				{
 					if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 					{
@@ -187,13 +307,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						GameMgr->MovingCharacter(VK_RIGHT);
 					}
 				}
-				if (GetAsyncKeyState(VK_SPACE))
+				if (GetAsyncKeyState(VK_SPACE) && GameMgr->ReturnState() == STATE_NULL)
 				{
 					if (!GameMgr->ReturnIsJumping())
 					{
 						GameMgr->JumpingCharacter();
 					}
 				}
+				if (GetAsyncKeyState(VK_SPACE) && (STATE_GAMEOVER == GameMgr->ReturnState() || STATE_WIN_SHUTDOWN == GameMgr->ReturnState()))
+					PostQuitMessage(0);
 			}
 		}
 			break;
@@ -201,8 +323,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 		return 0;
 	case WM_DESTROY:
-		KillTimer(hWnd, 1);
-		DrawMgr->~DrawManager();
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -332,4 +452,11 @@ for문 다 분리시켜야 하나??
 골 구현하고 게임오버 구현하면 끝
 스크롤이 개판되어서 미치겠어양
 왜 의도한대로 안 되는 거임
+
+맵스크롤 구현 완료... 골, 화로 남음
+골 화로 다 함 고리는 내 영역이 아닌 것 같음
+
+게임 오버, 승리 화면 구현 남음
+
+마지막 다와갓을때 충돌구역 계산 때문에 에러나는 거랑 게임 끝날때 메시지 출력 안 되는 거 수정하자
 */

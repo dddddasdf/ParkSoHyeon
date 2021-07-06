@@ -21,6 +21,7 @@
 #define BONUS_SCORE 10000
 #define MAP_WIDTH 5000	//전체 맵길이
 
+
 enum DIRECTION
 {
 	DIRECTION_STAND = 0,
@@ -35,6 +36,8 @@ enum MOTION
 	MOTION_STAND = 1,
 	MOTION_RUNNING = 2,
 	MOTION_JUMPING = 3,
+	MOTION_WIN1 = 4,
+	MOTION_WIN2 = 5,
 	MOTION_DEAD = 6
 
 	//캐릭터의 모션을 관리하기 위한 번호
@@ -127,7 +130,18 @@ enum LOCATION
 	LOCATION_RING1_START = 700,	//첫번째 고리 시작 위치
 	LOCATION_RING2_START = 2000,	//두번째 고리 시작 위치
 	LOCATION_LITTLERING_START = 3500,	//작은 고리 시작 위치
-	LOCATION_GOAL_X = 4900	//골인 지점 위치
+	LOCATION_GOAL_X = 4930	//골인 지점 위치
 
 	//매크로로 설정해둔 위치 좌표들 전부 여기다가 박아둘 예정
+};
+
+enum STATE
+{
+	STATE_NULL = 0,
+	STATE_DEAD = 1,
+	STATE_WIN = 2,
+	STATE_GAMEOVER = 3,
+	STATE_WIN_SHUTDOWN = 4
+
+	//현재 상태 반환
 };

@@ -26,6 +26,8 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 
 	//간단한 비트맵 받아두기... 오브젝트로 빼야 할 필요가 없다고 판단해서 목숨 표시는 비트맵으로만 굴림
 	LifeImage = ResourceMgr->ReturnInterfaceBitMapClass(2);
+	PointImage = ResourceMgr->ReturnPointBitMapClass();
+	m_GameOverSelect = 0;
 
 	//폰트 설정... - 점수용
 	m_FontCustomize = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "돋움");
@@ -41,7 +43,7 @@ void DrawManager::Init(HWND hWnd, HDC hdc)
 		m_FireVector.push_back(fire);
 	}
 	Fire* LastFire = new Fire(m_MemDCBack, NULL);	//골 앞에 있는 마지막 화로 설정
-	LastFire->SetLocationX(LOCATION_GOAL_X - LastFire->ReturnMemberBitMapWidth());
+	LastFire->SetLocationX(LOCATION_GOAL_X - LastFire->ReturnMemberBitMapWidth() - LOCATION_CHARACTER_VERTICAL);
 	m_FireVector.push_back(LastFire);
 }
 
@@ -69,7 +71,9 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	HBITMAP BitMapBack = CreateDIBSectionRe(hdc, m_WindowWidth, m_WindowHeight);
 	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(m_MemDCBack, BitMapBack);
 	
-	switch (m_WindowWidth >= MAP_WIDTH - CharacterXLocation + LOCATION_CHARACTER_VERTICAL)
+	bool Tmp = m_WindowWidth >= MAP_WIDTH - CharacterXLocation + LOCATION_CHARACTER_VERTICAL;	//맵의 마지막 지점이 보이기 시작했는가?에 대한 여부
+
+	switch (Tmp)
 	{
 	case false:
 	{
@@ -171,16 +175,10 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 		//화로 그림
 		{
-			int Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 출력해야 하는지 알기 위해 임시로 변수 구함
+			(m_FireVector.at(m_FireVector.size() - 2))->DrawFinal(m_MemDCBack, m_WindowWidth);
+			(m_FireVector.at(m_FireVector.size() - 1))->DrawFinal(m_MemDCBack, m_WindowWidth);
 
-			for (int i = 0; i <= 2; i++)
-			{
-				if ((m_FireVector.size()) > Tmp + i)
-					(m_FireVector.at(Tmp + i))->DrawFinal(m_MemDCBack, m_WindowWidth);	//마지막 화로가 되어서 다음 걸 참조할 수 없을 경우에 대해 예외처리
-				else
-					break;
-			}
-			//한 번에 3개만 출력하면 된다
+			//맵의 마지막 부분에서는 화로가 두 개만 보일 수밖에 없으므로 사이즈 값을 이용해 인덱스를 찾아내면 된다
 		}
 
 		//장애물 그리는 파트1 끝
@@ -265,10 +263,27 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 
 void DrawManager::MoveRings(float MovingRingPixel, float MovingLittleRingPixel, int CharacterLocationX)
 {
-	FireRing1->RingMoving(MovingRingPixel, CharacterLocationX);
-	FireRing2->RingMoving(MovingRingPixel, CharacterLocationX);
-	LittleFireRing->RingMoving(MovingLittleRingPixel, CharacterLocationX);
-	Cash1->CashMoving(MovingLittleRingPixel, CharacterLocationX);
+	bool Tmp = m_WindowWidth >= MAP_WIDTH - CharacterLocationX + LOCATION_CHARACTER_VERTICAL;	//맵의 마지막 지점이 보이기 시작했는가?에 대한 여부
+
+	switch (Tmp)
+	{
+	case false:
+	{
+		FireRing1->RingMoving(MovingRingPixel, CharacterLocationX);
+		FireRing2->RingMoving(MovingRingPixel, CharacterLocationX);
+		LittleFireRing->RingMoving(MovingLittleRingPixel, CharacterLocationX);
+		Cash1->CashMoving(MovingLittleRingPixel, CharacterLocationX);
+	}
+	break;
+	case true:
+	{
+		FireRing1->RingMovingFinal(MovingRingPixel, m_WindowWidth);
+		FireRing2->RingMovingFinal(MovingRingPixel, m_WindowWidth);
+		LittleFireRing->RingMovingFinal(MovingLittleRingPixel, m_WindowWidth);
+		Cash1->CashMovingFinal(MovingRingPixel, m_WindowWidth);
+	}
+	break;
+	}
 }
 
 bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
@@ -305,7 +320,7 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 	//↑유저 사각형
 
 	int Score_Tmp = 0;	//넘은 장애물 수에 따라 보내줄 점수 임시
-	int User_Tmp = CharacterXLocation + LOCATION_CHARACTER_VERTICAL + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;
+	int User_Tmp = CharacterXLocation + LOCATION_CHARACTER_VERTICAL + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;	//판정을 위해 유저 캐릭터가 갖는 X좌표
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -348,6 +363,7 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 
 
 	//점수 증가 부분
+	//고리1
 	if (User_Tmp >= FireRing1->GetLocationX() && User_Tmp <= FireRing1->GetLocationX() + MOVE_PIXEL && 
 		CharacterYLocation <= LOCATION_RING_Y + FireRing1->ReturnMemberBitMapHeight() && true == FireRing1->ReturnScoreSwitch())
 	{
@@ -355,6 +371,7 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 		FireRing1->SwitchOffScore();
 	}
        	
+	//고리2
 	if (User_Tmp >= FireRing2->GetLocationX() && User_Tmp <= FireRing2->GetLocationX() + MOVE_PIXEL &&
 		CharacterYLocation <= LOCATION_RING_Y + FireRing2->ReturnMemberBitMapHeight() && true == FireRing2->ReturnScoreSwitch())
 	{
@@ -362,6 +379,7 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 		FireRing2->SwitchOffScore();
 	}
 
+	//작은 고리
 	if (User_Tmp >= LittleFireRing->GetLocationX() && User_Tmp <= LittleFireRing->GetLocationX() + MOVE_PIXEL &&
 		CharacterYLocation <= LOCATION_RING_Y + LittleFireRing->ReturnMemberBitMapHeight() && true == LittleFireRing->ReturnScoreSwitch())
 	{
@@ -369,6 +387,7 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 		LittleFireRing->SwitchOffScore();
 	}
 
+	//화로
 	if (User_Tmp >= m_FireVector.at(Fire_Tmp)->GetLocationX() - LOCATION_CHARACTER_VERTICAL && User_Tmp <= m_FireVector.at(Fire_Tmp)->GetLocationX() + MOVE_PIXEL &&
 		CharacterYLocation <= LOCATION_FIRE_Y + m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapHeight() - LOCATION_CHARACTER_VERTICAL && true == m_FireVector.at(Fire_Tmp)->ReturnScoreSwitch())
 	{
@@ -379,6 +398,67 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	return Score_Tmp; //넘어간 장애물 수에 따라 증가시켜야 할 점수 결정
+}
+
+bool DrawManager::IsInGoal_In(const int& CharacterXLocation, const int& CharacterYLocation)
+{
+	int User_Tmp = CharacterXLocation + LOCATION_CHARACTER_VERTICAL + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;	//판정을 위해 유저 캐릭터가 갖는 X좌표
+	
+	if (User_Tmp >= GoalObject->GetLocationX() + (GoalObject->ReturnMemberBitMapWidth() * 0.5f) && 
+		((User_Tmp >= GoalObject->GetLocationY() - JUMP_PIXEL * 0.5f) || User_Tmp <= GoalObject->GetLocationY() + JUMP_PIXEL * 0.5f))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void DrawManager::DrawWinImages(HDC hdc, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score, const int& BonusScore, const int& MotionNumber)
+{
+	int CharacterXTmp = m_WindowWidth - (MAP_WIDTH - CharacterXLocation);	//이 경우 전용 캐릭터 화면 표시 위치 임시 좌표
+	
+	HBITMAP BitMapBack = CreateDIBSectionRe(hdc, m_WindowWidth, m_WindowHeight);
+	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(m_MemDCBack, BitMapBack);
+
+	Map->DrawWin(m_MemDCBack);
+	GoalObject->DrawFinal(m_MemDCBack, m_WindowWidth);
+	CharacterObject->DrawWin(m_MemDCBack, CharacterXTmp, CharacterYLocation, MotionNumber);
+
+	SelectObject(m_MemDCBack, m_FontCustomize);
+	SetTextColor(m_MemDCBack, RGB(255, 255, 255));
+	SetBkMode(m_MemDCBack, TRANSPARENT);
+	std::string str = std::to_string(Score);
+	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_SCORE_Y, str.c_str(), str.length());
+	str = "Bonus: " + std::to_string(BonusScore);
+	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
+
+	if (0 == BONUS_SCORE)
+	{
+		str = "스페이스바를 누르면 게임 종료";
+		TextOut(m_MemDCBack, m_WindowWidth - (str.length() * 0.5f), 600, str.c_str(), str.length());
+	}
+
+	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
+	SelectObject(m_MemDCBack, OldBitMapBack);
+	DeleteObject(BitMapBack);
+}
+
+void DrawManager::DrawGameOver(HDC hdc)
+{
+	HBITMAP BitMapBack = CreateDIBSectionRe(hdc, m_WindowWidth, m_WindowHeight);
+	HBITMAP OldBitMapBack = (HBITMAP)SelectObject(m_MemDCBack, BitMapBack);
+	
+	SelectObject(m_MemDCBack, m_FontCustomize);
+	SetTextColor(m_MemDCBack, RGB(255, 255, 255));
+	SetBkMode(m_MemDCBack, TRANSPARENT);
+	std::string str = "게임 오버";
+	TextOut(m_MemDCBack, m_WindowWidth - (str.length() * 0.5f), 300, str.c_str(), str.length());
+	str = "스페이스바를 누르면 게임 종료";
+	TextOut(m_MemDCBack, m_WindowWidth - (str.length() * 0.5f), 600, str.c_str(), str.length());
+
+	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
+	SelectObject(m_MemDCBack, OldBitMapBack);
+	DeleteObject(BitMapBack);
 }
 
 HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)
@@ -399,4 +479,21 @@ HBITMAP DrawManager::CreateDIBSectionRe(HDC hdc, int width, int height)
 DrawManager::~DrawManager()
 {
 	DeleteDC(m_MemDCBack);
+	FireRing1->~Ring1();
+	FireRing2->~Ring1();
+
+	LittleFireRing->~LittleRing();
+
+	Cash1->~Cash();
+
+	Map->~MapTile();
+
+	CharacterObject->~Character();
+
+	GoalObject->~Goal();
+
+	for (int i = 0; i < m_FireVector.size(); i++)
+	{
+		m_FireVector.at(i)->~Fire();
+	}
 }

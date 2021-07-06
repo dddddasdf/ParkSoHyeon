@@ -17,6 +17,7 @@ private:
 	int m_MovingDirection;	//링 위치 조절을 위한 방향 저장 멤버 변수
 
 	bool m_IsDeadTrigger;	//사망 상태일 경우 화면 갱신을 잠시 멈추기 위한 변수, 살아있을 때는 true 죽었을 때는 false
+	int m_NowState;	//현재 상태가 사망인지, 우승인지 뱉는 멤버변수
 
 	int m_BonusScore;	//보너스 점수
 public:
@@ -29,13 +30,25 @@ public:
 	bool ReturnIsMoving() { return m_IsMoving; }
 	bool ReturnIsJumping() { return m_IsJumping; }
 	bool ReturnIsDead() { return m_IsDeadTrigger; }
+	int ReturnState() { return m_NowState; }
 
 	void CalculateRings(float elapsed);
 	void MinusBonusScore() { if (m_BonusScore > 0) m_BonusScore -= 10; }
 
 	void CollisionCheck();	//충돌 체크 총괄
-	void DrawCharacterOrder(HDC *hdc, HWND hWnd) { DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation(), 
+	void GoalInCheck();	//골인 체크
+
+	void Winning(HDC *hdc);	//골인 했을 때
+	void ChangeWinningMotion();	//승리 자세 취하는 거
+	void CaculatingScore();	//점수 계산
+
+	bool IsGameOver();
+	void GameOver(HDC *hdc) { DrawMgr->DrawGameOver(*hdc); }
+
+	void DrawCharacterOrder(HDC *hdc) { DrawMgr->DrawImages(*hdc, m_PlayerData->ReturnMotion(), m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation(), 
 		m_PlayerData->ReturnLife(), m_PlayerData->ReturnScore(), m_BonusScore); }
+
+	~GameManager();
 };
 
 #define GameMgr GameManager::GetInstance()

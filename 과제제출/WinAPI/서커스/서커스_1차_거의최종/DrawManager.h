@@ -26,6 +26,7 @@ private:
 	Character* CharacterObject;
 
 	BitMap LifeImage;
+	BitMap PointImage;
 
 	HFONT m_FontCustomize;
 
@@ -33,6 +34,8 @@ private:
 
 	Fire* FireObjects;
 	std::vector <Fire*> m_FireVector;
+
+	int m_GameOverSelect;	//게임 오버일 때 다시 할 건지 묻는 것, 화살표 위치 지정용
 
 	///////////////임시
 	RECT Ring1RectDown;
@@ -50,8 +53,11 @@ public:
 	bool IsCashCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//돈주머니와 부딪쳤는지 체크
 	int IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//장애물과 부딪쳤는지, 뛰어넘었는지를 체크함
 	bool IsRingCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation);	//고리와 부딪쳤는지 체크
+	bool IsInGoal_In(const int& CharacterXLocation, const int& CharacterYLocation);	//골에 도착했는지 체크
 
-	void DrawGameOver();	//게임오버 화면 출력
+	void DrawWinImages(HDC hdc, const int& CharacterXLocation, const int& CharacterYLocation, const int& Life, const int& Score, const int& BonusScore, const int& MotionNumber);	//골도착시 그리는 부분
+	
+	void DrawGameOver(HDC hdc);	//게임오버 화면 출력
 
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 

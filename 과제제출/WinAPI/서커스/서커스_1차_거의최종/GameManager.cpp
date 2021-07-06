@@ -11,6 +11,7 @@ void GameManager::WholeInit(HWND hWnd, HDC hdc)
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
 	m_BonusScore = BONUS_SCORE;
+	m_NowState = STATE_NULL;
 }
 
 void GameManager::PartialInit()
@@ -24,6 +25,7 @@ void GameManager::PartialInit()
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
 	m_BonusScore = BONUS_SCORE;
+	m_NowState = STATE_NULL;
 }
 
 void GameManager::MovingCharacter(const int& Key)
@@ -158,13 +160,62 @@ void GameManager::CollisionCheck()
 	{
 		m_PlayerData->ChangeMotion(MOTION_DEAD);
 		m_IsDeadTrigger = true;
+		m_NowState = STATE_DEAD;
 		m_PlayerData->MinusLife();
 	}
 	else
 		m_PlayerData->PlusScore(Tmp);
+}
 
+void GameManager::GoalInCheck()
+{
+	if (DrawMgr->IsInGoal_In(m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
+	{
+		GameMgr->ChangeWinningMotion();
+		m_NowState = STATE_WIN;
+	}
+}
+
+void GameManager::Winning(HDC *hdc)
+{
+	DrawMgr->DrawWinImages(*hdc, m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation(),
+		m_PlayerData->ReturnLife(), m_PlayerData->ReturnScore(), m_BonusScore, m_PlayerData->ReturnMotion());
+}
+
+void GameManager::ChangeWinningMotion()
+{
+	if (m_PlayerData->ReturnMotion() == MOTION_WIN1)
+		m_PlayerData->ChangeMotion(MOTION_WIN2);
+	else
+		m_PlayerData->ChangeMotion(MOTION_WIN1);
+}
+
+void GameManager::CaculatingScore()
+{
+	if (m_BonusScore > 0)
+	{
+		m_BonusScore -= 10;
+		m_PlayerData->PlusScore(10);
+	}
+
+	if (0 == m_BonusScore)
+		m_NowState = STATE_WIN_SHUTDOWN;
+}
+
+bool GameManager::IsGameOver()
+{
 	if (0 == m_PlayerData->ReturnLife())
 	{
 		//게임 오버 화면
+		m_NowState = STATE_GAMEOVER;
+		return true;
 	}
+	else
+		return false;
+}
+
+GameManager::~GameManager()
+{
+	delete m_PlayerData;
+	DrawMgr->~DrawManager();
 }
