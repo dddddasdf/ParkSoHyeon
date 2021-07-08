@@ -27,5 +27,9 @@ public:
 	int ReturnLife() { return m_PlayerLife; }
 	void MinusLife() { m_PlayerLife--; }	//»ç¸Á½Ã ¸ñ¼û ÁÙ¾îµë
 	void PlusScore(const int& Score) { m_PlayerScore += Score; }
+	
+	void SetYLocation(const int& Y) {
+		m_PlayerYLocation = Y; //°ñÀÎ½Ã °­Á¦·Î yÁÂÇ¥ °íÁ¤
+	}
 };
 

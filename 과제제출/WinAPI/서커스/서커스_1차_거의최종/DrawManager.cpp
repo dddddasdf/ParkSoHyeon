@@ -233,12 +233,11 @@ void DrawManager::DrawImages(HDC hdc, const int& MotionNumber, const int& Charac
 	SelectObject(m_MemDCBack, m_FontCustomize);
 	SetTextColor(m_MemDCBack, RGB(255, 255,255));
 	SetBkMode(m_MemDCBack, TRANSPARENT);
+	SetTextAlign(m_MemDCBack, TA_CENTER);
 	std::string str = std::to_string(Score);
 	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_SCORE_Y, str.c_str(), str.length());
 	str = "Bonus: " + std::to_string(BonusScore);
-	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
-	str = "테스트용 픽셀:" + std::to_string(CharacterXLocation);
-	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y + 25, str.c_str(), str.length());
+	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
 	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +279,7 @@ void DrawManager::MoveRings(float MovingRingPixel, float MovingLittleRingPixel, 
 		FireRing1->RingMovingFinal(MovingRingPixel, m_WindowWidth);
 		FireRing2->RingMovingFinal(MovingRingPixel, m_WindowWidth);
 		LittleFireRing->RingMovingFinal(MovingLittleRingPixel, m_WindowWidth);
-		Cash1->CashMovingFinal(MovingRingPixel, m_WindowWidth);
+		Cash1->CashMovingFinal(MovingLittleRingPixel, m_WindowWidth);
 	}
 	break;
 	}
@@ -315,9 +314,21 @@ bool DrawManager::IsCashCollision(const int& MotionNumber, const int& CharacterX
 int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& CharacterXLocation, const int& CharacterYLocation)
 {
 	RECT TmpRect;
-	CharacterRect = { CharacterXLocation + LOCATION_CHARACTER_VERTICAL, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight() + HITBOX_CHARACTER_HEIGHT_UP,
-		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + (LONG)(LOCATION_CHARACTER_VERTICAL * 0.5f), CharacterYLocation - HITBOX_CHARACTER_HEIGHT_DOWN };	//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
-	//↑유저 사각형
+	bool Tmp = m_WindowWidth >= MAP_WIDTH - CharacterXLocation + LOCATION_CHARACTER_VERTICAL;	//맵의 마지막 지점이 보이기 시작했는가?에 대한 여부
+
+	switch (Tmp)
+	{
+	case false:
+		CharacterRect = { CharacterXLocation + LOCATION_CHARACTER_VERTICAL, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight() + HITBOX_CHARACTER_HEIGHT_UP,
+		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth() + (LONG)(LOCATION_CHARACTER_VERTICAL * 0.5f), CharacterYLocation - HITBOX_CHARACTER_HEIGHT_DOWN };	
+		//화면에 보이는 유저 위치 보정 때문에 CHARACTER_LOCATION_X을 추가해줘야 함
+		//↑유저 사각형
+		break;
+	case true:
+		CharacterRect = { CharacterXLocation, CharacterYLocation - CharacterObject->ReturnMemberBitMapHeight() + HITBOX_CHARACTER_HEIGHT_UP,
+		CharacterXLocation + CharacterObject->ReturnMemberBitMapWidth(), CharacterYLocation - HITBOX_CHARACTER_HEIGHT_DOWN };
+		break;
+	}
 
 	int Score_Tmp = 0;	//넘은 장애물 수에 따라 보내줄 점수 임시
 	int User_Tmp = CharacterXLocation + LOCATION_CHARACTER_VERTICAL + CharacterObject->ReturnMemberBitMapWidth() * 0.5f;	//판정을 위해 유저 캐릭터가 갖는 X좌표
@@ -326,18 +337,31 @@ int DrawManager::IsObsjectCollision(const int& MotionNumber, const int& Characte
 
 	//화로와 부딪쳤는지 체크함
 	int Fire_Tmp = CharacterXLocation / FIRE_DISTANCE;	//몇번째 화로부터 충돌 체크 해야 하는지 임시로 변수 구함
+	//벡터 사이즈 넘어가면 오류 나므로... 체크하는 if 구문 필요
 	{
-		RECT FireRectLeft = { m_FireVector.at(Fire_Tmp)->GetLocationX() + (m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL,
+		if (Fire_Tmp < m_FireVector.size())
+		{
+			RECT FireRectLeft = { m_FireVector.at(Fire_Tmp)->GetLocationX() + (m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL,
 			LOCATION_FIRE_Y - HITBOX_FIRE_UP,
 			m_FireVector.at(Fire_Tmp)->GetLocationX() + (m_FireVector.at(Fire_Tmp)->ReturnMemberBitMapWidth() * 0.5f) + HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL,
 			LOCATION_FIRE_Y };
-		RECT FireRectRight = { m_FireVector.at(Fire_Tmp + 1)->GetLocationX() + (m_FireVector.at(Fire_Tmp + 1)->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL, 
-			LOCATION_FIRE_Y - HITBOX_FIRE_UP,
-			m_FireVector.at(Fire_Tmp + 1)->GetLocationX() + (m_FireVector.at(Fire_Tmp + 1)->ReturnMemberBitMapWidth() * 0.5f) + HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL, LOCATION_FIRE_Y };
 
-		if (IntersectRect(&TmpRect, &CharacterRect, &FireRectLeft) || IntersectRect(&TmpRect, &CharacterRect, &FireRectRight))
+			if (IntersectRect(&TmpRect, &CharacterRect, &FireRectLeft))
+			{
+				return CRASHED_OBJECT;	//부딪친 것에 대해 참을 반환한다
+			}
+		}
+		
+		if (Fire_Tmp  + 1 < m_FireVector.size())
 		{
-			return CRASHED_OBJECT;	//부딪친 것에 대해 참을 반환한다
+			RECT FireRectRight = { m_FireVector.at(Fire_Tmp + 1)->GetLocationX() + (m_FireVector.at(Fire_Tmp + 1)->ReturnMemberBitMapWidth() * 0.5f) - HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL,
+				LOCATION_FIRE_Y - HITBOX_FIRE_UP,
+				m_FireVector.at(Fire_Tmp + 1)->GetLocationX() + (m_FireVector.at(Fire_Tmp + 1)->ReturnMemberBitMapWidth() * 0.5f) + HITBOX_FIRE_WIDTH - LOCATION_CHARACTER_VERTICAL, LOCATION_FIRE_Y };
+
+			if (IntersectRect(&TmpRect, &CharacterRect, &FireRectRight))
+			{
+				return CRASHED_OBJECT;	//부딪친 것에 대해 참을 반환한다
+			}
 		}
 
 		//LOCATION_CHARACTER_VERTICAL는 위치에 대한 보정값
@@ -407,6 +431,7 @@ bool DrawManager::IsInGoal_In(const int& CharacterXLocation, const int& Characte
 	if (User_Tmp >= GoalObject->GetLocationX() + (GoalObject->ReturnMemberBitMapWidth() * 0.5f) && 
 		((User_Tmp >= GoalObject->GetLocationY() - JUMP_PIXEL * 0.5f) || User_Tmp <= GoalObject->GetLocationY() + JUMP_PIXEL * 0.5f))
 	{
+		
 		return true;
 	}
 
@@ -427,15 +452,18 @@ void DrawManager::DrawWinImages(HDC hdc, const int& CharacterXLocation, const in
 	SelectObject(m_MemDCBack, m_FontCustomize);
 	SetTextColor(m_MemDCBack, RGB(255, 255, 255));
 	SetBkMode(m_MemDCBack, TRANSPARENT);
+	SetTextAlign(m_MemDCBack, TA_CENTER);
 	std::string str = std::to_string(Score);
 	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_SCORE_Y, str.c_str(), str.length());
 	str = "Bonus: " + std::to_string(BonusScore);
-	TextOut(m_MemDCBack, LOCATION_BONUS_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
+	TextOut(m_MemDCBack, LOCATION_SCORE_X, LOCATION_BONUS_SCORE_Y, str.c_str(), str.length());
 
-	if (0 == BONUS_SCORE)
+	
+	if (0 == BonusScore)
 	{
+		SetTextAlign(m_MemDCBack, TA_LEFT);
 		str = "스페이스바를 누르면 게임 종료";
-		TextOut(m_MemDCBack, m_WindowWidth - (str.length() * 0.5f), 600, str.c_str(), str.length());
+		TextOut(m_MemDCBack, (m_WindowWidth * 0.5f) - (str.length() * 0.5f * 5), LOCATION_SCORE_Y + 20, str.c_str(), str.length());
 	}
 
 	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
@@ -451,10 +479,11 @@ void DrawManager::DrawGameOver(HDC hdc)
 	SelectObject(m_MemDCBack, m_FontCustomize);
 	SetTextColor(m_MemDCBack, RGB(255, 255, 255));
 	SetBkMode(m_MemDCBack, TRANSPARENT);
+	SetTextAlign(m_MemDCBack, TA_CENTER);
 	std::string str = "게임 오버";
-	TextOut(m_MemDCBack, m_WindowWidth - (str.length() * 0.5f), 300, str.c_str(), str.length());
+	TextOut(m_MemDCBack, (m_WindowWidth * 0.5f), 250, str.c_str(), str.length());
 	str = "스페이스바를 누르면 게임 종료";
-	TextOut(m_MemDCBack, m_WindowWidth - (str.length() * 0.5f), 600, str.c_str(), str.length());
+	TextOut(m_MemDCBack, (m_WindowWidth * 0.5f), 350, str.c_str(), str.length());
 
 	BitBlt(hdc, 0, 0, m_WindowWidth, m_WindowHeight, m_MemDCBack, 0, 0, SRCCOPY);	//본 화면에 출력
 	SelectObject(m_MemDCBack, OldBitMapBack);

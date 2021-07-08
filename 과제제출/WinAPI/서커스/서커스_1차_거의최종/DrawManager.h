@@ -59,6 +59,8 @@ public:
 	
 	void DrawGameOver(HDC hdc);	//게임오버 화면 출력
 
+	bool IsFinal(const int& CharacterXLocation) { return (m_WindowWidth >= MAP_WIDTH - CharacterXLocation + LOCATION_CHARACTER_VERTICAL); }
+
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 
 	~DrawManager();

@@ -126,7 +126,7 @@ enum LOCATION
 	LOCATION_SCORE_X = 170,	//점수 표시 X위치
 	LOCATION_SCORE_Y = 475,	//점수 표시 Y위치
 	LOCATION_BONUS_SCORE_X = 100,	//보너스 점수 표시 X위치
-	LOCATION_BONUS_SCORE_Y = 520,	//보너스 점수 표시 X위치
+	LOCATION_BONUS_SCORE_Y = 520,	//보너스 점수 표시 Y위치
 	LOCATION_RING1_START = 700,	//첫번째 고리 시작 위치
 	LOCATION_RING2_START = 2000,	//두번째 고리 시작 위치
 	LOCATION_LITTLERING_START = 3500,	//작은 고리 시작 위치
@@ -137,7 +137,7 @@ enum LOCATION
 
 enum STATE
 {
-	STATE_NULL = 0,
+	STATE_NONE = 0,
 	STATE_DEAD = 1,
 	STATE_WIN = 2,
 	STATE_GAMEOVER = 3,

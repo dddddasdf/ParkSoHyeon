@@ -70,7 +70,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 		{
 			switch (GameMgr->ReturnState())
 			{
-			case STATE_NULL:
+			case STATE_NONE:
 			{
 				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
 				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
@@ -154,6 +154,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 			}
 				break;
 			case STATE_WIN:
+			case STATE_WIN_SHUTDOWN:
 			{
 				frameTime = GetTickCount64();       //윈도우가 시작된 후 지금까지 시간. 1/1000초.
 				if (!(limitFrameTime > frameTime))  //0.03초마다 업데이트.
@@ -166,12 +167,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPervlnstance, LPSTR lpszCmd
 
 					if (0.3f <= WinningCounter)
 					{
-						GameMgr->ChangeWinningMotion();	//화면 멈추는 시간 다 지나가면 부분적으로 초기화한다
+						GameMgr->ChangeWinningMotion();	//캐릭터 모션 교체
 						WinningCounter = 0;
 					}
 				}
-				GameMgr->Winning(&hdc);
 				GameMgr->CaculatingScore();
+				GameMgr->Winning(&hdc);
 
 			}
 				break;
@@ -296,7 +297,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			{
 				//캐릭터가 움직이고 있는 중이거나 점프 중일 때는 방향키값 체크 X
 				//점프는 점프 중인지만 확인한다<-이것들 싹다 게임매니저에 넣는 게 낫나?? 낫나???
-				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()) && GameMgr->ReturnState() == STATE_NULL)
+				if ((!GameMgr->ReturnIsMoving()) && (!GameMgr->ReturnIsJumping()) && GameMgr->ReturnState() == STATE_NONE)
 				{
 					if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 					{
@@ -307,7 +308,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						GameMgr->MovingCharacter(VK_RIGHT);
 					}
 				}
-				if (GetAsyncKeyState(VK_SPACE) && GameMgr->ReturnState() == STATE_NULL)
+				if (GetAsyncKeyState(VK_SPACE) && GameMgr->ReturnState() == STATE_NONE)
 				{
 					if (!GameMgr->ReturnIsJumping())
 					{

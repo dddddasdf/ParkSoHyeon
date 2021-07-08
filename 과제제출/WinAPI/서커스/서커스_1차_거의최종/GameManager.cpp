@@ -11,7 +11,7 @@ void GameManager::WholeInit(HWND hWnd, HDC hdc)
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
 	m_BonusScore = BONUS_SCORE;
-	m_NowState = STATE_NULL;
+	m_NowState = STATE_NONE;
 }
 
 void GameManager::PartialInit()
@@ -25,7 +25,7 @@ void GameManager::PartialInit()
 	m_MovingDirection = NULL;
 	m_IsDeadTrigger = false;
 	m_BonusScore = BONUS_SCORE;
-	m_NowState = STATE_NULL;
+	m_NowState = STATE_NONE;
 }
 
 void GameManager::MovingCharacter(const int& Key)
@@ -127,13 +127,15 @@ void GameManager::StandingCharacter()
 
 void GameManager::CalculateRings(float elapsed)
 {
+	bool Tmp = DrawMgr->IsFinal(m_PlayerData->ReturnCharacterXLocation());	//맵 끝부분은 스크롤하지 않으므로 가속이나 감속이 이루어지면 안 된다 그러기 위해 맵 끝부분인지 확인하는 임시 변수
+	
 	auto addSpeed = MOVE_PIXEL * 5;
-	if (m_MovingDirection == VK_RIGHT)
+	if (m_MovingDirection == VK_RIGHT && false == Tmp)
 	{
 		//MOVE_PIXEL * 40;
 		DrawMgr->MoveRings((RING_MOVE_PIXEL + addSpeed) * elapsed, (LITTLERING_MOVE_PIXEL + addSpeed) * elapsed, m_PlayerData->ReturnCharacterXLocation());
 	}
-	else if (m_MovingDirection == VK_LEFT && m_PlayerData->ReturnCharacterXLocation() > 0)
+	else if (m_MovingDirection == VK_LEFT && m_PlayerData->ReturnCharacterXLocation() > 0 && false == Tmp)
 	{
 		DrawMgr->MoveRings((RING_MOVE_PIXEL - addSpeed) * elapsed, (LITTLERING_MOVE_PIXEL - addSpeed) * elapsed, m_PlayerData->ReturnCharacterXLocation());
 	}
@@ -171,6 +173,7 @@ void GameManager::GoalInCheck()
 {
 	if (DrawMgr->IsInGoal_In(m_PlayerData->ReturnCharacterXLocation(), m_PlayerData->ReturnCharacterYLocation()))
 	{
+		m_PlayerData->SetYLocation(353);
 		GameMgr->ChangeWinningMotion();
 		m_NowState = STATE_WIN;
 	}
