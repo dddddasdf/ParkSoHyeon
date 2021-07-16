@@ -12,6 +12,12 @@
 #define new DEBUG_NEW
 #endif
 
+#pragma pack(1)
+struct TEST
+{
+	char Buffer[256];
+};
+#pragma pack()
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -181,13 +187,16 @@ void CMFCApplication3Dlg::OnBnClickedButtonSend()
 	GetDlgItemText(IDC_EDIT1, msg);
 	if (!msg.IsEmpty())
 	{
-		m_List.AddString(msg);
+		//m_List.AddString(msg);
 		SetDlgItemText(IDC_EDIT1, _T(""));
 
-		char buf[10];
+		
 		CW2A message(msg.GetString());
-		strcpy_s(buf, sizeof(buf), message.m_szBuffer);
+		TEST SendPacket;
+		strcpy_s(SendPacket.Buffer, sizeof(SendPacket.Buffer), message.m_szBuffer);
+		//char buf[10];
+		//strcpy_s(buf, sizeof(buf), message.m_szBuffer);
 
-		m_Client.Send(buf, sizeof(buf));
+		m_Client.Send((char*)&SendPacket, sizeof(SendPacket));
 	}
 }

@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "CClient.h"
 
+#pragma pack(1)
+struct TEST
+{
+	char Buffer[256];
+};
+#pragma pack()
 
 void CClient::OnClose(int nErrorCode)
 {
@@ -17,12 +23,17 @@ void CClient::OnClose(int nErrorCode)
 void CClient::OnReceive(int nErrorCode)
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-	char buf[256 + 1];
-	ZeroMemory(buf, sizeof(buf));
-	if (Receive(buf, sizeof(buf)) > 0)
+	int retval;
+
+	char bufferTmp[sizeof(TEST)];
+	ZeroMemory(bufferTmp, sizeof(bufferTmp));
+
+	if (Receive(bufferTmp, sizeof(bufferTmp)) > 0)
 	{
+		TEST* recv_packet = (TEST*)bufferTmp;
 		CMFCApplication3Dlg* pMain = (CMFCApplication3Dlg*)AfxGetMainWnd();
-		//pMain->m_List.AddString();
+		CString StringTmp(recv_packet->Buffer);
+		pMain->m_List.AddString(StringTmp);
 	}
 
 	CSocket::OnReceive(nErrorCode);
