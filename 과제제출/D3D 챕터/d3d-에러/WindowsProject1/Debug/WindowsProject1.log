@@ -1,0 +1,4 @@
+﻿  WindowsProject1.cpp
+c:\users\user\source\repos\project13\windowsproject1\windowsproject1.cpp(42): error C2065: 'IDC_D3D': 선언되지 않은 식별자입니다.
+c:\users\user\source\repos\project13\windowsproject1\windowsproject1.cpp(101): error C2065: 'IDI_D3D': 선언되지 않은 식별자입니다.
+c:\users\user\source\repos\project13\windowsproject1\windowsproject1.cpp(106): error C2065: 'IDI_SMALL': 선언되지 않은 식별자입니다.
