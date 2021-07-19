@@ -1,0 +1,3 @@
+﻿  d3d.cpp
+C:\Users\A-12\source\repos\D3D\d3d\d3d.cpp(93,27): warning C4101: 'frameTime' :참조되지 않은 지역 변수입니다.
+  d3d.vcxproj -> C:\Users\A-12\source\repos\D3D\Debug\d3d.exe
