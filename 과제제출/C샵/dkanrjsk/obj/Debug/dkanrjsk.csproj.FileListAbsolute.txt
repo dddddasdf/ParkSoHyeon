@@ -1,0 +1,7 @@
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\bin\Debug\dkanrjsk.exe.config
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\bin\Debug\dkanrjsk.exe
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\bin\Debug\dkanrjsk.pdb
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\obj\Debug\dkanrjsk.csprojAssemblyReference.cache
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\obj\Debug\dkanrjsk.csproj.CoreCompileInputs.cache
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\obj\Debug\dkanrjsk.exe
+C:\Users\A-12\source\repos\dkanrjsk\dkanrjsk\obj\Debug\dkanrjsk.pdb
